@@ -21,21 +21,29 @@
  */
 
 
-#ifndef ARCVISITOR_H
-#define ARCVISITOR_H
+#ifndef PRINTGRAPHVISITOR_H
+#define PRINTGRAPHVISITOR_H
+
+#include "vertexvisitor.h"
+#include "arcvisitor.h"
 
 namespace Algora {
 
-class Arc;
-
-class ArcVisitor
+class PrintGraphVisitor : public VertexVisitor, public ArcVisitor
 {
 public:
-    ArcVisitor() { }
+    PrintGraphVisitor();
 
-    virtual void visitArc(Arc *a) = 0;
+    // ArcVisitor interface
+public:
+    virtual void visitArc(Arc *a);
+
+    // VertexVisitor interface
+public:
+    virtual void visitVertex(Vertex *v);
+
 };
 
 }
 
-#endif // ARCVISITOR_H
+#endif // PRINTGRAPHVISITOR_H

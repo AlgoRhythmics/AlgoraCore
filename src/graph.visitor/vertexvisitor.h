@@ -33,7 +33,7 @@ class VertexVisitor
 public:
     VertexVisitor() { }
 
-    virtual void visit(Vertex *v) = 0;
+    virtual void visitVertex(Vertex *v) = 0;
 };
 
 }

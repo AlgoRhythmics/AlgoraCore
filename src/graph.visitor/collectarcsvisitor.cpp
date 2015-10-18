@@ -21,21 +21,17 @@
  */
 
 
-#ifndef ARCVISITOR_H
-#define ARCVISITOR_H
+#include "collectarcsvisitor.h"
 
-namespace Algora {
+using namespace Algora;
 
-class Arc;
-
-class ArcVisitor
+CollectArcsVisitor::CollectArcsVisitor(std::list<Arc *> *container)
+    : m_container(container)
 {
-public:
-    ArcVisitor() { }
-
-    virtual void visitArc(Arc *a) = 0;
-};
 
 }
 
-#endif // ARCVISITOR_H
+void CollectArcsVisitor::visitArc(Arc *a)
+{
+    m_container->push_back(a);
+}

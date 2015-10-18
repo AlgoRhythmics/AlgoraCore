@@ -21,21 +21,28 @@
  */
 
 
-#ifndef ARCVISITOR_H
-#define ARCVISITOR_H
+#ifndef COLLECTVERTICESVISITOR_H
+#define COLLECTVERTICESVISITOR_H
+
+#include "vertexvisitor.h"
+
+#include <list>
 
 namespace Algora {
 
-class Arc;
-
-class ArcVisitor
+class CollectVerticesVisitor : public VertexVisitor
 {
 public:
-    ArcVisitor() { }
+    CollectVerticesVisitor(std::list<Vertex*> *container);
 
-    virtual void visitArc(Arc *a) = 0;
+    // VertexVisitor interface
+public:
+    virtual void visitVertex(Vertex *v);
+
+private:
+    std::list<Vertex*> *m_container;
 };
 
 }
 
-#endif // ARCVISITOR_H
+#endif // COLLECTVERTICESVISITOR_H
