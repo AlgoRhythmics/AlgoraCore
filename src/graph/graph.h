@@ -31,8 +31,8 @@ namespace Algora {
 class Vertex;
 class Arc;
 
-class NodesVisitor;
-class ArcsVisitor;
+class VertexVisitor;
+class ArcVisitor;
 
 class Graph : public GraphArtifact
 {
@@ -49,10 +49,10 @@ public:
     virtual bool removeArc(Arc *a) = 0;
 
     // Accomodate visitors
-    virtual void acceptNodesVisitor(NodesVisitor *nVisitor) = 0;
-    virtual void acceptArcsVisitor(ArcsVisitor *aVisitor) = 0;
-    virtual void acceptOutgoingArcsVisitor(const Vertex *v, ArcsVisitor *aVisitor) = 0;
-    virtual void acceptIncomingArcsVisitor(const Vertex *v, ArcsVisitor *aVisitor) = 0;
+    virtual void acceptVertexVisitor(VertexVisitor *nVisitor) = 0;
+    virtual void acceptArcVisitor(ArcVisitor *aVisitor) = 0;
+    virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) = 0;
+    virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) = 0;
 
     // Misc
     virtual bool isEmpty() const = 0;

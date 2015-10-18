@@ -19,3 +19,4 @@ unix {
 }
 
 include(graph/graph.pri)
+include(graph.visitor/graph.visitor.pri)
