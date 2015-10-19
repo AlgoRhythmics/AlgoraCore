@@ -37,7 +37,7 @@ class ArcVisitor;
 class Graph : public GraphArtifact
 {
 public:
-    Graph();
+    Graph(GraphArtifact *parent = 0);
     virtual ~Graph();
 
     // Vertices

@@ -27,8 +27,8 @@
 
 using namespace Algora;
 
-Graph::Graph()
-    : GraphArtifact()
+Graph::Graph(GraphArtifact *parent)
+    : GraphArtifact(parent)
 {
 
 }
