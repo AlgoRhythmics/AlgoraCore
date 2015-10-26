@@ -21,27 +21,29 @@
  */
 
 
-#ifndef ARC_H
-#define ARC_H
+#ifndef PARALLELARCSBUNDLE_H
+#define PARALLELARCSBUNDLE_H
 
-#include "graphartifact.h"
+#include "arc.h"
+#include <list>
 
 namespace Algora {
 
-class Vertex;
+class ArcVisitor;
 
-class Arc : public GraphArtifact
+class ParallelArcsBundle : public Arc
 {
 public:
-    Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
-    virtual ~Arc();
+    ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
+    virtual ~ParallelArcsBundle();
 
-    virtual Vertex *getTail() const;
-    virtual Vertex *getHead() const;
+    virtual void getArcs(std::list<Arc*> *l) const;
+    virtual int getSize() const;
+    virtual void acceptArcVisitor(ArcVisitor *aVisitor) const;
 
-    // GraphArtifact interface
-public:
-    virtual std::string toString();
+    virtual bool addArc(Arc *a);
+    virtual void removeArc(Arc *a);
+    virtual bool containsArc(Arc *a) const;
 
 private:
     struct CheshireCat;
@@ -50,4 +52,4 @@ private:
 
 }
 
-#endif // ARC_H
+#endif // PARALLELARCSBUNDLE_H
