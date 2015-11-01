@@ -129,7 +129,7 @@ struct IncidenceListGraph::CheshireCat {
 };
 
 IncidenceListGraph::IncidenceListGraph(GraphArtifact *parent)
-    : Graph(parent)
+    : DiGraph(parent)
 {
     cat = new CheshireCat;
 }

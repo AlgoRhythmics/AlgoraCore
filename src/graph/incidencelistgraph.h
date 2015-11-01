@@ -24,17 +24,17 @@
 #ifndef INCIDENCELISTGRAPH_H
 #define INCIDENCELISTGRAPH_H
 
-#include "graph.h"
+#include "digraph.h"
 
 namespace Algora {
 
-class IncidenceListGraph : public Graph
+class IncidenceListGraph : public DiGraph
 {
 public:
     IncidenceListGraph(GraphArtifact *parent = 0);
     virtual ~IncidenceListGraph();
 
-    // Graph interface
+    // DiGraph interface
 public:
     virtual Vertex *addVertex();
     virtual bool removeVertex(Vertex *v);

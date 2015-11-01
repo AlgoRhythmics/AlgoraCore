@@ -21,8 +21,8 @@
  */
 
 
-#ifndef GRAPH_H
-#define GRAPH_H
+#ifndef DIGRAPH_H
+#define DIGRAPH_H
 
 #include "graphartifact.h"
 
@@ -34,11 +34,11 @@ class Arc;
 class VertexVisitor;
 class ArcVisitor;
 
-class Graph : public GraphArtifact
+class DiGraph : public GraphArtifact
 {
 public:
-    Graph(GraphArtifact *parent = 0);
-    virtual ~Graph();
+    DiGraph(GraphArtifact *parent = 0);
+    virtual ~DiGraph();
 
     // Vertices
     virtual Vertex *addVertex() = 0;

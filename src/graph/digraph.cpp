@@ -21,27 +21,27 @@
  */
 
 
-#include "graph.h"
+#include "digraph.h"
 
 #include <sstream>
 
 using namespace Algora;
 
-Graph::Graph(GraphArtifact *parent)
+DiGraph::DiGraph(GraphArtifact *parent)
     : GraphArtifact(parent)
 {
 
 }
 
-Graph::~Graph()
+DiGraph::~DiGraph()
 {
 
 }
 
-std::string Graph::toString() const
+std::string DiGraph::toString() const
 {
     std::ostringstream strStream;
-    strStream << "Graph #";
+    strStream << "DiGraph #";
     strStream << std::to_string(getId());
     return strStream.str();
 }
