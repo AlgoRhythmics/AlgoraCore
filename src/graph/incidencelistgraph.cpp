@@ -65,6 +65,21 @@ struct IncidenceListGraph::CheshireCat {
     VertexList vertices;
     VertexMap vertexMap;
 
+    ~CheshireCat() {
+        for (auto vIter = vertices.cbegin(); vIter != vertices.cend(); vIter++) {
+            IncidenceListVertex *iv = *vIter;
+            for (auto aIter = iv->outgoingArcs.cbegin(); aIter != iv->outgoingArcs.cend(); aIter++) {
+                delete *aIter;
+            }
+            iv->outgoingArcs.clear();
+            iv->incomingArcs.clear();
+            delete iv->vertex;
+            delete iv;
+        }
+        vertices.clear();
+        vertexMap.clear();
+    }
+
     void addVertex(Vertex *v) {
         IncidenceListVertex *iv = new IncidenceListVertex(v);
         vertices.push_back(iv);
