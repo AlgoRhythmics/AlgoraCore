@@ -24,6 +24,7 @@
 #include "incidencelistgraph.h"
 #include "vertex.h"
 #include "arc.h"
+#include "parallelarcsbundle.h"
 
 #include "graph.visitor/vertexvisitor.h"
 #include "graph.visitor/arcvisitor.h"
@@ -266,4 +267,39 @@ bool IncidenceListGraph::isEmpty() const
 int IncidenceListGraph::getSize() const
 {
     return cat->vertices.size();
+}
+
+void IncidenceListGraph::bundleParallelArcs()
+{
+    for (auto vIter = cat->vertices.cbegin(); vIter != cat->vertices.cend(); vIter++) {
+        IncidenceListVertex *iv = *vIter;
+        iv->incomingArcs.clear();
+    }
+    for (auto vIter = cat->vertices.cbegin(); vIter != cat->vertices.cend(); vIter++) {
+        IncidenceListVertex *iv = *vIter;
+        std::unordered_map<IncidenceListVertex*,IncidenceListArc*> map;
+        for (auto aIter = iv->outgoingArcs.cbegin(); aIter != iv->outgoingArcs.cend(); aIter++) {
+            IncidenceListArc *ia = *aIter;
+            auto f = map.find(ia->head);
+            if (f == map.end()) {
+                map[ia->head] = ia;
+            } else {
+                Arc *a = f->second->arc;
+                ParallelArcsBundle *pa = dynamic_cast<ParallelArcsBundle*>(a);
+                if (pa == 0) {
+                    pa = new ParallelArcsBundle(a->getTail(), a->getHead(), this);
+                    pa->addArc(a);
+                    f->second->arc = pa;
+                }
+                pa->addArc(ia->arc);
+            }
+        }
+        iv->outgoingArcs.clear();
+
+        for (auto mIter = map.cbegin(); mIter != map.cend(); mIter++) {
+            IncidenceListArc *ia = mIter->second;
+            iv->outgoingArcs.push_back(ia);
+            ia->head->incomingArcs.push_back(ia);
+        }
+    }
 }

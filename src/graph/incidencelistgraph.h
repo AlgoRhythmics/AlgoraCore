@@ -47,6 +47,9 @@ public:
     virtual bool isEmpty() const;
     virtual int getSize() const;
 
+public:
+    void bundleParallelArcs();
+
 private:
     struct CheshireCat;
     CheshireCat *cat;
