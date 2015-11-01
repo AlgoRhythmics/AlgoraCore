@@ -25,7 +25,7 @@
 
 using namespace Algora;
 
-CollectVerticesVisitor::CollectVerticesVisitor(std::list<Vertex *> *container)
+CollectVerticesVisitor::CollectVerticesVisitor(std::vector<Vertex *> *container)
     : m_container(container)
 {
 

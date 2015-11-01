@@ -26,21 +26,21 @@
 
 #include "arcvisitor.h"
 
-#include <list>
+#include <vector>
 
 namespace Algora {
 
 class CollectArcsVisitor : public ArcVisitor
 {
 public:
-    CollectArcsVisitor(std::list<Arc*> *container);
+    CollectArcsVisitor(std::vector<Arc *> *container);
 
     // ArcVisitor interface
 public:
     virtual void visitArc(Arc *a);
 
 private:
-    std::list<Arc*> *m_container;
+    std::vector<Arc*> *m_container;
 };
 
 }

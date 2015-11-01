@@ -26,21 +26,21 @@
 
 #include "vertexvisitor.h"
 
-#include <list>
+#include <vector>
 
 namespace Algora {
 
 class CollectVerticesVisitor : public VertexVisitor
 {
 public:
-    CollectVerticesVisitor(std::list<Vertex*> *container);
+    CollectVerticesVisitor(std::vector<Vertex*> *container);
 
     // VertexVisitor interface
 public:
     virtual void visitVertex(Vertex *v);
 
 private:
-    std::list<Vertex*> *m_container;
+    std::vector<Vertex*> *m_container;
 };
 
 }

@@ -25,7 +25,7 @@
 
 using namespace Algora;
 
-CollectArcsVisitor::CollectArcsVisitor(std::list<Arc *> *container)
+CollectArcsVisitor::CollectArcsVisitor(std::vector<Arc *> *container)
     : m_container(container)
 {
 

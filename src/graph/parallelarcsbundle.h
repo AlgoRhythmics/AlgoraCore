@@ -25,7 +25,7 @@
 #define PARALLELARCSBUNDLE_H
 
 #include "arc.h"
-#include <list>
+#include <vector>
 
 namespace Algora {
 
@@ -37,7 +37,7 @@ public:
     ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
     virtual ~ParallelArcsBundle();
 
-    virtual void getArcs(std::list<Arc*> *l) const;
+    virtual void getArcs(std::vector<Arc*> *l) const;
     virtual int getSize() const;
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) const;
 

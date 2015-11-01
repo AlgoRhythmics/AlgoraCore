@@ -28,16 +28,17 @@
 #include "graph.visitor/vertexvisitor.h"
 #include "graph.visitor/arcvisitor.h"
 
-#include <list>
+#include <vector>
 #include <unordered_map>
+#include <algorithm>
 
 using namespace Algora;
 
 struct IncidenceListVertex;
 struct IncidenceListArc;
 
-typedef std::list<IncidenceListVertex*> VertexList;
-typedef std::list<IncidenceListArc*> ArcList;
+typedef std::vector<IncidenceListVertex*> VertexList;
+typedef std::vector<IncidenceListArc*> ArcList;
 typedef std::unordered_map<Vertex*,IncidenceListVertex*> VertexMap;
 typedef std::unordered_map<Arc*,IncidenceListArc*> ArcMap;
 
@@ -73,26 +74,26 @@ struct IncidenceListGraph::CheshireCat {
     void removeVertex(VertexMap::iterator &vMapIt) {
         IncidenceListVertex *iv = vMapIt->second;
         // remove incident arcs
-        for (ArcList::const_iterator i = iv->outgoingArcs.cbegin();
+        for (auto i = iv->outgoingArcs.cbegin();
              i != iv->outgoingArcs.cend(); i++) {
             IncidenceListArc *ila = *i;
             removeArcAtHead(ila);
             delete ila;
         }
-        for (ArcList::const_iterator i = iv->incomingArcs.cbegin();
+        for (auto i = iv->incomingArcs.cbegin();
              i != iv->incomingArcs.cend(); i++) {
             IncidenceListArc *ila = *i;
             removeArcAtTail(ila);
             delete ila;
         }
-        vertices.remove(iv);
+        vertices.erase(std::remove(vertices.begin(), vertices.end(), iv), vertices.end());
         vertexMap.erase(vMapIt);
         delete iv->vertex;
         delete iv;
     }
 
     IncidenceListVertex *find(Vertex *v) {
-        VertexMap::iterator i = vertexMap.find(v);
+        auto i = vertexMap.find(v);
         if (i == vertexMap.end()) {
             return 0;
         }
@@ -106,11 +107,17 @@ struct IncidenceListGraph::CheshireCat {
     }
 
     void removeArcAtTail(IncidenceListArc *ila) {
-        ila->tail->outgoingArcs.remove(ila);
+        ila->tail->outgoingArcs.erase(std::remove(
+                                          ila->tail->outgoingArcs.begin(),
+                                          ila->tail->outgoingArcs.end(), ila),
+                                      ila->tail->outgoingArcs.end());
     }
 
     void removeArcAtHead(IncidenceListArc *ila) {
-        ila->head->incomingArcs.remove(ila);
+        ila->tail->incomingArcs.erase(std::remove(
+                                          ila->tail->incomingArcs.begin(),
+                                          ila->tail->incomingArcs.end(), ila),
+                                      ila->tail->incomingArcs.end());
     }
 
     void removeArc(IncidenceListArc *ila) {
@@ -168,7 +175,7 @@ bool IncidenceListGraph::removeArc(Arc *a)
     if (!t) {
         return false;
     }
-    ArcList::iterator i = t->outgoingArcs.begin();
+    auto i = t->outgoingArcs.begin();
     for (;i != t->outgoingArcs.end(); i++) {
         if (a == (*i)->arc) {
             break;
@@ -197,10 +204,10 @@ void IncidenceListGraph::acceptVertexVisitor(VertexVisitor *nVisitor)
 
 void IncidenceListGraph::acceptArcVisitor(ArcVisitor *aVisitor)
 {
-    for (VertexList::const_iterator i = cat->vertices.cbegin();
+    for (auto i = cat->vertices.cbegin();
          i != cat->vertices.cend(); i++) {
         IncidenceListVertex *ilv = *i;
-        for (ArcList::const_iterator j = ilv->outgoingArcs.cbegin();
+        for (auto j = ilv->outgoingArcs.cbegin();
              j != ilv->outgoingArcs.cend(); j++) {
             IncidenceListArc *ila = *j;
             aVisitor->visitArc(ila->arc);
@@ -210,12 +217,12 @@ void IncidenceListGraph::acceptArcVisitor(ArcVisitor *aVisitor)
 
 void IncidenceListGraph::acceptOutgoingArcVisitor(Vertex *v, ArcVisitor *aVisitor)
 {
-    VertexMap::iterator i = cat->vertexMap.find(v);
+    auto i = cat->vertexMap.find(v);
     if (i == cat->vertexMap.end())
         return;
 
     IncidenceListVertex *ilv = i->second;
-    for (ArcList::const_iterator j = ilv->outgoingArcs.cbegin();
+    for (auto j = ilv->outgoingArcs.cbegin();
          j != ilv->outgoingArcs.cend(); j++) {
         IncidenceListArc *ila = *j;
         aVisitor->visitArc(ila->arc);
@@ -224,12 +231,12 @@ void IncidenceListGraph::acceptOutgoingArcVisitor(Vertex *v, ArcVisitor *aVisito
 
 void IncidenceListGraph::acceptIncomingArcVisitor(Vertex *v, ArcVisitor *aVisitor)
 {
-    VertexMap::iterator i = cat->vertexMap.find(v);
+    auto i = cat->vertexMap.find(v);
     if (i == cat->vertexMap.end())
         return;
 
     IncidenceListVertex *ilv = i->second;
-    for (ArcList::const_iterator j = ilv->incomingArcs.cbegin();
+    for (auto j = ilv->incomingArcs.cbegin();
          j != ilv->incomingArcs.cend(); j++) {
         IncidenceListArc *ila = *j;
         aVisitor->visitArc(ila->arc);

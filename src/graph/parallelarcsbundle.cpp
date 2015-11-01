@@ -30,7 +30,7 @@
 using namespace Algora;
 
 struct ParallelArcsBundle::CheshireCat {
-    std::list<Arc*> arcsBundle;
+    std::vector<Arc*> arcsBundle;
 };
 
 ParallelArcsBundle::ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent)
@@ -44,7 +44,7 @@ ParallelArcsBundle::~ParallelArcsBundle()
     delete cat;
 }
 
-void ParallelArcsBundle::getArcs(std::list<Arc *> *l) const
+void ParallelArcsBundle::getArcs(std::vector<Arc *> *l) const
 {
     std::copy(cat->arcsBundle.cbegin(), cat->arcsBundle.cend(), std::back_inserter(*l));
 }
@@ -74,7 +74,7 @@ bool ParallelArcsBundle::addArc(Arc *a)
 
 void ParallelArcsBundle::removeArc(Arc *a)
 {
-    cat->arcsBundle.remove(a);
+    cat->arcsBundle.erase(std::remove(cat->arcsBundle.begin(), cat->arcsBundle.end(), a), cat->arcsBundle.end());
 }
 
 bool ParallelArcsBundle::containsArc(Arc *a) const
