@@ -23,9 +23,11 @@
 
 #include "parallelarcsbundle.h"
 
+#include "vertex.h"
 #include "graph.visitor/arcvisitor.h"
 
 #include <algorithm>
+#include <sstream>
 
 using namespace Algora;
 
@@ -81,4 +83,21 @@ bool ParallelArcsBundle::containsArc(Arc *a) const
 {
     auto i = std::find(cat->arcsBundle.cbegin(), cat->arcsBundle.cend(), a);
     return i != cat->arcsBundle.end();
+}
+
+
+std::string ParallelArcsBundle::toString() const
+{
+    std::ostringstream strStream;
+    strStream << "[Parallel Arcs Bundle #"
+        << std::to_string(getId())
+        << ": "
+        << getTail()->toString()
+        << " -> "
+        << getHead()->toString()
+        << ", size "
+        << cat->arcsBundle.size()
+        << "]";
+
+    return strStream.str();
 }

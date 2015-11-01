@@ -41,7 +41,7 @@ public:
 
     // GraphArtifact interface
 public:
-    virtual std::string toString();
+    virtual std::string toString() const override;
 
 private:
     struct CheshireCat;

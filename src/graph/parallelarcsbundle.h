@@ -45,9 +45,14 @@ public:
     virtual void removeArc(Arc *a);
     virtual bool containsArc(Arc *a) const;
 
+    // GraphArtifact interface
+public:
+    virtual std::string toString() const override;
+
 private:
     struct CheshireCat;
     CheshireCat *cat;
+
 };
 
 }

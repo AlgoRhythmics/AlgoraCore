@@ -58,7 +58,7 @@ Vertex *Arc::getHead() const
     return cat->head;
 }
 
-std::string Arc::toString()
+std::string Arc::toString() const
 {
     std::ostringstream strStream;
     strStream << "[Arc #"
