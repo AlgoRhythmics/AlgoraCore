@@ -31,7 +31,7 @@ namespace Algora {
 class Vertex : public GraphArtifact
 {
 public:
-    Vertex(GraphArtifact *parent = 0);
+    explicit Vertex(GraphArtifact *parent = 0);
     virtual ~Vertex();
 
     virtual std::string toString() const override;

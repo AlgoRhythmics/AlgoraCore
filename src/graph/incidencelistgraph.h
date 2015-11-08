@@ -31,7 +31,7 @@ namespace Algora {
 class IncidenceListGraph : public DiGraph
 {
 public:
-    IncidenceListGraph(GraphArtifact *parent = 0);
+    explicit IncidenceListGraph(GraphArtifact *parent = 0);
     virtual ~IncidenceListGraph();
 
     // DiGraph interface

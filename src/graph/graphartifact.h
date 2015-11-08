@@ -31,7 +31,7 @@ namespace Algora {
 class GraphArtifact
 {
 public:
-    GraphArtifact(GraphArtifact *parent = 0);
+    explicit GraphArtifact(GraphArtifact *parent = 0);
     virtual ~GraphArtifact();
 
     int getId() const;

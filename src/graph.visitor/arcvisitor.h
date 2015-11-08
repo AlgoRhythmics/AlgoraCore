@@ -31,7 +31,8 @@ class Arc;
 class ArcVisitor
 {
 public:
-    ArcVisitor() { }
+    explicit ArcVisitor() { }
+    virtual ~ArcVisitor() { }
 
     virtual void visitArc(Arc *a) = 0;
 };

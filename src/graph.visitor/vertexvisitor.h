@@ -31,7 +31,8 @@ class Vertex;
 class VertexVisitor
 {
 public:
-    VertexVisitor() { }
+    explicit VertexVisitor() {}
+    virtual ~VertexVisitor() {}
 
     virtual void visitVertex(Vertex *v) = 0;
 };

@@ -33,7 +33,7 @@ namespace Algora {
 class CollectVerticesVisitor : public VertexVisitor
 {
 public:
-    CollectVerticesVisitor(std::vector<Vertex*> *container);
+    explicit CollectVerticesVisitor(std::vector<Vertex*> *container);
 
     // VertexVisitor interface
 public:

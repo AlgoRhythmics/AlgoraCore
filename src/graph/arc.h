@@ -33,7 +33,7 @@ class Vertex;
 class Arc : public GraphArtifact
 {
 public:
-    Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
+    explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
     virtual ~Arc();
 
     virtual Vertex *getTail() const;

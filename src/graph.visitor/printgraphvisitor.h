@@ -32,7 +32,7 @@ namespace Algora {
 class PrintGraphVisitor : public VertexVisitor, public ArcVisitor
 {
 public:
-    PrintGraphVisitor();
+    explicit PrintGraphVisitor();
 
     // ArcVisitor interface
 public:

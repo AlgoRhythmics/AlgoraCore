@@ -33,7 +33,7 @@ namespace Algora {
 class CollectArcsVisitor : public ArcVisitor
 {
 public:
-    CollectArcsVisitor(std::vector<Arc *> *container);
+    explicit CollectArcsVisitor(std::vector<Arc *> *container);
 
     // ArcVisitor interface
 public:

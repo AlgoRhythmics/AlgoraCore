@@ -37,7 +37,7 @@ class ArcVisitor;
 class DiGraph : public GraphArtifact
 {
 public:
-    DiGraph(GraphArtifact *parent = 0);
+    explicit DiGraph(GraphArtifact *parent = 0);
     virtual ~DiGraph();
 
     // Vertices
