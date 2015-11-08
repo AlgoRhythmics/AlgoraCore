@@ -40,8 +40,8 @@ struct IncidenceListArc;
 
 typedef std::vector<IncidenceListVertex*> VertexList;
 typedef std::vector<IncidenceListArc*> ArcList;
-typedef std::unordered_map<Vertex*,IncidenceListVertex*> VertexMap;
-typedef std::unordered_map<Arc*,IncidenceListArc*> ArcMap;
+typedef std::unordered_map<const Vertex*,IncidenceListVertex*> VertexMap;
+typedef std::unordered_map<const Arc*,IncidenceListArc*> ArcMap;
 
 struct IncidenceListVertex {
     Vertex *vertex;
@@ -108,12 +108,12 @@ struct IncidenceListGraph::CheshireCat {
         delete iv;
     }
 
-    IncidenceListVertex *find(Vertex *v) {
-        auto i = vertexMap.find(v);
-        if (i == vertexMap.end()) {
+    IncidenceListVertex *find(const Vertex *v) {
+        try {
+          return vertexMap.at(v);
+        } catch (const std::out_of_range& ) {
             return 0;
         }
-        return i->second;
     }
 
     void addArc(Arc *a, IncidenceListVertex *t, IncidenceListVertex *h) {
@@ -172,7 +172,7 @@ bool IncidenceListGraph::removeVertex(Vertex *v)
     return true;
 }
 
-Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
+Arc *IncidenceListGraph::addArc(const Vertex *tail, const Vertex *head)
 {
     IncidenceListVertex *t = cat->find(tail);
     IncidenceListVertex *h = cat->find(head);
@@ -231,7 +231,7 @@ void IncidenceListGraph::acceptArcVisitor(ArcVisitor *aVisitor)
     }
 }
 
-void IncidenceListGraph::acceptOutgoingArcVisitor(Vertex *v, ArcVisitor *aVisitor)
+void IncidenceListGraph::acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
 {
     auto i = cat->vertexMap.find(v);
     if (i == cat->vertexMap.end())
@@ -245,7 +245,7 @@ void IncidenceListGraph::acceptOutgoingArcVisitor(Vertex *v, ArcVisitor *aVisito
     }
 }
 
-void IncidenceListGraph::acceptIncomingArcVisitor(Vertex *v, ArcVisitor *aVisitor)
+void IncidenceListGraph::acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
 {
     auto i = cat->vertexMap.find(v);
     if (i == cat->vertexMap.end())
