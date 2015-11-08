@@ -37,7 +37,8 @@ public:
     int getId() const;
     GraphArtifact *getParent() const;
 
-    virtual std::string toString() const;
+    virtual std::string toString() const = 0;
+
 private:
     GraphArtifact(const GraphArtifact&);
     GraphArtifact& operator=(const GraphArtifact&);
