@@ -30,17 +30,42 @@
 
 using namespace Algora;
 
+struct PrintGraphVisitor::CheshireCat {
+    bool endLine;
+    std::ostream &out;
+
+    CheshireCat() :
+        endLine(false), out(std::cout) { }
+};
+
 PrintGraphVisitor::PrintGraphVisitor()
+ : cat(new CheshireCat)
 {
 
+}
+
+PrintGraphVisitor::~PrintGraphVisitor()
+{
+    delete cat;
+}
+
+void PrintGraphVisitor::setEndLineAfterEachElement(bool endl)
+{
+    cat->endLine = endl;
 }
 
 void PrintGraphVisitor::visitArc(Arc *a)
 {
-    std::cout << a->toString();
+    cat->out << a->toString();
+    if (cat->endLine) {
+        cat->out << std::endl;
+    }
 }
 
 void PrintGraphVisitor::visitVertex(Vertex *v)
 {
-    std::cout << v->toString();
+    cat->out << v->toString();
+    if (cat->endLine) {
+        cat->out << std::endl;
+    }
 }

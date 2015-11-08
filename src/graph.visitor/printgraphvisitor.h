@@ -33,6 +33,9 @@ class PrintGraphVisitor : public VertexVisitor, public ArcVisitor
 {
 public:
     explicit PrintGraphVisitor();
+    virtual ~PrintGraphVisitor();
+
+    void setEndLineAfterEachElement(bool endl);
 
     // ArcVisitor interface
 public:
@@ -42,6 +45,9 @@ public:
 public:
     virtual void visitVertex(Vertex *v);
 
+private:
+    struct CheshireCat;
+    CheshireCat *cat;
 };
 
 }
