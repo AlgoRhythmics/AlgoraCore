@@ -38,6 +38,9 @@ public:
     GraphArtifact *getParent() const;
 
     virtual std::string toString() const;
+private:
+    GraphArtifact(const GraphArtifact&);
+    GraphArtifact& operator=(const GraphArtifact&);
 
 private:
     struct CheshireCat;
