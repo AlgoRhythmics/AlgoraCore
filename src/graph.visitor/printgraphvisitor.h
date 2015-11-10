@@ -27,15 +27,19 @@
 #include "vertexvisitor.h"
 #include "arcvisitor.h"
 
+#include <iostream>
+
 namespace Algora {
 
 class PrintGraphVisitor : public VertexVisitor, public ArcVisitor
 {
 public:
-    explicit PrintGraphVisitor();
+    explicit PrintGraphVisitor(const std::string &sep = std::string(), std::ostream &os = std::cout);
     virtual ~PrintGraphVisitor();
 
-    void setEndLineAfterEachElement(bool endl);
+    void setItemSeparator(const std::string &sep);
+
+    void reset();
 
     // ArcVisitor interface
 public:

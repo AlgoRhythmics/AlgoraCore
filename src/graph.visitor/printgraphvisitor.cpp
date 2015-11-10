@@ -31,15 +31,16 @@
 using namespace Algora;
 
 struct PrintGraphVisitor::CheshireCat {
-    bool endLine;
+    bool firstItemVisited;
+    std::string itemSeparator;
     std::ostream &out;
 
-    CheshireCat() :
-        endLine(false), out(std::cout) { }
+    CheshireCat(const std::string &sep, std::ostream &os) :
+        firstItemVisited(false), itemSeparator(sep), out(os) { }
 };
 
-PrintGraphVisitor::PrintGraphVisitor()
- : cat(new CheshireCat)
+PrintGraphVisitor::PrintGraphVisitor(const std::string &sep, std::ostream &os)
+ : cat(new CheshireCat(sep, os))
 {
 
 }
@@ -49,23 +50,33 @@ PrintGraphVisitor::~PrintGraphVisitor()
     delete cat;
 }
 
-void PrintGraphVisitor::setEndLineAfterEachElement(bool endl)
+void PrintGraphVisitor::setItemSeparator(const std::string &sep)
 {
-    cat->endLine = endl;
+    cat->itemSeparator = sep;
+    reset();
+}
+
+void PrintGraphVisitor::reset()
+{
+    cat->firstItemVisited = false;
 }
 
 void PrintGraphVisitor::visitArc(Arc *a)
 {
-    cat->out << a->toString();
-    if (cat->endLine) {
-        cat->out << std::endl;
+    if (cat->firstItemVisited) {
+        cat->out << cat->itemSeparator;
+    } else {
+        cat->firstItemVisited = true;
     }
+    cat->out << a->toString();
 }
 
 void PrintGraphVisitor::visitVertex(Vertex *v)
 {
-    cat->out << v->toString();
-    if (cat->endLine) {
-        cat->out << std::endl;
+    if (cat->firstItemVisited) {
+        cat->out << cat->itemSeparator;
+    } else {
+        cat->firstItemVisited = true;
     }
+    cat->out << v->toString();
 }
