@@ -70,7 +70,9 @@ struct IncidenceListGraph::CheshireCat {
         for (auto vIter = vertices.cbegin(); vIter != vertices.cend(); vIter++) {
             IncidenceListVertex *iv = *vIter;
             for (auto aIter = iv->outgoingArcs.cbegin(); aIter != iv->outgoingArcs.cend(); aIter++) {
-                delete *aIter;
+                IncidenceListArc *ia = *aIter;
+                delete ia->arc;
+                delete ia;
             }
             iv->outgoingArcs.clear();
             iv->incomingArcs.clear();
@@ -292,6 +294,7 @@ void IncidenceListGraph::bundleParallelArcs()
                     f->second->arc = pa;
                 }
                 pa->addArc(ia->arc);
+                delete ia;
             }
         }
         iv->outgoingArcs.clear();

@@ -43,6 +43,10 @@ ParallelArcsBundle::ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact
 
 ParallelArcsBundle::~ParallelArcsBundle()
 {
+    for (auto i = cat->arcsBundle.cbegin();
+         i != cat->arcsBundle.cend(); i++) {
+        delete *i;
+    }
     delete cat;
 }
 
