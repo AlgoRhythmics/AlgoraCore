@@ -1,0 +1,29 @@
+#!/bin/bash
+
+PRO_FILE="AlgoraCore.pro"
+
+QMAKE=$(which qmake)
+QMAKE_ARGS="-r -spec linux-g++-64"
+QMAKE_ARGS_DEBUG="CONFIG+=debug"
+
+
+CUR_DIR=$(pwd)
+BUILD_DIR="${CUR_DIR}/build"
+BUILD_DIR_DEBUG="${BUILD_DIR}/Debug"
+BUILD_DIR_RELEASE="${BUILD_DIR}/Release"
+
+PRO_PATH="${CUR_DIR}/src/${PRO_FILE}"
+
+echo "Checking whether build paths exist..."
+mkdir -p "${BUILD_DIR_DEBUG}"
+mkdir -p "${BUILD_DIR_RELEASE}"
+
+echo "Compiling debug version..."
+cd "${BUILD_DIR_DEBUG}"
+${QMAKE} ${PRO_PATH} ${QMAKE_ARGS} ${QMAKE_ARGS_DEBUG} && make
+
+echo "Compiling release version..."
+cd "${BUILD_DIR_RELEASE}"
+${QMAKE} ${PRO_PATH} ${QMAKE_ARGS} && make
+
+cd "${CUR_DIR}"
