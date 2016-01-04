@@ -36,9 +36,15 @@ struct ParallelArcsBundle::CheshireCat {
 };
 
 ParallelArcsBundle::ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent)
-    : Arc(tail, head, parent)
+    : Arc(tail, head, parent), grin(new CheshireCat)
 {
-    grin = new CheshireCat;
+
+}
+
+ParallelArcsBundle::ParallelArcsBundle(Arc *arc)
+    : Arc(arc->getTail(), arc->getHead(), arc->getParent()), grin(new CheshireCat)
+{
+    grin->arcsBundle.push_back(arc);
 }
 
 ParallelArcsBundle::~ParallelArcsBundle()
@@ -93,12 +99,12 @@ bool ParallelArcsBundle::containsArc(Arc *a) const
 std::string ParallelArcsBundle::toString() const
 {
     std::ostringstream strStream;
-    strStream << "[Parallel Arcs Bundle #"
-        << std::to_string(getId())
-        << ": "
+    strStream << "Parallel Arcs Bundle ("
         << getTail()->toString()
         << " -> "
         << getHead()->toString()
+        << ") ["
+        << idString()
         << ", size "
         << grin->arcsBundle.size()
         << "]";

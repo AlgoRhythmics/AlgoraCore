@@ -20,38 +20,23 @@
  *   http://algora.xaikal.org
  */
 
-#include "incidencelistgraph.h"
+#include "incidencelistgraphimpl.h"
 
 #include "incidencelistvertex.h"
+
 #include "graph/arc.h"
+#include "graph/parallelarcsbundle.h"
+
 #include "graph.visitor/vertexvisitor.h"
 #include "graph.visitor/arcvisitor.h"
+#include "graph.visitor/collectarcsvisitor.h"
+#include "graph.visitor/grimreaper.h"
 
 #include <vector>
+#include <unordered_map>
 #include <algorithm>
 
 namespace Algora {
-
-typedef typename std::vector<IncidenceListVertex*> VertexList;
-
-class IncidenceListGraph::CheshireCat {
-    VertexList vertices;
-
-public:
-    explicit CheshireCat();
-    ~CheshireCat();
-
-    void addVertex(IncidenceListVertex *vertex);
-    void removeVertex(IncidenceListVertex *v);
-    void addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
-    void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
-    void acceptVertexVisitor(VertexVisitor *nVisitor);
-    void acceptArcVisitor(ArcVisitor *aVisitor);
-    void acceptOutgoingArcVisitor(const IncidenceListVertex *v, ArcVisitor *aVisitor);
-    void acceptIncomingArcVisitor(const IncidenceListVertex *v, ArcVisitor *aVisitor);
-    bool isEmpty() const;
-    int getSize() const;
-};
 
 IncidenceListGraph::CheshireCat::CheshireCat()
 {
@@ -60,7 +45,9 @@ IncidenceListGraph::CheshireCat::CheshireCat()
 
 IncidenceListGraph::CheshireCat::~CheshireCat()
 {
+    GrimReaper destroy;
     for (IncidenceListVertex *v : vertices) {
+        v->acceptOutgoingArcVisitor(&destroy);
         v->clearOutgoingArcs();
         v->clearIncomingArcs();
         delete v;
@@ -82,15 +69,15 @@ void IncidenceListGraph::CheshireCat::removeVertex(IncidenceListVertex *v)
 
 void IncidenceListGraph::CheshireCat::addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
 {
-    auto arc = std::shared_ptr<Arc>(a);
-    tail->addOutgoingArc(arc);
-    head->addIncomingArc(arc);
+    tail->addOutgoingArc(a);
+    head->addIncomingArc(a);
 }
 
 void IncidenceListGraph::CheshireCat::removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     tail->removeOutgoingArc(a);
     head->removeIncomingArc(a);
+    delete a;
 }
 
 void IncidenceListGraph::CheshireCat::acceptVertexVisitor(VertexVisitor *nVisitor)
@@ -125,6 +112,48 @@ bool IncidenceListGraph::CheshireCat::isEmpty() const
 int IncidenceListGraph::CheshireCat::getSize() const
 {
     return vertices.size();
+}
+
+void IncidenceListGraph::CheshireCat::bundleParallelArcs()
+{
+    for (IncidenceListVertex *vertex : vertices) {
+        vertex->clearIncomingArcs();
+    }
+
+    for (IncidenceListVertex *vertex : vertices) {
+        bundleOutgoingArcs(vertex);
+    }
+}
+
+void IncidenceListGraph::CheshireCat::bundleOutgoingArcs(IncidenceListVertex *vertex)
+{
+    std::vector<Arc*> outArcs;
+    CollectArcsVisitor collector(&outArcs);
+    vertex->acceptOutgoingArcVisitor(&collector);
+    vertex->clearOutgoingArcs();
+
+    std::unordered_map<IncidenceListVertex*,Arc*> map;
+    for (Arc *outArc : outArcs) {
+        IncidenceListVertex *head = dynamic_cast<IncidenceListVertex*>(outArc->getHead());
+        if (map.count(head) == 0) {
+            map[head] = outArc;
+        } else {
+            Arc *mappedArc = map[head];
+            ParallelArcsBundle *bundle = dynamic_cast<ParallelArcsBundle*>(mappedArc);
+            if (bundle) {
+                bundle->addArc(outArc);
+            } else {
+                bundle = new ParallelArcsBundle(mappedArc);
+                bundle->addArc(outArc);
+                map[head] = bundle;
+            }
+        }
+    }
+    for (auto i : map) {
+        Arc *arc = i.second;
+        vertex->addOutgoingArc(arc);
+        i.first->addIncomingArc(arc);
+    }
 }
 
 }

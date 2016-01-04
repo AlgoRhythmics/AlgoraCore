@@ -35,6 +35,7 @@ class ParallelArcsBundle : public Arc
 {
 public:
     explicit ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
+    explicit ParallelArcsBundle(Arc *arc);
     virtual ~ParallelArcsBundle();
 
     virtual void getArcs(std::vector<Arc*> *l) const;

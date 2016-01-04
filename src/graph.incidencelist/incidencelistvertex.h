@@ -26,8 +26,6 @@
 
 #include "../graph/vertex.h"
 
-#include <memory>
-
 namespace Algora {
 
 class IncidenceListGraph;
@@ -45,11 +43,11 @@ protected:
     virtual int getOutDegree() const;
     virtual int getInDegree() const;
 
-    virtual void addOutgoingArc(std::shared_ptr<Arc> a);
+    virtual void addOutgoingArc(Arc *a);
     virtual void removeOutgoingArc(Arc *a);
     virtual void clearOutgoingArcs();
 
-    virtual void addIncomingArc(std::shared_ptr<Arc> a);
+    virtual void addIncomingArc(Arc *a);
     virtual void removeIncomingArc(Arc *a);
     virtual void clearIncomingArcs();
 

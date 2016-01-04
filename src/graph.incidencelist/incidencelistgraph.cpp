@@ -26,7 +26,7 @@
 #include "graph/arc.h"
 #include "graph/parallelarcsbundle.h"
 
-#include "incidencelistgraphimpl.cpp"
+#include "incidencelistgraphimpl.h"
 
 #include <stdexcept>
 
@@ -112,6 +112,11 @@ bool IncidenceListGraph::isEmpty() const
 int IncidenceListGraph::getSize() const
 {
     return grin->getSize();
+}
+
+void IncidenceListGraph::bundleParallelArcs()
+{
+    grin->bundleParallelArcs();
 }
 
 IncidenceListVertex *castVertex(Vertex *v, IncidenceListGraph *graph) {

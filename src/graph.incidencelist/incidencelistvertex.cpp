@@ -33,7 +33,7 @@
 
 namespace Algora {
 
-typedef typename std::vector<std::shared_ptr<Arc> > ArcList;
+typedef typename std::vector<Arc*> ArcList;
 
 void removeArcFromList(ArcList &list, Arc *arc);
 
@@ -59,7 +59,7 @@ int IncidenceListVertex::getOutDegree() const
     return grin->outgoingArcs.size();
 }
 
-void IncidenceListVertex::addOutgoingArc(std::shared_ptr<Arc> a)
+void IncidenceListVertex::addOutgoingArc(Arc *a)
 {
     if (a->getTail() != this) {
         throw std::invalid_argument("Arc has other tail.");
@@ -85,7 +85,7 @@ int IncidenceListVertex::getInDegree() const
     return grin->incomingArcs.size();
 }
 
-void IncidenceListVertex::addIncomingArc(std::shared_ptr<Arc> a)
+void IncidenceListVertex::addIncomingArc(Arc *a)
 {
     if (a->getHead() != this) {
         throw std::invalid_argument("Arc has other head.");
@@ -108,21 +108,20 @@ void IncidenceListVertex::clearIncomingArcs()
 
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
 {
-    for (std::shared_ptr<Arc> a : grin->outgoingArcs) {
-        aVisitor->visitArc(a.get());
+    for (Arc *a : grin->outgoingArcs) {
+        aVisitor->visitArc(a);
     }
 }
 
 void IncidenceListVertex::acceptIncomingArcVisitor(ArcVisitor *aVisitor) const
 {
-    for (std::shared_ptr<Arc> a : grin->incomingArcs) {
-        aVisitor->visitArc(a.get());
+    for (Arc *a : grin->incomingArcs) {
+        aVisitor->visitArc(a);
     }
 }
 
 void removeArcFromList(ArcList &list, Arc *arc) {
-    list.erase(std::find_if(list.cbegin(), list.cend(),
-                            [=](const std::shared_ptr<Arc> &a) { return a.get() == arc; }));
+    list.erase(std::find(list.cbegin(), list.cend(), arc));
 }
 
 }
