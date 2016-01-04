@@ -2,8 +2,9 @@ message("pri file being processed: $$PWD")
 
 HEADERS += \ 
     $$PWD/incidencelistgraph.h \
-    $$PWD/incidencelistgraphvertex.h
+    $$PWD/incidencelistvertex.h
 
 SOURCES += \ 
     $$PWD/incidencelistgraph.cpp \
-    $$PWD/incidencelistgraphvertex.cpp
+    $$PWD/incidencelistvertex.cpp \
+    $$PWD/incidencelistgraphimpl.cpp

@@ -37,18 +37,15 @@ public:
     // DiGraph interface
 public:
     virtual Vertex *addVertex();
-    virtual bool removeVertex(Vertex *v);
-    virtual Arc *addArc(const Vertex *tail, const Vertex *head);
-    virtual bool removeArc(Arc *a);
+    virtual void removeVertex(Vertex *v);
+    virtual Arc *addArc(Vertex *tail, Vertex *head);
+    virtual void removeArc(Arc *a);
     virtual void acceptVertexVisitor(VertexVisitor *nVisitor);
     virtual void acceptArcVisitor(ArcVisitor *aVisitor);
     virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
     virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
     virtual bool isEmpty() const;
     virtual int getSize() const;
-
-public:
-    void bundleParallelArcs();
 
 private:
     class CheshireCat;

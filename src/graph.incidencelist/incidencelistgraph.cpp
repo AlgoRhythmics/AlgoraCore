@@ -22,135 +22,22 @@
 
 
 #include "incidencelistgraph.h"
-#include "graph/vertex.h"
+#include "incidencelistvertex.h"
 #include "graph/arc.h"
 #include "graph/parallelarcsbundle.h"
 
-#include "graph.visitor/vertexvisitor.h"
-#include "graph.visitor/arcvisitor.h"
+#include "incidencelistgraphimpl.cpp"
 
-#include <vector>
-#include <unordered_map>
-#include <algorithm>
+#include <stdexcept>
 
 namespace Algora {
 
-struct IncidenceListVertex;
-struct IncidenceListArc;
-
-typedef std::vector<IncidenceListVertex*> VertexList;
-typedef std::vector<IncidenceListArc*> ArcList;
-typedef std::unordered_map<const Vertex*,IncidenceListVertex*> VertexMap;
-typedef std::unordered_map<const Arc*,IncidenceListArc*> ArcMap;
-
-struct IncidenceListVertex {
-    Vertex *vertex;
-
-    ArcList outgoingArcs;
-    ArcList incomingArcs;
-
-    IncidenceListVertex(Vertex *v)
-      : vertex(v) { }
-};
-
-struct IncidenceListArc {
-    Arc *arc;
-    IncidenceListVertex *tail;
-    IncidenceListVertex *head;
-
-    IncidenceListArc(Arc *a, IncidenceListVertex *t, IncidenceListVertex *h)
-        : arc(a), tail(t), head(h) { }
-};
-
-class IncidenceListGraph::CheshireCat {
-public:
-    VertexList vertices;
-    VertexMap vertexMap;
-
-    ~CheshireCat() {
-        for (auto vIter = vertices.cbegin(); vIter != vertices.cend(); vIter++) {
-            IncidenceListVertex *iv = *vIter;
-            for (auto aIter = iv->outgoingArcs.cbegin(); aIter != iv->outgoingArcs.cend(); aIter++) {
-                IncidenceListArc *ia = *aIter;
-                delete ia->arc;
-                delete ia;
-            }
-            iv->outgoingArcs.clear();
-            iv->incomingArcs.clear();
-            delete iv->vertex;
-            delete iv;
-        }
-        vertices.clear();
-        vertexMap.clear();
-    }
-
-    void addVertex(Vertex *v) {
-        IncidenceListVertex *iv = new IncidenceListVertex(v);
-        vertices.push_back(iv);
-        vertexMap[iv->vertex] = iv;
-    }
-
-    void removeVertex(VertexMap::iterator &vMapIt) {
-        IncidenceListVertex *iv = vMapIt->second;
-        // remove incident arcs
-        for (auto i = iv->outgoingArcs.cbegin();
-             i != iv->outgoingArcs.cend(); i++) {
-            IncidenceListArc *ila = *i;
-            removeArcAtHead(ila);
-            delete ila;
-        }
-        for (auto i = iv->incomingArcs.cbegin();
-             i != iv->incomingArcs.cend(); i++) {
-            IncidenceListArc *ila = *i;
-            removeArcAtTail(ila);
-            delete ila;
-        }
-        vertices.erase(std::remove(vertices.begin(), vertices.end(), iv), vertices.end());
-        vertexMap.erase(vMapIt);
-        delete iv->vertex;
-        delete iv;
-    }
-
-    IncidenceListVertex *find(const Vertex *v) {
-        try {
-          return vertexMap.at(v);
-        } catch (const std::out_of_range& ) {
-            return 0;
-        }
-    }
-
-    void addArc(Arc *a, IncidenceListVertex *t, IncidenceListVertex *h) {
-        IncidenceListArc *ila = new IncidenceListArc(a, t, h);
-        t->outgoingArcs.push_back(ila);
-        h->incomingArcs.push_back(ila);
-    }
-
-    void removeArcAtTail(IncidenceListArc *ila) {
-        ila->tail->outgoingArcs.erase(std::remove(
-                                          ila->tail->outgoingArcs.begin(),
-                                          ila->tail->outgoingArcs.end(), ila),
-                                      ila->tail->outgoingArcs.end());
-    }
-
-    void removeArcAtHead(IncidenceListArc *ila) {
-        ila->tail->incomingArcs.erase(std::remove(
-                                          ila->tail->incomingArcs.begin(),
-                                          ila->tail->incomingArcs.end(), ila),
-                                      ila->tail->incomingArcs.end());
-    }
-
-    void removeArc(IncidenceListArc *ila) {
-        removeArcAtTail(ila);
-        removeArcAtHead(ila);
-        delete ila->arc;
-        delete ila;
-    }
-};
+IncidenceListVertex *castVertex(Vertex *v, IncidenceListGraph *graph);
 
 IncidenceListGraph::IncidenceListGraph(GraphArtifact *parent)
-    : DiGraph(parent)
+    : DiGraph(parent), grin(new CheshireCat)
 {
-    grin = new CheshireCat;
+
 }
 
 IncidenceListGraph::~IncidenceListGraph()
@@ -160,152 +47,80 @@ IncidenceListGraph::~IncidenceListGraph()
 
 Vertex *IncidenceListGraph::addVertex()
 {
-    Vertex *v = new Vertex(this);
+    auto v = new IncidenceListVertex(this);
     grin->addVertex(v);
     return v;
 }
 
-bool IncidenceListGraph::removeVertex(Vertex *v)
+void IncidenceListGraph::removeVertex(Vertex *v)
 {
-    VertexMap::iterator i = grin->vertexMap.find(v);
-    if (i == grin->vertexMap.end()) {
-        return false;
-    }
-    grin->removeVertex(i);
-    return true;
+    auto vertex = castVertex(v, this);
+
+    grin->removeVertex(vertex);
 }
 
-Arc *IncidenceListGraph::addArc(const Vertex *tail, const Vertex *head)
+Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
 {
-    IncidenceListVertex *t = grin->find(tail);
-    IncidenceListVertex *h = grin->find(head);
-    if (t == 0 || h == 0) {
-        return 0;
-    }
-    Arc *a = new Arc(t->vertex, h->vertex, this);
+    auto t = castVertex(tail, this);
+    auto h = castVertex(head, this);
+
+    Arc *a = new Arc(t, h, this);
+
     grin->addArc(a, t, h);
     return a;
 }
 
-bool IncidenceListGraph::removeArc(Arc *a)
+void IncidenceListGraph::removeArc(Arc *a)
 {
-    Vertex *tail = a->getTail();
-    IncidenceListVertex *t = grin->find(tail);
-    if (!t) {
-        return false;
-    }
-    auto i = t->outgoingArcs.begin();
-    for (;i != t->outgoingArcs.end(); i++) {
-        if (a == (*i)->arc) {
-            break;
-        }
-    }
-    if (i == t->outgoingArcs.end()) {
-        return false;
+    if (a->getParent() != this) {
+        throw std::invalid_argument("Arc is not a part of this graph.");
     }
 
-    IncidenceListArc *ila = *i;
-    grin->removeArcAtHead(ila);
-    t->outgoingArcs.erase(i);
-    delete ila->arc;
-    delete ila;
-    return true;
+    auto tail = castVertex(a->getTail(), this);
+    auto head = castVertex(a->getHead(), this);
+
+    grin->removeArc(a, tail, head);
 }
 
 void IncidenceListGraph::acceptVertexVisitor(VertexVisitor *nVisitor)
 {
-    for (VertexList::const_iterator i = grin->vertices.cbegin();
-         i != grin->vertices.cend(); i++) {
-        IncidenceListVertex *ilv = *i;
-        nVisitor->visitVertex(ilv->vertex);
-    }
+    grin->acceptVertexVisitor(nVisitor);
 }
 
 void IncidenceListGraph::acceptArcVisitor(ArcVisitor *aVisitor)
 {
-    for (auto i = grin->vertices.cbegin();
-         i != grin->vertices.cend(); i++) {
-        IncidenceListVertex *ilv = *i;
-        for (auto j = ilv->outgoingArcs.cbegin();
-             j != ilv->outgoingArcs.cend(); j++) {
-            IncidenceListArc *ila = *j;
-            aVisitor->visitArc(ila->arc);
-        }
-    }
+    grin->acceptArcVisitor(aVisitor);
 }
 
 void IncidenceListGraph::acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
 {
-    auto i = grin->vertexMap.find(v);
-    if (i == grin->vertexMap.end())
-        return;
-
-    IncidenceListVertex *ilv = i->second;
-    for (auto j = ilv->outgoingArcs.cbegin();
-         j != ilv->outgoingArcs.cend(); j++) {
-        IncidenceListArc *ila = *j;
-        aVisitor->visitArc(ila->arc);
-    }
+    auto vertex = castVertex(const_cast<Vertex*>(v), this);
+    grin->acceptOutgoingArcVisitor(vertex, aVisitor);
 }
 
 void IncidenceListGraph::acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
 {
-    auto i = grin->vertexMap.find(v);
-    if (i == grin->vertexMap.end())
-        return;
-
-    IncidenceListVertex *ilv = i->second;
-    for (auto j = ilv->incomingArcs.cbegin();
-         j != ilv->incomingArcs.cend(); j++) {
-        IncidenceListArc *ila = *j;
-        aVisitor->visitArc(ila->arc);
-    }
+    auto vertex = castVertex(const_cast<Vertex*>(v), this);
+    grin->acceptIncomingArcVisitor(vertex, aVisitor);
 }
 
 bool IncidenceListGraph::isEmpty() const
 {
-    return grin->vertices.empty();
+    return grin->isEmpty();
 }
 
 int IncidenceListGraph::getSize() const
 {
-    return grin->vertices.size();
+    return grin->getSize();
 }
 
-void IncidenceListGraph::bundleParallelArcs()
-{
-    for (auto vIter = grin->vertices.cbegin(); vIter != grin->vertices.cend(); vIter++) {
-        IncidenceListVertex *iv = *vIter;
-        iv->incomingArcs.clear();
-    }
-    for (auto vIter = grin->vertices.cbegin(); vIter != grin->vertices.cend(); vIter++) {
-        IncidenceListVertex *iv = *vIter;
-        std::unordered_map<IncidenceListVertex*,IncidenceListArc*> map;
-        for (auto aIter = iv->outgoingArcs.cbegin(); aIter != iv->outgoingArcs.cend(); aIter++) {
-            IncidenceListArc *ia = *aIter;
-            auto f = map.find(ia->head);
-            if (f == map.end()) {
-                map[ia->head] = ia;
-            } else {
-                Arc *a = f->second->arc;
-                ParallelArcsBundle *pa = dynamic_cast<ParallelArcsBundle*>(a);
-                if (pa == 0) {
-                    pa = new ParallelArcsBundle(a->getTail(), a->getHead(), this);
-                    pa->addArc(a);
-                    f->second->arc = pa;
-                }
-                pa->addArc(ia->arc);
-                delete ia;
-            }
-        }
-        iv->outgoingArcs.clear();
+IncidenceListVertex *castVertex(Vertex *v, IncidenceListGraph *graph) {
+    auto vertex = dynamic_cast<IncidenceListVertex*>(v);
 
-        for (auto mIter = map.cbegin(); mIter != map.cend(); mIter++) {
-            IncidenceListArc *ia = mIter->second;
-            iv->outgoingArcs.push_back(ia);
-            ia->head->incomingArcs.push_back(ia);
-        }
+    if (!vertex || vertex->getParent() != graph) {
+        throw std::invalid_argument("Vertex is not a part of this graph.");
     }
+    return vertex;
 }
 
 }

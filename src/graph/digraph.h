@@ -42,11 +42,11 @@ public:
 
     // Vertices
     virtual Vertex *addVertex() = 0;
-    virtual bool removeVertex(Vertex *v) = 0;
+    virtual void removeVertex(Vertex *v) = 0;
 
     // Arcs
-    virtual Arc *addArc(const Vertex *tail, const Vertex *head) = 0;
-    virtual bool removeArc(Arc *a) = 0;
+    virtual Arc *addArc(Vertex *tail, Vertex *head) = 0;
+    virtual void removeArc(Arc *a) = 0;
 
     // Accomodate visitors
     virtual void acceptVertexVisitor(VertexVisitor *nVisitor) = 0;
