@@ -24,7 +24,7 @@
 #ifndef INCIDENCELISTGRAPH_H
 #define INCIDENCELISTGRAPH_H
 
-#include "../graph/digraph.h"
+#include "graph/digraph.h"
 
 namespace Algora {
 
