@@ -39,6 +39,9 @@ public:
 
     virtual std::string toString() const = 0;
 
+protected:
+    std::string idString() const;
+
 private:
     GraphArtifact(const GraphArtifact&);
     GraphArtifact& operator=(const GraphArtifact&);

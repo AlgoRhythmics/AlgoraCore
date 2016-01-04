@@ -40,8 +40,7 @@ Vertex::~Vertex()
 std::string Vertex::toString() const
 {
     std::ostringstream strStream;
-    strStream << "[Vertex #";
-    strStream << std::to_string(getId());
-    strStream << "]";
+    strStream << "Vertex [";
+    strStream << idString() << "]";
     return strStream.str();
 }

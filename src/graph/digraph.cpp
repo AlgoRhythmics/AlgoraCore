@@ -41,7 +41,7 @@ DiGraph::~DiGraph()
 std::string DiGraph::toString() const
 {
     std::ostringstream strStream;
-    strStream << "DiGraph #";
-    strStream << std::to_string(getId());
+    strStream << "DiGraph [";
+    strStream << idString() << "]";
     return strStream.str();
 }
