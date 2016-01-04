@@ -51,7 +51,7 @@ public:
 
 private:
     struct CheshireCat;
-    CheshireCat *cat;
+    CheshireCat *grin;
 
 };
 

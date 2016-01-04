@@ -22,40 +22,41 @@
 
 #include "graphartifact.h"
 
-using namespace Algora;
+#include <sstream>
 
-struct GraphArtifact::CheshireCat {
+namespace Algora {
+
+class GraphArtifact::CheshireCat {
     static int nextId;
-
+public:
     int id;
     GraphArtifact *parent;
 
-    CheshireCat(GraphArtifact *parent)
-        : id(nextId), parent(parent) {
-        nextId++;
-    }
+    CheshireCat(GraphArtifact *parent);
 };
 
 int GraphArtifact::CheshireCat::nextId = 0;
 
 GraphArtifact::GraphArtifact(GraphArtifact *parent)
 {
-    cat = new CheshireCat(parent);
+    grin = new CheshireCat(parent);
 }
 
 GraphArtifact::~GraphArtifact()
 {
-    delete cat;
+    delete grin;
 }
 
 int GraphArtifact::getId() const
 {
-    return cat->id;
+    return grin->id;
 }
 
 GraphArtifact *GraphArtifact::getParent() const
 {
-    return cat->parent;
+    return grin->parent;
+}
+
 std::string GraphArtifact::idString() const
 {
     std::ostringstream strStream;
@@ -63,4 +64,10 @@ std::string GraphArtifact::idString() const
     strStream << std::to_string(getId());
     return strStream.str();
 }
+
+GraphArtifact::CheshireCat::CheshireCat(GraphArtifact *parent)
+    : id(nextId), parent(parent) {
+    nextId++;
+}
+
 }

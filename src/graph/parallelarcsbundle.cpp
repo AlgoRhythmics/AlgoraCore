@@ -29,7 +29,7 @@
 #include <algorithm>
 #include <sstream>
 
-using namespace Algora;
+namespace Algora {
 
 struct ParallelArcsBundle::CheshireCat {
     std::vector<Arc*> arcsBundle;
@@ -38,32 +38,32 @@ struct ParallelArcsBundle::CheshireCat {
 ParallelArcsBundle::ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent)
     : Arc(tail, head, parent)
 {
-    cat = new CheshireCat;
+    grin = new CheshireCat;
 }
 
 ParallelArcsBundle::~ParallelArcsBundle()
 {
-    for (auto i = cat->arcsBundle.cbegin();
-         i != cat->arcsBundle.cend(); i++) {
+    for (auto i = grin->arcsBundle.cbegin();
+         i != grin->arcsBundle.cend(); i++) {
         delete *i;
     }
-    delete cat;
+    delete grin;
 }
 
 void ParallelArcsBundle::getArcs(std::vector<Arc *> *l) const
 {
-    std::copy(cat->arcsBundle.cbegin(), cat->arcsBundle.cend(), std::back_inserter(*l));
+    std::copy(grin->arcsBundle.cbegin(), grin->arcsBundle.cend(), std::back_inserter(*l));
 }
 
 int ParallelArcsBundle::getSize() const
 {
-    return cat->arcsBundle.size();
+    return grin->arcsBundle.size();
 }
 
 void ParallelArcsBundle::acceptArcVisitor(ArcVisitor *aVisitor) const
 {
-    for (auto i = cat->arcsBundle.cbegin();
-         i != cat->arcsBundle.cend(); i++) {
+    for (auto i = grin->arcsBundle.cbegin();
+         i != grin->arcsBundle.cend(); i++) {
         aVisitor->visitArc(*i);
     }
 }
@@ -74,19 +74,19 @@ bool ParallelArcsBundle::addArc(Arc *a)
         return false;
     }
 
-    cat->arcsBundle.push_back(a);
+    grin->arcsBundle.push_back(a);
     return true;
 }
 
 void ParallelArcsBundle::removeArc(Arc *a)
 {
-    cat->arcsBundle.erase(std::remove(cat->arcsBundle.begin(), cat->arcsBundle.end(), a), cat->arcsBundle.end());
+    grin->arcsBundle.erase(std::remove(grin->arcsBundle.begin(), grin->arcsBundle.end(), a), grin->arcsBundle.end());
 }
 
 bool ParallelArcsBundle::containsArc(Arc *a) const
 {
-    auto i = std::find(cat->arcsBundle.cbegin(), cat->arcsBundle.cend(), a);
-    return i != cat->arcsBundle.end();
+    auto i = std::find(grin->arcsBundle.cbegin(), grin->arcsBundle.cend(), a);
+    return i != grin->arcsBundle.end();
 }
 
 
@@ -100,8 +100,11 @@ std::string ParallelArcsBundle::toString() const
         << " -> "
         << getHead()->toString()
         << ", size "
-        << cat->arcsBundle.size()
+        << grin->arcsBundle.size()
         << "]";
 
     return strStream.str();
 }
+
+}
+

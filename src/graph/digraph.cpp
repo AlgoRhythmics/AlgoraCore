@@ -25,7 +25,7 @@
 
 #include <sstream>
 
-using namespace Algora;
+namespace Algora {
 
 DiGraph::DiGraph(GraphArtifact *parent)
     : GraphArtifact(parent)
@@ -44,4 +44,6 @@ std::string DiGraph::toString() const
     strStream << "DiGraph [";
     strStream << idString() << "]";
     return strStream.str();
+}
+
 }

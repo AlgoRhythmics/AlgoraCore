@@ -33,7 +33,7 @@
 #include <unordered_map>
 #include <algorithm>
 
-using namespace Algora;
+namespace Algora {
 
 struct IncidenceListVertex;
 struct IncidenceListArc;
@@ -149,47 +149,47 @@ struct IncidenceListGraph::CheshireCat {
 IncidenceListGraph::IncidenceListGraph(GraphArtifact *parent)
     : DiGraph(parent)
 {
-    cat = new CheshireCat;
+    grin = new CheshireCat;
 }
 
 IncidenceListGraph::~IncidenceListGraph()
 {
-    delete cat;
+    delete grin;
 }
 
 Vertex *IncidenceListGraph::addVertex()
 {
     Vertex *v = new Vertex(this);
-    cat->addVertex(v);
+    grin->addVertex(v);
     return v;
 }
 
 bool IncidenceListGraph::removeVertex(Vertex *v)
 {
-    VertexMap::iterator i = cat->vertexMap.find(v);
-    if (i == cat->vertexMap.end()) {
+    VertexMap::iterator i = grin->vertexMap.find(v);
+    if (i == grin->vertexMap.end()) {
         return false;
     }
-    cat->removeVertex(i);
+    grin->removeVertex(i);
     return true;
 }
 
 Arc *IncidenceListGraph::addArc(const Vertex *tail, const Vertex *head)
 {
-    IncidenceListVertex *t = cat->find(tail);
-    IncidenceListVertex *h = cat->find(head);
+    IncidenceListVertex *t = grin->find(tail);
+    IncidenceListVertex *h = grin->find(head);
     if (t == 0 || h == 0) {
         return 0;
     }
     Arc *a = new Arc(t->vertex, h->vertex, this);
-    cat->addArc(a, t, h);
+    grin->addArc(a, t, h);
     return a;
 }
 
 bool IncidenceListGraph::removeArc(Arc *a)
 {
     Vertex *tail = a->getTail();
-    IncidenceListVertex *t = cat->find(tail);
+    IncidenceListVertex *t = grin->find(tail);
     if (!t) {
         return false;
     }
@@ -204,7 +204,7 @@ bool IncidenceListGraph::removeArc(Arc *a)
     }
 
     IncidenceListArc *ila = *i;
-    cat->removeArcAtHead(ila);
+    grin->removeArcAtHead(ila);
     t->outgoingArcs.erase(i);
     delete ila->arc;
     delete ila;
@@ -213,8 +213,8 @@ bool IncidenceListGraph::removeArc(Arc *a)
 
 void IncidenceListGraph::acceptVertexVisitor(VertexVisitor *nVisitor)
 {
-    for (VertexList::const_iterator i = cat->vertices.cbegin();
-         i != cat->vertices.cend(); i++) {
+    for (VertexList::const_iterator i = grin->vertices.cbegin();
+         i != grin->vertices.cend(); i++) {
         IncidenceListVertex *ilv = *i;
         nVisitor->visitVertex(ilv->vertex);
     }
@@ -222,8 +222,8 @@ void IncidenceListGraph::acceptVertexVisitor(VertexVisitor *nVisitor)
 
 void IncidenceListGraph::acceptArcVisitor(ArcVisitor *aVisitor)
 {
-    for (auto i = cat->vertices.cbegin();
-         i != cat->vertices.cend(); i++) {
+    for (auto i = grin->vertices.cbegin();
+         i != grin->vertices.cend(); i++) {
         IncidenceListVertex *ilv = *i;
         for (auto j = ilv->outgoingArcs.cbegin();
              j != ilv->outgoingArcs.cend(); j++) {
@@ -235,8 +235,8 @@ void IncidenceListGraph::acceptArcVisitor(ArcVisitor *aVisitor)
 
 void IncidenceListGraph::acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
 {
-    auto i = cat->vertexMap.find(v);
-    if (i == cat->vertexMap.end())
+    auto i = grin->vertexMap.find(v);
+    if (i == grin->vertexMap.end())
         return;
 
     IncidenceListVertex *ilv = i->second;
@@ -249,8 +249,8 @@ void IncidenceListGraph::acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *a
 
 void IncidenceListGraph::acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
 {
-    auto i = cat->vertexMap.find(v);
-    if (i == cat->vertexMap.end())
+    auto i = grin->vertexMap.find(v);
+    if (i == grin->vertexMap.end())
         return;
 
     IncidenceListVertex *ilv = i->second;
@@ -263,21 +263,21 @@ void IncidenceListGraph::acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *a
 
 bool IncidenceListGraph::isEmpty() const
 {
-    return cat->vertices.empty();
+    return grin->vertices.empty();
 }
 
 int IncidenceListGraph::getSize() const
 {
-    return cat->vertices.size();
+    return grin->vertices.size();
 }
 
 void IncidenceListGraph::bundleParallelArcs()
 {
-    for (auto vIter = cat->vertices.cbegin(); vIter != cat->vertices.cend(); vIter++) {
+    for (auto vIter = grin->vertices.cbegin(); vIter != grin->vertices.cend(); vIter++) {
         IncidenceListVertex *iv = *vIter;
         iv->incomingArcs.clear();
     }
-    for (auto vIter = cat->vertices.cbegin(); vIter != cat->vertices.cend(); vIter++) {
+    for (auto vIter = grin->vertices.cbegin(); vIter != grin->vertices.cend(); vIter++) {
         IncidenceListVertex *iv = *vIter;
         std::unordered_map<IncidenceListVertex*,IncidenceListArc*> map;
         for (auto aIter = iv->outgoingArcs.cbegin(); aIter != iv->outgoingArcs.cend(); aIter++) {
@@ -305,4 +305,6 @@ void IncidenceListGraph::bundleParallelArcs()
             ia->head->incomingArcs.push_back(ia);
         }
     }
+}
+
 }

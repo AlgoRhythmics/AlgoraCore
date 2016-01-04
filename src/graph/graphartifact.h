@@ -47,8 +47,8 @@ private:
     GraphArtifact& operator=(const GraphArtifact&);
 
 private:
-    struct CheshireCat;
-    CheshireCat *cat;
+    class CheshireCat;
+    CheshireCat *grin;
 };
 
 }

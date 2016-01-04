@@ -26,7 +26,7 @@
 
 #include <sstream>
 
-using namespace Algora;
+namespace Algora {
 
 struct Arc::CheshireCat {
     Vertex *tail;
@@ -40,22 +40,22 @@ struct Arc::CheshireCat {
 Arc::Arc(Vertex *tail, Vertex *head, GraphArtifact *parent)
     : GraphArtifact(parent)
 {
-    cat = new CheshireCat(tail, head);
+    grin = new CheshireCat(tail, head);
 }
 
 Arc::~Arc()
 {
-    delete cat;
+    delete grin;
 }
 
 Vertex *Arc::getTail() const
 {
-    return cat->tail;
+    return grin->tail;
 }
 
 Vertex *Arc::getHead() const
 {
-    return cat->head;
+    return grin->head;
 }
 
 std::string Arc::toString() const
@@ -69,4 +69,6 @@ std::string Arc::toString() const
         << idString() << "]";
 
     return strStream.str();
+}
+
 }

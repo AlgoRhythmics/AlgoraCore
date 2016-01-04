@@ -24,7 +24,7 @@
 #include "vertex.h"
 #include <sstream>
 
-using namespace Algora;
+namespace Algora {
 
 Vertex::Vertex(GraphArtifact *parent)
     : GraphArtifact(parent)
@@ -43,4 +43,6 @@ std::string Vertex::toString() const
     strStream << "Vertex [";
     strStream << idString() << "]";
     return strStream.str();
+}
+
 }
