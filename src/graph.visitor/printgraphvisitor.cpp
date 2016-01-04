@@ -23,8 +23,7 @@
 
 #include "printgraphvisitor.h"
 
-#include "graph/vertex.h"
-#include "graph/arc.h"
+#include "graph/graphartifact.h"
 
 #include <iostream>
 
@@ -61,22 +60,12 @@ void PrintGraphVisitor::reset()
     cat->firstItemVisited = false;
 }
 
-void PrintGraphVisitor::visitArc(Arc *a)
+void Algora::PrintGraphVisitor::visitArtifact(GraphArtifact *artifact)
 {
     if (cat->firstItemVisited) {
         cat->out << cat->itemSeparator;
     } else {
         cat->firstItemVisited = true;
     }
-    cat->out << a->toString();
-}
-
-void PrintGraphVisitor::visitVertex(Vertex *v)
-{
-    if (cat->firstItemVisited) {
-        cat->out << cat->itemSeparator;
-    } else {
-        cat->firstItemVisited = true;
-    }
-    cat->out << v->toString();
+    cat->out << artifact->toString();
 }

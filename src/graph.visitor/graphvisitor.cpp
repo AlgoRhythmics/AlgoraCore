@@ -21,35 +21,26 @@
  */
 
 
-#ifndef PRINTGRAPHVISITOR_H
-#define PRINTGRAPHVISITOR_H
-
 #include "graphvisitor.h"
 
-#include <iostream>
+#include "graph/vertex.h"
+#include "graph/arc.h"
 
 namespace Algora {
 
-class PrintGraphVisitor : public GraphVisitor
+GraphVisitor::GraphVisitor()
 {
-public:
-    explicit PrintGraphVisitor(const std::string &sep = std::string(), std::ostream &os = std::cout);
-    virtual ~PrintGraphVisitor();
-
-    void setItemSeparator(const std::string &sep);
-
-    void reset();
-
-    // GraphVisitor interface
-public:
-    virtual void visitArtifact(GraphArtifact *artifact) override;
-
-private:
-    struct CheshireCat;
-    CheshireCat *cat;
-
-};
 
 }
 
-#endif // PRINTGRAPHVISITOR_H
+void GraphVisitor::visitArc(Arc *a)
+{
+    visitArtifact(a);
+}
+
+void GraphVisitor::visitVertex(Vertex *v)
+{
+    visitArtifact(v);
+}
+
+}
