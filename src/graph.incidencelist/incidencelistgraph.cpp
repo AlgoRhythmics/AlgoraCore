@@ -22,9 +22,9 @@
 
 
 #include "incidencelistgraph.h"
-#include "vertex.h"
-#include "arc.h"
-#include "parallelarcsbundle.h"
+#include "graph/vertex.h"
+#include "graph/arc.h"
+#include "graph/parallelarcsbundle.h"
 
 #include "graph.visitor/vertexvisitor.h"
 #include "graph.visitor/arcvisitor.h"
@@ -62,7 +62,8 @@ struct IncidenceListArc {
         : arc(a), tail(t), head(h) { }
 };
 
-struct IncidenceListGraph::CheshireCat {
+class IncidenceListGraph::CheshireCat {
+public:
     VertexList vertices;
     VertexMap vertexMap;
 

@@ -24,7 +24,7 @@
 #ifndef INCIDENCELISTGRAPH_H
 #define INCIDENCELISTGRAPH_H
 
-#include "digraph.h"
+#include "../graph/digraph.h"
 
 namespace Algora {
 
@@ -51,7 +51,7 @@ public:
     void bundleParallelArcs();
 
 private:
-    struct CheshireCat;
+    class CheshireCat;
     CheshireCat *grin;
 };
 

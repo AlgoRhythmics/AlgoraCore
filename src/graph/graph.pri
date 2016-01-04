@@ -5,7 +5,6 @@ HEADERS += \
     $$PWD/digraph.h \
     $$PWD/vertex.h \
     $$PWD/arc.h \
-    $$PWD/incidencelistgraph.h \
     $$PWD/parallelarcsbundle.h
 
 SOURCES += \
@@ -13,5 +12,4 @@ SOURCES += \
     $$PWD/vertex.cpp \
     $$PWD/arc.cpp \
     $$PWD/graphartifact.cpp \
-    $$PWD/incidencelistgraph.cpp \
     $$PWD/parallelarcsbundle.cpp
