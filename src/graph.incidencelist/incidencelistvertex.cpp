@@ -119,15 +119,25 @@ bool IncidenceListVertex::hasIncomingArc(Arc *a) const
 
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
 {
-    for (Arc *a : grin->outgoingArcs) {
-        aVisitor->visitArc(a);
-    }
+    visitOutgoingArcs(aVisitor->getVisitorFunction());
 }
 
 void IncidenceListVertex::acceptIncomingArcVisitor(ArcVisitor *aVisitor) const
 {
+    visitIncomingArcs(aVisitor->getVisitorFunction());
+}
+
+void IncidenceListVertex::visitOutgoingArcs(ArcVisitorFunc avFun) const
+{
+    for (Arc *a : grin->outgoingArcs) {
+        avFun(a);
+    }
+}
+
+void IncidenceListVertex::visitIncomingArcs(ArcVisitorFunc avFun) const
+{
     for (Arc *a : grin->incomingArcs) {
-        aVisitor->visitArc(a);
+        avFun(a);
     }
 }
 

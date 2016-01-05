@@ -47,10 +47,12 @@ public:
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     bool containsArc(Arc *a, IncidenceListVertex *tail) const;
 
-    void acceptVertexVisitor(VertexVisitor *nVisitor);
-    void acceptArcVisitor(ArcVisitor *aVisitor);
-    void acceptOutgoingArcVisitor(const IncidenceListVertex *v, ArcVisitor *aVisitor);
-    void acceptIncomingArcVisitor(const IncidenceListVertex *v, ArcVisitor *aVisitor);
+    void visitVertices(VertexVisitorFunc vvFun);
+
+    void visitArcs(ArcVisitorFunc avFun);
+    void visitOutgoingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun);
+    void visitIncomingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun);
+
     bool isEmpty() const;
     int getSize() const;
     void bundleParallelArcs();

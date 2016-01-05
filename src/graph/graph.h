@@ -25,6 +25,7 @@
 #define GRAPH_H
 
 #include "graphartifact.h"
+#include "graph.visitor/visitorfunctions.h"
 
 namespace Algora {
 
@@ -43,7 +44,8 @@ public:
     virtual bool containsVertex(Vertex *v) const = 0;
 
     // Accomodate visitors
-    virtual void acceptVertexVisitor(VertexVisitor *nVisitor) = 0;
+    virtual void acceptVertexVisitor(VertexVisitor *nVisitor);
+    virtual void visitVertices(VertexVisitorFunc vvFun) = 0;
 
     // Misc
     virtual bool isEmpty() const = 0;

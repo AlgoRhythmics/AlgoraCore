@@ -24,6 +24,8 @@
 #ifndef ARCVISITOR_H
 #define ARCVISITOR_H
 
+#include "visitorfunctions.h"
+
 namespace Algora {
 
 class Arc;
@@ -35,6 +37,12 @@ public:
     virtual ~ArcVisitor() { }
 
     virtual void visitArc(Arc *a) = 0;
+
+    ArcVisitorFunc getVisitorFunction()
+    {
+        using namespace std::placeholders;
+        return std::bind(&ArcVisitor::visitArc, this, _1);
+    }
 };
 
 }

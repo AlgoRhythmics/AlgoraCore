@@ -90,28 +90,28 @@ bool IncidenceListGraph::CheshireCat::containsArc(Arc *a, IncidenceListVertex *t
     return tail->hasOutgoingArc(a);
 }
 
-void IncidenceListGraph::CheshireCat::acceptVertexVisitor(VertexVisitor *nVisitor)
+void IncidenceListGraph::CheshireCat::visitVertices(VertexVisitorFunc vvFun)
 {
     for (Vertex *v : vertices) {
-        nVisitor->visitVertex(v);
+        vvFun(v);
     }
 }
 
-void IncidenceListGraph::CheshireCat::acceptArcVisitor(ArcVisitor *aVisitor)
+void IncidenceListGraph::CheshireCat::visitArcs(ArcVisitorFunc avFun)
 {
     for (IncidenceListVertex *v : vertices) {
-        v->acceptOutgoingArcVisitor(aVisitor);
+        v->visitOutgoingArcs(avFun);
     }
 }
 
-void IncidenceListGraph::CheshireCat::acceptOutgoingArcVisitor(const IncidenceListVertex *v, ArcVisitor *aVisitor)
+void IncidenceListGraph::CheshireCat::visitOutgoingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun)
 {
-    v->acceptOutgoingArcVisitor(aVisitor);
+    v->visitOutgoingArcs(avFun);
 }
 
-void IncidenceListGraph::CheshireCat::acceptIncomingArcVisitor(const IncidenceListVertex *v, ArcVisitor *aVisitor)
+void IncidenceListGraph::CheshireCat::visitIncomingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun)
 {
-    v->acceptIncomingArcVisitor(aVisitor);
+    v->visitIncomingArcs(avFun);
 }
 
 bool IncidenceListGraph::CheshireCat::isEmpty() const

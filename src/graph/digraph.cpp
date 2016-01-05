@@ -24,6 +24,8 @@
 #include "digraph.h"
 #include "arc.h"
 
+#include "graph.visitor/arcvisitor.h"
+
 #include <sstream>
 
 namespace Algora {
@@ -37,6 +39,21 @@ DiGraph::DiGraph(GraphArtifact *parent)
 DiGraph::~DiGraph()
 {
 
+}
+
+void DiGraph::acceptArcVisitor(ArcVisitor *aVisitor)
+{
+    visitArcs(aVisitor->getVisitorFunction());
+}
+
+void DiGraph::acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
+{
+    visitOutgoingArcs(v, aVisitor->getVisitorFunction());
+}
+
+void DiGraph::acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
+{
+    visitIncomingArcs(v, aVisitor->getVisitorFunction());
 }
 
 std::string DiGraph::toString() const

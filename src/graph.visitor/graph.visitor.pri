@@ -7,7 +7,8 @@ HEADERS += \
     $$PWD/collectarcsvisitor.h \
     $$PWD/printgraphvisitor.h \
     $$PWD/graphvisitor.h \
-    $$PWD/grimreaper.h
+    $$PWD/grimreaper.h \
+    $$PWD/visitorfunctions.h
 
 SOURCES += \
     $$PWD/collectverticesvisitor.cpp \

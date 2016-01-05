@@ -38,24 +38,24 @@ public:
 
     // Graph interface
 public:
-    virtual Vertex *addVertex();
-    virtual void removeVertex(Vertex *v);
+    virtual Vertex *addVertex() override;
+    virtual void removeVertex(Vertex *v) override;
     virtual bool containsVertex(Vertex *v) const override;
 
-    virtual void acceptVertexVisitor(VertexVisitor *nVisitor);
+    virtual void visitVertices(VertexVisitorFunc vvFun) override;
 
-    virtual bool isEmpty() const;
-    virtual int getSize() const;
+    virtual bool isEmpty() const override;
+    virtual int getSize() const override;
 
     // DiGraph interface
 public:
-    virtual Arc *addArc(Vertex *tail, Vertex *head);
-    virtual void removeArc(Arc *a);
+    virtual Arc *addArc(Vertex *tail, Vertex *head) override;
+    virtual void removeArc(Arc *a) override;
     virtual bool containsArc(Arc *a) const override;
 
-    virtual void acceptArcVisitor(ArcVisitor *aVisitor);
-    virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
-    virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
+    virtual void visitArcs(ArcVisitorFunc avFun) override;
+    virtual void visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun) override;
+    virtual void visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun) override;
 
 public:
     void bundleParallelArcs();

@@ -74,6 +74,11 @@ bool IncidenceListGraph::containsVertex(Vertex *v) const
     return grin->containsVertex(vertex);
 }
 
+void IncidenceListGraph::visitVertices(VertexVisitorFunc vvFun)
+{
+    grin->visitVertices(vvFun);
+}
+
 Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
 {
     auto t = castVertex(tail, this);
@@ -112,26 +117,21 @@ bool IncidenceListGraph::containsArc(Arc *a) const
     return grin->containsArc(a, tail);
 }
 
-void IncidenceListGraph::acceptVertexVisitor(VertexVisitor *nVisitor)
+void IncidenceListGraph::visitArcs(ArcVisitorFunc avFun)
 {
-    grin->acceptVertexVisitor(nVisitor);
+    grin->visitArcs(avFun);
 }
 
-void IncidenceListGraph::acceptArcVisitor(ArcVisitor *aVisitor)
-{
-    grin->acceptArcVisitor(aVisitor);
-}
-
-void IncidenceListGraph::acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
+void IncidenceListGraph::visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun)
 {
     auto vertex = castVertex(const_cast<Vertex*>(v), this);
-    grin->acceptOutgoingArcVisitor(vertex, aVisitor);
+    grin->visitOutgoingArcs(vertex, avFun);
 }
 
-void IncidenceListGraph::acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor)
+void IncidenceListGraph::visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun)
 {
     auto vertex = castVertex(const_cast<Vertex*>(v), this);
-    grin->acceptIncomingArcVisitor(vertex, aVisitor);
+    grin->visitIncomingArcs(vertex, avFun);
 }
 
 bool IncidenceListGraph::isEmpty() const

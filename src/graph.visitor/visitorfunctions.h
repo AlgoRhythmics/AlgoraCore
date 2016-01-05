@@ -21,30 +21,20 @@
  */
 
 
-#ifndef VERTEXVISITOR_H
-#define VERTEXVISITOR_H
+#ifndef VISITORFUNCTIONS_H
+#define VISITORFUNCTIONS_H
 
-#include "visitorfunctions.h"
+#include <functional>
 
 namespace Algora {
 
 class Vertex;
+class Arc;
 
-class VertexVisitor
-{
-public:
-    explicit VertexVisitor() {}
-    virtual ~VertexVisitor() {}
-
-    virtual void visitVertex(Vertex *v) = 0;
-
-    VertexVisitorFunc getVisitorFunction()
-    {
-        using namespace std::placeholders;
-        return std::bind(&VertexVisitor::visitVertex, this, _1);
-    }
-};
+typedef std::function<void(Vertex *v)> VertexVisitorFunc;
+typedef std::function<void(Arc *a)> ArcVisitorFunc;
 
 }
 
-#endif // VERTEXVISITOR_H
+#endif // VISITORFUNCTIONS_H
+

@@ -24,7 +24,8 @@
 #ifndef INCIDENCELISTVERTEX_H
 #define INCIDENCELISTVERTEX_H
 
-#include "../graph/vertex.h"
+#include "graph/vertex.h"
+#include "graph.visitor/visitorfunctions.h"
 
 namespace Algora {
 
@@ -40,8 +41,10 @@ public:
     virtual bool hasOutgoingArc(Arc *a) const;
     virtual bool hasIncomingArc(Arc *a) const;
 
-    virtual void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
-    virtual void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
+    void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
+    void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
+    virtual void visitOutgoingArcs(ArcVisitorFunc avFun) const;
+    virtual void visitIncomingArcs(ArcVisitorFunc avFun) const;
 
     int getOutDegree() const;
     int getInDegree() const;

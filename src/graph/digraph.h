@@ -46,9 +46,12 @@ public:
     virtual bool containsArc(Arc *a) const = 0;
 
     // Accomodate visitors
-    virtual void acceptArcVisitor(ArcVisitor *aVisitor) = 0;
-    virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) = 0;
-    virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) = 0;
+    virtual void acceptArcVisitor(ArcVisitor *aVisitor);
+    virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
+    virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
+    virtual void visitArcs(ArcVisitorFunc avFun) = 0;
+    virtual void visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun) = 0;
+    virtual void visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun) = 0;
 
     // GraphArtifact interface
 public:

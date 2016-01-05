@@ -24,6 +24,7 @@
 #include "graph.h"
 
 #include "vertex.h"
+#include "graph.visitor/vertexvisitor.h"
 
 namespace Algora {
 
@@ -36,6 +37,11 @@ Graph::Graph(GraphArtifact *parent)
 Graph::~Graph()
 {
 
+}
+
+void Graph::acceptVertexVisitor(VertexVisitor *nVisitor)
+{
+    visitVertices(nVisitor->getVisitorFunction());
 }
 
 Vertex *Graph::createVertex()
