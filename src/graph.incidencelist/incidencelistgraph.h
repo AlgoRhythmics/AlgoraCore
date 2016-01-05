@@ -28,31 +28,44 @@
 
 namespace Algora {
 
+class IncidenceListVertex;
+
 class IncidenceListGraph : public DiGraph
 {
 public:
     explicit IncidenceListGraph(GraphArtifact *parent = 0);
     virtual ~IncidenceListGraph();
 
-    // DiGraph interface
+    // Graph interface
 public:
     virtual Vertex *addVertex();
     virtual void removeVertex(Vertex *v);
+    virtual bool containsVertex(Vertex *v) const override;
+
+    virtual void acceptVertexVisitor(VertexVisitor *nVisitor);
+
+    virtual bool isEmpty() const;
+    virtual int getSize() const;
+
+    // DiGraph interface
+public:
     virtual Arc *addArc(Vertex *tail, Vertex *head);
     virtual void removeArc(Arc *a);
-    virtual void acceptVertexVisitor(VertexVisitor *nVisitor);
+    virtual bool containsArc(Arc *a) const override;
+
     virtual void acceptArcVisitor(ArcVisitor *aVisitor);
     virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
     virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
-    virtual bool isEmpty() const;
-    virtual int getSize() const;
 
 public:
     void bundleParallelArcs();
 
+protected:
+    IncidenceListVertex *createIncidenceListVertex();
+
 private:
     class CheshireCat;
-    CheshireCat *grin;
+    CheshireCat *grin;  
 };
 
 }

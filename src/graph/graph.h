@@ -21,26 +21,38 @@
  */
 
 
-#ifndef VERTEX_H
-#define VERTEX_H
+#ifndef GRAPH_H
+#define GRAPH_H
 
 #include "graphartifact.h"
 
 namespace Algora {
 
-class Vertex : public GraphArtifact
+class Vertex;
+class VertexVisitor;
+
+class Graph : public GraphArtifact
 {
-    friend class Graph;
-
 public:
-    virtual ~Vertex();
+    explicit Graph(GraphArtifact *parent = 0);
+    virtual ~Graph();
 
-    virtual std::string toString() const override;
+    // Vertices
+    virtual Vertex *addVertex() = 0;
+    virtual void removeVertex(Vertex *v) = 0;
+    virtual bool containsVertex(Vertex *v) const = 0;
+
+    // Accomodate visitors
+    virtual void acceptVertexVisitor(VertexVisitor *nVisitor) = 0;
+
+    // Misc
+    virtual bool isEmpty() const = 0;
+    virtual int getSize() const = 0;
 
 protected:
-    explicit Vertex(GraphArtifact *parent = 0);
+    Vertex *createVertex();
 };
 
 }
 
-#endif // VERTEX_H
+#endif // GRAPH_H

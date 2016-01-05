@@ -47,7 +47,7 @@ IncidenceListGraph::~IncidenceListGraph()
 
 Vertex *IncidenceListGraph::addVertex()
 {
-    auto v = new IncidenceListVertex(this);
+    auto v = createIncidenceListVertex();
     grin->addVertex(v);
     return v;
 }
@@ -59,12 +59,27 @@ void IncidenceListGraph::removeVertex(Vertex *v)
     grin->removeVertex(vertex);
 }
 
+bool IncidenceListGraph::containsVertex(Vertex *v) const
+{
+    if (v->getParent() != this) {
+        return false;
+    }
+
+    auto vertex = dynamic_cast<IncidenceListVertex*>(v);
+
+    if (!vertex) {
+        return false;
+    }
+
+    return grin->containsVertex(vertex);
+}
+
 Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
 {
     auto t = castVertex(tail, this);
     auto h = castVertex(head, this);
 
-    Arc *a = new Arc(t, h, this);
+    Arc *a = createArc(t, h);
 
     grin->addArc(a, t, h);
     return a;
@@ -73,6 +88,7 @@ Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
 void IncidenceListGraph::removeArc(Arc *a)
 {
     if (a->getParent() != this) {
+    //if (!containsArc(a)) {
         throw std::invalid_argument("Arc is not a part of this graph.");
     }
 
@@ -80,6 +96,20 @@ void IncidenceListGraph::removeArc(Arc *a)
     auto head = castVertex(a->getHead(), this);
 
     grin->removeArc(a, tail, head);
+}
+
+bool IncidenceListGraph::containsArc(Arc *a) const
+{
+    if (a->getParent() != this) {
+        return false;
+    }
+
+    auto tail = dynamic_cast<IncidenceListVertex*>(a->getTail());
+    if (!tail) {
+        return false;
+    }
+
+    return grin->containsArc(a, tail);
 }
 
 void IncidenceListGraph::acceptVertexVisitor(VertexVisitor *nVisitor)
@@ -117,6 +147,11 @@ int IncidenceListGraph::getSize() const
 void IncidenceListGraph::bundleParallelArcs()
 {
     grin->bundleParallelArcs();
+}
+
+IncidenceListVertex *IncidenceListGraph::createIncidenceListVertex()
+{
+    return new IncidenceListVertex(this);
 }
 
 IncidenceListVertex *castVertex(Vertex *v, IncidenceListGraph *graph) {

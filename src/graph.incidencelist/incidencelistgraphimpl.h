@@ -41,8 +41,12 @@ public:
 
     void addVertex(IncidenceListVertex *vertex);
     void removeVertex(IncidenceListVertex *v);
+    bool containsVertex(IncidenceListVertex *v) const;
+
     void addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
+    bool containsArc(Arc *a, IncidenceListVertex *tail) const;
+
     void acceptVertexVisitor(VertexVisitor *nVisitor);
     void acceptArcVisitor(ArcVisitor *aVisitor);
     void acceptOutgoingArcVisitor(const IncidenceListVertex *v, ArcVisitor *aVisitor);

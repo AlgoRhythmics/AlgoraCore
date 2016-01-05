@@ -22,13 +22,14 @@
 
 
 #include "digraph.h"
+#include "arc.h"
 
 #include <sstream>
 
 namespace Algora {
 
 DiGraph::DiGraph(GraphArtifact *parent)
-    : GraphArtifact(parent)
+    : Graph(parent)
 {
 
 }
@@ -44,6 +45,11 @@ std::string DiGraph::toString() const
     strStream << "DiGraph [";
     strStream << idString() << "]";
     return strStream.str();
+}
+
+Arc *DiGraph::createArc(Vertex *tail, Vertex *head)
+{
+    return new Arc(tail, head, this);
 }
 
 }

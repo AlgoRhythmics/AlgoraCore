@@ -21,26 +21,27 @@
  */
 
 
-#ifndef VERTEX_H
-#define VERTEX_H
+#include "graph.h"
 
-#include "graphartifact.h"
+#include "vertex.h"
 
 namespace Algora {
 
-class Vertex : public GraphArtifact
+Graph::Graph(GraphArtifact *parent)
+    : GraphArtifact(parent)
 {
-    friend class Graph;
-
-public:
-    virtual ~Vertex();
-
-    virtual std::string toString() const override;
-
-protected:
-    explicit Vertex(GraphArtifact *parent = 0);
-};
 
 }
 
-#endif // VERTEX_H
+Graph::~Graph()
+{
+
+}
+
+Vertex *Graph::createVertex()
+{
+    return new Vertex(this);
+}
+
+}
+

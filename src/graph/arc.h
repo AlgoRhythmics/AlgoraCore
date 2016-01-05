@@ -32,8 +32,9 @@ class Vertex;
 
 class Arc : public GraphArtifact
 {
+    friend class DiGraph;
+
 public:
-    explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
     virtual ~Arc();
 
     virtual Vertex *getTail() const;
@@ -42,6 +43,9 @@ public:
     // GraphArtifact interface
 public:
     virtual std::string toString() const override;
+
+protected:
+    explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
 
 private:
     struct CheshireCat;

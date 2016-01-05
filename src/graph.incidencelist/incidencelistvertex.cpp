@@ -36,6 +36,7 @@ namespace Algora {
 typedef typename std::vector<Arc*> ArcList;
 
 void removeArcFromList(ArcList &list, Arc *arc);
+bool isArcInList(ArcList &list, Arc *arc);
 
 class IncidenceListVertex::CheshireCat {
 public:
@@ -106,6 +107,16 @@ void IncidenceListVertex::clearIncomingArcs()
     grin->incomingArcs.clear();
 }
 
+bool IncidenceListVertex::hasOutgoingArc(Arc *a) const
+{
+    return isArcInList(grin->outgoingArcs, a);
+}
+
+bool IncidenceListVertex::hasIncomingArc(Arc *a) const
+{
+    return isArcInList(grin->incomingArcs, a);
+}
+
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
 {
     for (Arc *a : grin->outgoingArcs) {
@@ -122,6 +133,10 @@ void IncidenceListVertex::acceptIncomingArcVisitor(ArcVisitor *aVisitor) const
 
 void removeArcFromList(ArcList &list, Arc *arc) {
     list.erase(std::find(list.cbegin(), list.cend(), arc));
+}
+
+bool isArcInList(ArcList &list, Arc *arc) {
+    return std::find(list.cbegin(), list.cend(), arc) != list.cend();
 }
 
 }

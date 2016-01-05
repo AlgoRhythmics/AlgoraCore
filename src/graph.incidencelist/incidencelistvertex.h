@@ -36,12 +36,19 @@ class IncidenceListVertex : public Vertex
 {
     friend class IncidenceListGraph;
 
+public:
+    virtual bool hasOutgoingArc(Arc *a) const;
+    virtual bool hasIncomingArc(Arc *a) const;
+
+    virtual void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
+    virtual void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
+
+    int getOutDegree() const;
+    int getInDegree() const;
+
 protected:
     explicit IncidenceListVertex(IncidenceListGraph *graph = 0);
     virtual ~IncidenceListVertex();
-
-    virtual int getOutDegree() const;
-    virtual int getInDegree() const;
 
     virtual void addOutgoingArc(Arc *a);
     virtual void removeOutgoingArc(Arc *a);
@@ -50,9 +57,6 @@ protected:
     virtual void addIncomingArc(Arc *a);
     virtual void removeIncomingArc(Arc *a);
     virtual void clearIncomingArcs();
-
-    virtual void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
-    virtual void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
 
 private:
     class CheshireCat;

@@ -67,6 +67,11 @@ void IncidenceListGraph::CheshireCat::removeVertex(IncidenceListVertex *v)
     vertices.erase(std::find(vertices.cbegin(), vertices.cend(), v));
 }
 
+bool IncidenceListGraph::CheshireCat::containsVertex(IncidenceListVertex *v) const
+{
+    return std::find(vertices.cbegin(), vertices.cend(), v) != vertices.cend();
+}
+
 void IncidenceListGraph::CheshireCat::addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     tail->addOutgoingArc(a);
@@ -78,6 +83,11 @@ void IncidenceListGraph::CheshireCat::removeArc(Arc *a, IncidenceListVertex *tai
     tail->removeOutgoingArc(a);
     head->removeIncomingArc(a);
     delete a;
+}
+
+bool IncidenceListGraph::CheshireCat::containsArc(Arc *a, IncidenceListVertex *tail) const
+{
+    return tail->hasOutgoingArc(a);
 }
 
 void IncidenceListGraph::CheshireCat::acceptVertexVisitor(VertexVisitor *nVisitor)

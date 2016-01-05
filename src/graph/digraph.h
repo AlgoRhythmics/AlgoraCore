@@ -24,7 +24,7 @@
 #ifndef DIGRAPH_H
 #define DIGRAPH_H
 
-#include "graphartifact.h"
+#include "graph.h"
 
 namespace Algora {
 
@@ -34,33 +34,28 @@ class Arc;
 class VertexVisitor;
 class ArcVisitor;
 
-class DiGraph : public GraphArtifact
+class DiGraph : public Graph
 {
 public:
     explicit DiGraph(GraphArtifact *parent = 0);
     virtual ~DiGraph();
 
-    // Vertices
-    virtual Vertex *addVertex() = 0;
-    virtual void removeVertex(Vertex *v) = 0;
-
     // Arcs
     virtual Arc *addArc(Vertex *tail, Vertex *head) = 0;
     virtual void removeArc(Arc *a) = 0;
+    virtual bool containsArc(Arc *a) const = 0;
 
     // Accomodate visitors
-    virtual void acceptVertexVisitor(VertexVisitor *nVisitor) = 0;
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) = 0;
     virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) = 0;
     virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) = 0;
 
-    // Misc
-    virtual bool isEmpty() const = 0;
-    virtual int getSize() const = 0;
-
     // GraphArtifact interface
 public:
     virtual std::string toString() const override;
+
+protected:
+    Arc *createArc(Vertex *tail, Vertex *head);
 };
 
 }
