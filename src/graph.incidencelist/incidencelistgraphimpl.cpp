@@ -30,7 +30,6 @@
 #include "graph.visitor/vertexvisitor.h"
 #include "graph.visitor/arcvisitor.h"
 #include "graph.visitor/collectarcsvisitor.h"
-#include "graph.visitor/grimreaper.h"
 
 #include <vector>
 #include <unordered_map>
@@ -45,9 +44,8 @@ IncidenceListGraph::CheshireCat::CheshireCat()
 
 IncidenceListGraph::CheshireCat::~CheshireCat()
 {
-    GrimReaper destroy;
     for (IncidenceListVertex *v : vertices) {
-        v->acceptOutgoingArcVisitor(&destroy);
+        v->visitOutgoingArcs([](Arc *a) { delete a; });
         v->clearOutgoingArcs();
         v->clearIncomingArcs();
         delete v;
@@ -62,9 +60,20 @@ void IncidenceListGraph::CheshireCat::addVertex(IncidenceListVertex *vertex)
 
 void IncidenceListGraph::CheshireCat::removeVertex(IncidenceListVertex *v)
 {
+    v->visitOutgoingArcs([](Arc *a) {
+        IncidenceListVertex *head = dynamic_cast<IncidenceListVertex*>(a->getHead());
+        head->removeIncomingArc(a);
+        delete a;
+    });
     v->clearOutgoingArcs();
+    v->visitIncomingArcs([](Arc *a) {
+        IncidenceListVertex *tail = dynamic_cast<IncidenceListVertex*>(a->getTail());
+        tail->removeOutgoingArc(a);
+        delete a;
+    });
     v->clearIncomingArcs();
     vertices.erase(std::find(vertices.cbegin(), vertices.cend(), v));
+    delete v;
 }
 
 bool IncidenceListGraph::CheshireCat::containsVertex(IncidenceListVertex *v) const
