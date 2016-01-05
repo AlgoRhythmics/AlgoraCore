@@ -25,6 +25,7 @@
 
 #include "incidencelistgraph.h"
 #include "graph/arc.h"
+#include "graph/parallelarcsbundle.h"
 #include "graph.visitor/arcvisitor.h"
 
 #include <vector>
@@ -35,8 +36,10 @@ namespace Algora {
 
 typedef typename std::vector<Arc*> ArcList;
 
-void removeArcFromList(ArcList &list, Arc *arc);
+bool removeArcFromList(ArcList &list, Arc *arc);
+bool removeBundledArcFromList(ArcList &list, Arc *arc);
 bool isArcInList(ArcList &list, Arc *arc);
+bool isBundledArc(ArcList &list, Arc *arc);
 
 class IncidenceListVertex::CheshireCat {
 public:
@@ -73,7 +76,9 @@ void IncidenceListVertex::removeOutgoingArc(Arc *a)
     if (a->getTail() != this) {
         throw std::invalid_argument("Arc has other tail.");
     }
-    removeArcFromList(grin->outgoingArcs, a);
+    if (!removeArcFromList(grin->outgoingArcs, a)) {
+        removeBundledArcFromList(grin->outgoingArcs, a);
+    }
 }
 
 void IncidenceListVertex::clearOutgoingArcs()
@@ -99,7 +104,9 @@ void IncidenceListVertex::removeIncomingArc(Arc *a)
     if (a->getHead() != this) {
         throw std::invalid_argument("Arc has other head.");
     }
-    removeArcFromList(grin->incomingArcs, a);
+    if (!removeArcFromList(grin->incomingArcs, a)) {
+        removeBundledArcFromList(grin->incomingArcs, a);
+    }
 }
 
 void IncidenceListVertex::clearIncomingArcs()
@@ -109,12 +116,12 @@ void IncidenceListVertex::clearIncomingArcs()
 
 bool IncidenceListVertex::hasOutgoingArc(Arc *a) const
 {
-    return isArcInList(grin->outgoingArcs, a);
+    return isArcInList(grin->outgoingArcs, a) || isBundledArc(grin->outgoingArcs, a);
 }
 
 bool IncidenceListVertex::hasIncomingArc(Arc *a) const
 {
-    return isArcInList(grin->incomingArcs, a);
+    return isArcInList(grin->incomingArcs, a) || isBundledArc(grin->incomingArcs, a);
 }
 
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
@@ -141,12 +148,42 @@ void IncidenceListVertex::visitIncomingArcs(ArcVisitorFunc avFun) const
     }
 }
 
-void removeArcFromList(ArcList &list, Arc *arc) {
-    list.erase(std::find(list.cbegin(), list.cend(), arc));
+bool removeArcFromList(ArcList &list, Arc *arc) {
+    auto it = std::find(list.cbegin(), list.cend(), arc);
+    if (it != list.cend()) {
+        list.erase(it);
+        return true;
+    }
+    return false;
+}
+
+bool removeBundledArcFromList(ArcList &list, Arc *arc) {
+    for (Arc *a : list) {
+        if (a->getHead() == arc->getHead() && a->getTail() == arc->getTail()) {
+            ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(a);
+            if (pab && pab->containsArc(arc)) {
+                pab->removeArc(arc);
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 bool isArcInList(ArcList &list, Arc *arc) {
     return std::find(list.cbegin(), list.cend(), arc) != list.cend();
+}
+
+bool isBundledArc(ArcList &list, Arc *arc) {
+    for (Arc *a : list) {
+        if (a->getHead() == arc->getHead() && a->getTail() == arc->getTail()) {
+            ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(a);
+            if (pab && pab->containsArc(arc)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 }
