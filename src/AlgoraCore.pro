@@ -21,3 +21,4 @@ unix {
 include(graph/graph.pri)
 include(graph.incidencelist/graph.incidencelist.pri)
 include(graph.visitor/graph.visitor.pri)
+include(property/property.pri)
