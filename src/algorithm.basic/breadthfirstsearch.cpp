@@ -33,7 +33,7 @@
 namespace Algora {
 
 BreadthFirstSearch::BreadthFirstSearch()
-    : startVertex(0), bfsNumber(0), maxBfsNumber(-1)
+    : startVertex(0), maxBfsNumber(-1)
 {
 
 }
@@ -46,7 +46,6 @@ BreadthFirstSearch::~BreadthFirstSearch()
 bool BreadthFirstSearch::prepare()
 {
     return PropertyComputingAlgorithm<bool, int>::prepare()
-            && bfsNumber != 0
             && ( startVertex == 0 || diGraph->containsVertex(startVertex));
 }
 
@@ -62,7 +61,7 @@ void BreadthFirstSearch::run()
     maxBfsNumber = 0;
     queue.push_back(startVertex);
     discovered.setValue(startVertex, true);
-    bfsNumber->setValue(startVertex, maxBfsNumber);
+    propertyMap->setValue(startVertex, maxBfsNumber);
 
     while (!queue.empty()) {
         Vertex *curr = queue.front();
@@ -74,7 +73,7 @@ void BreadthFirstSearch::run()
                 queue.push_back(a->getHead());
                 discovered.setValue(head, true);
                 maxBfsNumber++;
-                bfsNumber->setValue(head, maxBfsNumber);
+                propertyMap->setValue(head, maxBfsNumber);
             }
         });
     }

@@ -53,15 +53,8 @@ public:
 public:
     virtual bool deliver() override;
 
-    // PropertyComputingAlgorithm interface
-public:
-    virtual void usePropertyMap(PropertyMap<int> *map) override {
-        bfsNumber = map;
-    }
-
 private:
     Vertex *startVertex;
-    PropertyMap<int> *bfsNumber;
     int maxBfsNumber;
 
     // DiGraphAlgorithm interface
