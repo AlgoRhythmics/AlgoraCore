@@ -74,6 +74,11 @@ bool IncidenceListGraph::containsVertex(Vertex *v) const
     return grin->containsVertex(vertex);
 }
 
+Vertex *IncidenceListGraph::getAnyVertex() const
+{
+    return grin->getFirstVertex();
+}
+
 void IncidenceListGraph::visitVertices(VertexVisitorFunc vvFun)
 {
     grin->visitVertices(vvFun);

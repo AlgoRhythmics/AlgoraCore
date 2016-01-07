@@ -81,6 +81,14 @@ bool IncidenceListGraph::CheshireCat::containsVertex(IncidenceListVertex *v) con
     return std::find(vertices.cbegin(), vertices.cend(), v) != vertices.cend();
 }
 
+IncidenceListVertex *IncidenceListGraph::CheshireCat::getFirstVertex() const
+{
+    if (vertices.empty()) {
+        return 0;
+    }
+    return vertices.at(0);
+}
+
 void IncidenceListGraph::CheshireCat::addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     tail->addOutgoingArc(a);

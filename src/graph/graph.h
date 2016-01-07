@@ -42,6 +42,7 @@ public:
     virtual Vertex *addVertex() = 0;
     virtual void removeVertex(Vertex *v) = 0;
     virtual bool containsVertex(Vertex *v) const = 0;
+    virtual Vertex *getAnyVertex() const = 0;
 
     // Accomodate visitors
     virtual void acceptVertexVisitor(VertexVisitor *nVisitor);

@@ -41,6 +41,7 @@ public:
     virtual Vertex *addVertex() override;
     virtual void removeVertex(Vertex *v) override;
     virtual bool containsVertex(Vertex *v) const override;
+    virtual Vertex *getAnyVertex() const override;
 
     virtual void visitVertices(VertexVisitorFunc vvFun) override;
 
