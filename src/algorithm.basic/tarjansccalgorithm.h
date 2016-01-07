@@ -21,26 +21,33 @@
  */
 
 
-#ifndef BASIC_ALGORITHMS_H
-#define BASIC_ALGORITHMS_H
+#ifndef TARJANSCCALGORITHM_H
+#define TARJANSCCALGORITHM_H
 
-#include "finddipathalgorithm.h"
-#include "breadthfirstsearch.h"
-#include "tarjansccalgorithm.h"
+#include "algorithm/propertycomputingalgorithm.h"
 
 namespace Algora {
 
-class DiGraph;
 class Vertex;
 
-bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to) {
-    FindDiPathAlgorithm findDiPath(false);
-    findDiPath.setSourceVertex(from);
-    findDiPath.setTargetVertex(to);
-    return runAlgorithm(findDiPath, diGraph);
-}
+class TarjanSCCAlgorithm : public PropertyComputingAlgorithm<int, int>
+{
+public:
+    TarjanSCCAlgorithm();
+    virtual ~TarjanSCCAlgorithm();
+
+    // DiGraphAlgorithm interface
+public:
+    virtual void run() override;
+
+    // ValueComputingAlgorithm interface
+public:
+    virtual int deliver() override;
+
+private:
+    int numSccs;
+};
 
 }
 
-#endif // BASIC_ALGORITHMS_H
-
+#endif // TARJANSCCALGORITHM_H
