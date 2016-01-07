@@ -55,20 +55,21 @@ void FindDiPathAlgorithm::run()
 {
     vertexPath.clear();
     arcPath.clear();
+    pathFound = false;
 
     if (from == to) {
+        pathFound = true;
         return;
     }
 
     std::deque<Vertex*> queue;
     PropertyMap<bool> discovered(false);
     PropertyMap<Arc*> pred(0);
-    bool targetFound = false;
 
     queue.push_back(from);
     discovered.setValue(from, true);
 
-    while (!targetFound && !queue.empty()) {
+    while (!pathFound && !queue.empty()) {
         Vertex *curr = queue.front();
         queue.pop_front();
 
@@ -81,13 +82,13 @@ void FindDiPathAlgorithm::run()
                 }
                 discovered.setValue(head, true);
                 if (head == to) {
-                    targetFound = true;
+                    pathFound = true;
                 }
             }
         });
     }
 
-    if (targetFound && constructPath) {
+    if (pathFound && constructPath) {
         Vertex *p = to;
         while (p != from) {
             Arc *a = pred.getValue(p);
@@ -103,13 +104,14 @@ void FindDiPathAlgorithm::run()
 
 bool FindDiPathAlgorithm::deliver()
 {
-    return from == to || !arcPath.empty();
+    return pathFound;
 }
 
 void Algora::FindDiPathAlgorithm::onDiGraphSet()
 {
     vertexPath.clear();
     arcPath.clear();
+    pathFound = false;
 }
 
 }

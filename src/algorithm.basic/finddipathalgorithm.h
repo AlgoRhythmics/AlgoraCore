@@ -76,6 +76,7 @@ private:
     Vertex *to;
     std::vector<Vertex*> vertexPath;
     std::vector<Arc*> arcPath;
+    bool pathFound;
 
     // DiGraphAlgorithm interface
 private:
