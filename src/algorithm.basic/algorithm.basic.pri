@@ -4,9 +4,11 @@ HEADERS += \
     $$PWD/finddipathalgorithm.h \
     $$PWD/breadthfirstsearch.h \
     $$PWD/basic_algorithms.h \
-    $$PWD/tarjansccalgorithm.h
+    $$PWD/tarjansccalgorithm.h \
+    $$PWD/topsortalgorithm.h
 
 SOURCES += \     
     $$PWD/finddipathalgorithm.cpp \
     $$PWD/breadthfirstsearch.cpp \
-    $$PWD/tarjansccalgorithm.cpp
+    $$PWD/tarjansccalgorithm.cpp \
+    $$PWD/topsortalgorithm.cpp

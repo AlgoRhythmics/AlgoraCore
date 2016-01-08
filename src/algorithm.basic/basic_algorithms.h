@@ -24,13 +24,16 @@
 #ifndef BASIC_ALGORITHMS_H
 #define BASIC_ALGORITHMS_H
 
+#include "graph/digraph.h"
+#include "property/propertymap.h"
+
 #include "finddipathalgorithm.h"
 #include "breadthfirstsearch.h"
 #include "tarjansccalgorithm.h"
+#include "topsortalgorithm.h"
 
 namespace Algora {
 
-class DiGraph;
 class Vertex;
 
 bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to) {
@@ -38,6 +41,12 @@ bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to) {
     findDiPath.setSourceVertex(from);
     findDiPath.setTargetVertex(to);
     return runAlgorithm(findDiPath, diGraph);
+}
+
+bool isAcyclic(DiGraph *diGraph) {
+    TopSortAlgorithm topSort(false);
+    int maxTs = runAlgorithm(topSort, diGraph);
+    return maxTs == diGraph->getSize();
 }
 
 }
