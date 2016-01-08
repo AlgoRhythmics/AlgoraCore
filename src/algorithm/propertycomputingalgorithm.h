@@ -35,7 +35,8 @@ template<typename ValueType, typename PropertyType>
 class PropertyComputingAlgorithm : public ValueComputingAlgorithm<ValueType>
 {
 public:
-    PropertyComputingAlgorithm() : propertyMap(0) { }
+    PropertyComputingAlgorithm(bool computeValues = true)
+        : computePropertyValues(computeValues), propertyMap(0) { }
     virtual ~PropertyComputingAlgorithm() { }
 
     virtual void usePropertyMap(PropertyMap<PropertyType> *map) {
@@ -45,10 +46,12 @@ public:
     // DiGraphAlgorithm interface
 public:
     virtual bool prepare() override {
-        return ValueComputingAlgorithm<ValueType>::prepare() && propertyMap != 0;
+        return ValueComputingAlgorithm<ValueType>::prepare()
+                && (!computePropertyValues || propertyMap != 0);
     }
 
 protected:
+    bool computePropertyValues;
     PropertyMap<PropertyType> *propertyMap;
 };
 
