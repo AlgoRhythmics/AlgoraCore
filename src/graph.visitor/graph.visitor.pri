@@ -14,5 +14,6 @@ SOURCES += \
     $$PWD/collectverticesvisitor.cpp \
     $$PWD/collectarcsvisitor.cpp \
     $$PWD/printgraphvisitor.cpp \
-    $$PWD/graphvisitor.cpp
+    $$PWD/graphvisitor.cpp \
+    $$PWD/visitorfunctions.cpp
 
