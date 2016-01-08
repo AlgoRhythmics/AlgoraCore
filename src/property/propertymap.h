@@ -38,17 +38,17 @@ public:
         : Property<T>(name), defaultValue(defaultValue) { }
     virtual ~PropertyMap() { }
 
-    virtual T getDefaultValue() const { return defaultValue; }
+    T getDefaultValue() const { return defaultValue; }
 
-    virtual bool isSetExplicitly(const GraphArtifact *ga) const {
+    bool isSetExplicitly(const GraphArtifact *ga) const {
         return map.count(ga) > 0;
     }
 
-    virtual void setValue(const GraphArtifact *ga, const T &value) {
+    void setValue(const GraphArtifact *ga, const T &value) {
         map[ga] = value;
     }
 
-    virtual void resetToDefault(const GraphArtifact *ga) {
+    void resetToDefault(const GraphArtifact *ga) {
         auto i = map.find(ga);
         if (i != map.end()) { map.erase(i); }
     }
