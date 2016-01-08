@@ -25,18 +25,21 @@
 #define GRAPH_H
 
 #include "graphartifact.h"
+#include "vertex.h"
+
+#include "graph.visitor/vertexvisitor.h"
 #include "graph.visitor/visitorfunctions.h"
 
 namespace Algora {
 
 class Vertex;
-class VertexVisitor;
 
 class Graph : public GraphArtifact
 {
 public:
-    explicit Graph(GraphArtifact *parent = 0);
-    virtual ~Graph();
+    explicit Graph(GraphArtifact *parent = 0)
+        : GraphArtifact(parent) { }
+    virtual ~Graph() { }
 
     // Vertices
     virtual Vertex *addVertex() = 0;
@@ -45,15 +48,22 @@ public:
     virtual Vertex *getAnyVertex() const = 0;
 
     // Accomodate visitors
-    virtual void acceptVertexVisitor(VertexVisitor *nVisitor);
-    virtual void visitVertices(VertexVisitorFunc vvFun) = 0;
+    virtual void acceptVertexVisitor(VertexVisitor *nVisitor) {
+        visitVertices(nVisitor->getVisitorFunction());
+    }
+    virtual void visitVertices(VertexVisitorFunc vvFun) {
+        visitVerticesUntil(vvFun, vertexFalse);
+    }
+    virtual void visitVerticesUntil(VertexVisitorFunc vvFun, VertexPredicate breakCondition) = 0;
 
     // Misc
     virtual bool isEmpty() const = 0;
     virtual int getSize() const = 0;
 
 protected:
-    Vertex *createVertex();
+    Vertex *createVertex() {
+        return new Vertex(this);
+    }
 };
 
 }

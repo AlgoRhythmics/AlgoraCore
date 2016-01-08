@@ -43,8 +43,8 @@ public:
 
     void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
     void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
-    virtual void visitOutgoingArcs(ArcVisitorFunc avFun) const;
-    virtual void visitIncomingArcs(ArcVisitorFunc avFun) const;
+    virtual bool visitOutgoingArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition = arcTrue) const;
+    virtual bool visitIncomingArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition = arcTrue) const;
 
     int getOutDegree() const;
     int getInDegree() const;

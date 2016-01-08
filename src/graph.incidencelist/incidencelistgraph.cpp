@@ -81,9 +81,9 @@ Vertex *IncidenceListGraph::getAnyVertex() const
     return grin->getFirstVertex();
 }
 
-void IncidenceListGraph::visitVertices(VertexVisitorFunc vvFun)
+void IncidenceListGraph::visitVerticesUntil(VertexVisitorFunc vvFun, VertexPredicate breakCondition)
 {
-    grin->visitVertices(vvFun);
+    grin->visitVertices(vvFun, breakCondition);
 }
 
 Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
@@ -136,21 +136,21 @@ int IncidenceListGraph::getInDegree(const Vertex *v) const
     return grin->getInDegree(vertex);
 }
 
-void IncidenceListGraph::visitArcs(ArcVisitorFunc avFun)
+void IncidenceListGraph::visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
-    grin->visitArcs(avFun);
+    grin->visitArcs(avFun, breakCondition);
 }
 
-void IncidenceListGraph::visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun)
+void IncidenceListGraph::visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
     auto vertex = castVertex(v, this);
-    grin->visitOutgoingArcs(vertex, avFun);
+    grin->visitOutgoingArcs(vertex, avFun, breakCondition);
 }
 
-void IncidenceListGraph::visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun)
+void IncidenceListGraph::visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
     auto vertex = castVertex(v, this);
-    grin->visitIncomingArcs(vertex, avFun);
+    grin->visitIncomingArcs(vertex, avFun, breakCondition);
 }
 
 bool IncidenceListGraph::isEmpty() const

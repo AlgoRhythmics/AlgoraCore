@@ -126,26 +126,34 @@ bool IncidenceListVertex::hasIncomingArc(Arc *a) const
 
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
 {
-    visitOutgoingArcs(aVisitor->getVisitorFunction());
+    visitOutgoingArcs(aVisitor->getVisitorFunction(), arcFalse);
 }
 
 void IncidenceListVertex::acceptIncomingArcVisitor(ArcVisitor *aVisitor) const
 {
-    visitIncomingArcs(aVisitor->getVisitorFunction());
+    visitIncomingArcs(aVisitor->getVisitorFunction(), arcFalse);
 }
 
-void IncidenceListVertex::visitOutgoingArcs(ArcVisitorFunc avFun) const
+bool IncidenceListVertex::visitOutgoingArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition) const
 {
     for (Arc *a : grin->outgoingArcs) {
+        if (breakCondition(a)) {
+            return false;
+        }
         avFun(a);
     }
+    return true;
 }
 
-void IncidenceListVertex::visitIncomingArcs(ArcVisitorFunc avFun) const
+bool IncidenceListVertex::visitIncomingArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition) const
 {
     for (Arc *a : grin->incomingArcs) {
+        if (breakCondition(a)) {
+            return false;
+        }
         avFun(a);
     }
+    return true;
 }
 
 bool removeArcFromList(ArcList &list, Arc *arc) {

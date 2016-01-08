@@ -43,7 +43,7 @@ public:
     virtual bool containsVertex(Vertex *v) const override;
     virtual Vertex *getAnyVertex() const override;
 
-    virtual void visitVertices(VertexVisitorFunc vvFun) override;
+    virtual void visitVerticesUntil(VertexVisitorFunc vvFun, VertexPredicate breakCondition) override;
 
     virtual bool isEmpty() const override;
     virtual int getSize() const override;
@@ -57,9 +57,9 @@ public:
     virtual int getOutDegree(const Vertex *v) const override;
     virtual int getInDegree(const Vertex *v) const override;
 
-    virtual void visitArcs(ArcVisitorFunc avFun) override;
-    virtual void visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun) override;
-    virtual void visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun) override;
+    virtual void visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondition) override;
+    virtual void visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition) override;
+    virtual void visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition) override;
 
 public:
     void bundleParallelArcs();

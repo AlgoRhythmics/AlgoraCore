@@ -25,20 +25,19 @@
 #define DIGRAPH_H
 
 #include "graph.h"
+#include "arc.h"
+
+#include "graph.visitor/arcvisitor.h"
 
 namespace Algora {
 
 class Vertex;
-class Arc;
-
-class VertexVisitor;
-class ArcVisitor;
 
 class DiGraph : public Graph
 {
 public:
     explicit DiGraph(GraphArtifact *parent = 0);
-    virtual ~DiGraph();
+    virtual ~DiGraph() { }
 
     // Arcs
     virtual Arc *addArc(Vertex *tail, Vertex *head) = 0;
@@ -49,19 +48,33 @@ public:
     virtual int getInDegree(const Vertex *v) const = 0;
 
     // Accomodate visitors
-    virtual void acceptArcVisitor(ArcVisitor *aVisitor);
-    virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
-    virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);
-    virtual void visitArcs(ArcVisitorFunc avFun) = 0;
-    virtual void visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun) = 0;
-    virtual void visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun) = 0;
+    virtual void acceptArcVisitor(ArcVisitor *aVisitor) {
+        visitArcs(aVisitor->getVisitorFunction());
+    }
+    virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) {
+        visitOutgoingArcs(v, aVisitor->getVisitorFunction());
+    }
+    virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) {
+        visitIncomingArcs(v, aVisitor->getVisitorFunction());
+    }
+    virtual void visitArcs(ArcVisitorFunc avFun) {
+        visitArcsUntil(avFun, arcFalse);
+    }
+    virtual void visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun) { visitOutgoingArcsUntil(v, avFun, arcFalse); }
+    virtual void visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun) { visitIncomingArcsUntil(v, avFun, arcFalse); }
+
+    virtual void visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondition) = 0;
+    virtual void visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition) = 0;
+    virtual void visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition) = 0;
 
     // GraphArtifact interface
 public:
     virtual std::string toString() const override;
 
 protected:
-    Arc *createArc(Vertex *tail, Vertex *head);
+    Arc *createArc(Vertex *tail, Vertex *head) {
+        return new Arc(tail, head, this);
+    }
 };
 
 }

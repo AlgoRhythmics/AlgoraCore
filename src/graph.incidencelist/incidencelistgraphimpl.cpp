@@ -117,28 +117,33 @@ int IncidenceListGraph::CheshireCat::getInDegree(const IncidenceListVertex *v) c
     return v->getInDegree();
 }
 
-void IncidenceListGraph::CheshireCat::visitVertices(VertexVisitorFunc vvFun)
+void IncidenceListGraph::CheshireCat::visitVertices(VertexVisitorFunc vvFun, VertexPredicate breakCondition)
 {
     for (Vertex *v : vertices) {
+        if (breakCondition(v)) {
+            break;
+        }
         vvFun(v);
     }
 }
 
-void IncidenceListGraph::CheshireCat::visitArcs(ArcVisitorFunc avFun)
+void IncidenceListGraph::CheshireCat::visitArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
     for (IncidenceListVertex *v : vertices) {
-        v->visitOutgoingArcs(avFun);
+        if (!v->visitOutgoingArcs(avFun, breakCondition)) {
+            break;
+        }
     }
 }
 
-void IncidenceListGraph::CheshireCat::visitOutgoingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun)
+void IncidenceListGraph::CheshireCat::visitOutgoingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
-    v->visitOutgoingArcs(avFun);
+    v->visitOutgoingArcs(avFun, breakCondition);
 }
 
-void IncidenceListGraph::CheshireCat::visitIncomingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun)
+void IncidenceListGraph::CheshireCat::visitIncomingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
-    v->visitIncomingArcs(avFun);
+    v->visitIncomingArcs(avFun, breakCondition);
 }
 
 bool IncidenceListGraph::CheshireCat::isEmpty() const
