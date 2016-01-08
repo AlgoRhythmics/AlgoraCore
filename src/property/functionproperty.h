@@ -41,7 +41,7 @@ public:
 
     // Property interface
 public:
-    virtual T getValue(const GraphArtifact *ga) override { return fun(ga); }
+    virtual T getValue(const GraphArtifact *ga) const override { return fun(ga); }
 
 private:
     PropertyFunction fun;

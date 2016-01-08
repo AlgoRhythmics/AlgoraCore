@@ -67,7 +67,7 @@ void FindDiPathAlgorithm::run()
     PropertyMap<Arc*> pred(0);
 
     queue.push_back(from);
-    discovered.setValue(from, true);
+    discovered[from] = true;
 
     while (!pathFound && !queue.empty()) {
         Vertex *curr = queue.front();
@@ -75,12 +75,12 @@ void FindDiPathAlgorithm::run()
 
         diGraph->visitOutgoingArcs(curr, [&](Arc *a) {
             Vertex *head = a->getHead();
-            if (!discovered.getValue(head)) {
+            if (!discovered(head)) {
                 queue.push_back(a->getHead());
                 if (constructPath) {
-                    pred.setValue(head, a);
+                    pred[head] = a;
                 }
-                discovered.setValue(head, true);
+                discovered[head] = true;
                 if (head == to) {
                     pathFound = true;
                 }
@@ -91,7 +91,7 @@ void FindDiPathAlgorithm::run()
     if (pathFound && constructPath) {
         Vertex *p = to;
         while (p != from) {
-            Arc *a = pred.getValue(p);
+            Arc *a = pred(p);
             vertexPath.push_back(p);
             arcPath.push_back(a);
             p = a->getTail();

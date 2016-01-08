@@ -39,20 +39,30 @@ public:
     virtual ~PropertyMap() { }
 
     virtual T getDefaultValue() const { return defaultValue; }
+
     virtual bool isSetExplicitly(const GraphArtifact *ga) const {
         return map.count(ga) > 0;
     }
+
     virtual void setValue(const GraphArtifact *ga, const T &value) {
         map[ga] = value;
     }
+
     virtual void resetToDefault(const GraphArtifact *ga) {
         auto i = map.find(ga);
         if (i != map.end()) { map.erase(i); }
     }
 
+    T &operator[](const GraphArtifact *ga) {
+        if (!isSetExplicitly(ga)) {
+            map[ga] = defaultValue;
+        }
+        return map[ga];
+    }
+
     // Property interface
 public:
-    virtual T getValue(const GraphArtifact *ga) override {
+    virtual T getValue(const GraphArtifact *ga) const override {
         return map.count(ga) > 0 ? map.at(ga) : defaultValue;
     }
 

@@ -57,11 +57,12 @@ void BreadthFirstSearch::run()
 
     std::deque<Vertex*> queue;
     PropertyMap<bool> discovered(false);
+    PropertyMap<int> &bfsNumber = *propertyMap;
 
     maxBfsNumber = 0;
     queue.push_back(startVertex);
-    discovered.setValue(startVertex, true);
-    propertyMap->setValue(startVertex, maxBfsNumber);
+    discovered[startVertex] = true;
+    bfsNumber[startVertex] = maxBfsNumber;
 
     while (!queue.empty()) {
         Vertex *curr = queue.front();
@@ -69,11 +70,11 @@ void BreadthFirstSearch::run()
 
         diGraph->visitOutgoingArcs(curr, [&](Arc *a) {
             Vertex *head = a->getHead();
-            if (!discovered.getValue(head)) {
+            if (!discovered(head)) {
                 queue.push_back(a->getHead());
-                discovered.setValue(head, true);
+                discovered[head] = true;
                 maxBfsNumber++;
-                propertyMap->setValue(head, maxBfsNumber);
+                bfsNumber[head] = maxBfsNumber;
             }
         });
     }

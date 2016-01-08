@@ -38,7 +38,8 @@ void strongconnect(DiGraph *graph, Vertex *v,
                    std::deque<Vertex*> &stack,
                    PropertyMap<int> &vertexIndex,
                    PropertyMap<int> &lowLink,
-                   PropertyMap<bool> &onStack, PropertyMap<int> &sccNumber);
+                   PropertyMap<bool> &onStack,
+                   PropertyMap<int> &sccNumber);
 
 TarjanSCCAlgorithm::TarjanSCCAlgorithm()
     : numSccs(0)
@@ -76,7 +77,7 @@ int tarjanRecursive(DiGraph *diGraph, PropertyMap<int> &sccNumber) {
     PropertyMap<bool> onStack(false);
 
     diGraph->visitVertices([&](Vertex *v) {
-        if (vertexIndex.getValue(v) == -1) {
+        if (vertexIndex(v) == -1) {
             strongconnect(diGraph, v, nextIndex, nextScc, stack, vertexIndex, lowLink, onStack, sccNumber);
         }
     });
@@ -92,35 +93,35 @@ void strongconnect(DiGraph *graph, Vertex *v,
                    PropertyMap<int> &sccNumber) {
 
     int vLowLink = nextIndex;
-    vertexIndex.setValue(v, nextIndex);
-    lowLink.setValue(v, nextIndex);
+    vertexIndex[v] = nextIndex;
+    lowLink[v] = nextIndex;
     nextIndex++;
     stack.push_back(v);
-    onStack.setValue(v, true);
+    onStack[v] = true;
 
     graph->visitOutgoingArcs(v, [&](Arc *a) {
         Vertex *head = a->getHead();
-        if (vertexIndex.getValue(head) == -1) {
+        if (vertexIndex(head) == -1) {
             strongconnect(graph, head, nextIndex, nextScc, stack, vertexIndex, lowLink, onStack, sccNumber);
-            int hLowLink = lowLink.getValue(head);
+            int hLowLink = lowLink(head);
             if (hLowLink < vLowLink) {
-                lowLink.setValue(v, hLowLink);
+                lowLink[v] = hLowLink;
             }
-        } else if (onStack.getValue(head)) {
-            int hIndex = vertexIndex.getValue(head);
+        } else if (onStack(head)) {
+            int hIndex = vertexIndex(head);
             if (hIndex < vLowLink) {
-                lowLink.setValue(v, hIndex);
+                lowLink[v] = hIndex;
             }
         }
     });
 
-    if (lowLink.getValue(v) == vertexIndex.getValue(v)) {
+    if (lowLink(v) == vertexIndex(v)) {
         Vertex *w;
         do {
             w  = stack.back();
             stack.pop_back();
-            onStack.setValue(w, false);
-            sccNumber.setValue(w, nextScc);
+            onStack[w] = false;
+            sccNumber[w] = nextScc;
         } while (w != v);
         nextScc++;
     }

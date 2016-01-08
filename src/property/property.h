@@ -36,7 +36,11 @@ public:
         : GraphArtifactProperty(name) { }
     virtual ~Property() { }
 
-    virtual T getValue(const GraphArtifact *ga) = 0;
+    T operator()(const GraphArtifact *ga) const {
+        return getValue(ga);
+    }
+
+    virtual T getValue(const GraphArtifact *ga) const = 0;
 };
 
 }
