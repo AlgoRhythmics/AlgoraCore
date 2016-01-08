@@ -2,7 +2,7 @@
 
 PRO_FILE="AlgoraCore.pro"
 
-QMAKE=$(which qmake)
+[ -z "${QMAKE}" ] && QMAKE=$(which qmake)
 QMAKE_ARGS="-r -spec linux-g++-64"
 QMAKE_ARGS_DEBUG="CONFIG+=debug"
 
@@ -14,7 +14,16 @@ BUILD_DIR_RELEASE="${BUILD_DIR}/Release"
 
 PRO_PATH="${CUR_DIR}/src/${PRO_FILE}"
 
-echo "Checking whether build paths exist..."
+if [ "$1" == "-c" -o "$1" == "--clean" ]
+then
+	echo "Removing build directory as requested..."
+  rm -rf ${BUILD_DIR}
+else
+	echo "Unsupported option $1".
+	exit 1
+fi
+
+echo "Creating build paths if necessary..."
 mkdir -p "${BUILD_DIR_DEBUG}"
 mkdir -p "${BUILD_DIR_RELEASE}"
 
