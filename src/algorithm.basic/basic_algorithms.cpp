@@ -20,25 +20,26 @@
  *   http://algora.xaikal.org
  */
 
+#include "basic_algorithms.h"
 
-#ifndef BASIC_ALGORITHMS_H
-#define BASIC_ALGORITHMS_H
-
-#include "finddipathalgorithm.h"
-#include "breadthfirstsearch.h"
-#include "tarjansccalgorithm.h"
-#include "topsortalgorithm.h"
+#include "graph/digraph.h"
+#include "property/propertymap.h"
 
 namespace Algora {
 
-class DiGraph;
-class Vertex;
+bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to) {
+    FindDiPathAlgorithm findDiPath(false);
+    findDiPath.setSourceVertex(from);
+    findDiPath.setTargetVertex(to);
+    return runAlgorithm(findDiPath, diGraph);
+}
 
-bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to);
-
-bool isAcyclic(DiGraph *diGraph);
+bool isAcyclic(DiGraph *diGraph) {
+    TopSortAlgorithm topSort(false);
+    int maxTs = runAlgorithm(topSort, diGraph);
+    return maxTs == diGraph->getSize();
+}
 
 }
 
-#endif // BASIC_ALGORITHMS_H
 
