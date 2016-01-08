@@ -48,6 +48,9 @@ public:
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     bool containsArc(Arc *a, IncidenceListVertex *tail) const;
 
+    int getOutDegree(const IncidenceListVertex *v) const;
+    int getInDegree(const IncidenceListVertex *v) const;
+
     void visitVertices(VertexVisitorFunc vvFun);
 
     void visitArcs(ArcVisitorFunc avFun);

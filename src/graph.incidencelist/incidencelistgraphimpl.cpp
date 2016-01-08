@@ -107,6 +107,16 @@ bool IncidenceListGraph::CheshireCat::containsArc(Arc *a, IncidenceListVertex *t
     return tail->hasOutgoingArc(a);
 }
 
+int IncidenceListGraph::CheshireCat::getOutDegree(const IncidenceListVertex *v) const
+{
+    return v->getOutDegree();
+}
+
+int IncidenceListGraph::CheshireCat::getInDegree(const IncidenceListVertex *v) const
+{
+    return v->getInDegree();
+}
+
 void IncidenceListGraph::CheshireCat::visitVertices(VertexVisitorFunc vvFun)
 {
     for (Vertex *v : vertices) {

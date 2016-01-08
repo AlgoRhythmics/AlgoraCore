@@ -45,6 +45,9 @@ public:
     virtual void removeArc(Arc *a) = 0;
     virtual bool containsArc(Arc *a) const = 0;
 
+    virtual int getOutDegree(const Vertex *v) const = 0;
+    virtual int getInDegree(const Vertex *v) const = 0;
+
     // Accomodate visitors
     virtual void acceptArcVisitor(ArcVisitor *aVisitor);
     virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor);

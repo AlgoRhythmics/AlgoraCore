@@ -54,6 +54,9 @@ public:
     virtual void removeArc(Arc *a) override;
     virtual bool containsArc(Arc *a) const override;
 
+    virtual int getOutDegree(const Vertex *v) const override;
+    virtual int getInDegree(const Vertex *v) const override;
+
     virtual void visitArcs(ArcVisitorFunc avFun) override;
     virtual void visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun) override;
     virtual void visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun) override;

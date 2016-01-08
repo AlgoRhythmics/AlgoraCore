@@ -32,7 +32,9 @@
 
 namespace Algora {
 
-IncidenceListVertex *castVertex(Vertex *v, IncidenceListGraph *graph);
+const IncidenceListVertex *castVertex(const Vertex *v, const IncidenceListGraph *graph);
+IncidenceListVertex *castVertex(Vertex *v, const IncidenceListGraph *graph);
+void checkVertex(const Vertex *v, const IncidenceListGraph *graph);
 
 IncidenceListGraph::IncidenceListGraph(GraphArtifact *parent)
     : DiGraph(parent), grin(new CheshireCat)
@@ -122,6 +124,18 @@ bool IncidenceListGraph::containsArc(Arc *a) const
     return grin->containsArc(a, tail);
 }
 
+int IncidenceListGraph::getOutDegree(const Vertex *v) const
+{
+    auto vertex = castVertex(v, this);
+    return grin->getOutDegree(vertex);
+}
+
+int IncidenceListGraph::getInDegree(const Vertex *v) const
+{
+    auto vertex = castVertex(v, this);
+    return grin->getInDegree(vertex);
+}
+
 void IncidenceListGraph::visitArcs(ArcVisitorFunc avFun)
 {
     grin->visitArcs(avFun);
@@ -129,13 +143,13 @@ void IncidenceListGraph::visitArcs(ArcVisitorFunc avFun)
 
 void IncidenceListGraph::visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun)
 {
-    auto vertex = castVertex(const_cast<Vertex*>(v), this);
+    auto vertex = castVertex(v, this);
     grin->visitOutgoingArcs(vertex, avFun);
 }
 
 void IncidenceListGraph::visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun)
 {
-    auto vertex = castVertex(const_cast<Vertex*>(v), this);
+    auto vertex = castVertex(v, this);
     grin->visitIncomingArcs(vertex, avFun);
 }
 
@@ -159,13 +173,22 @@ IncidenceListVertex *IncidenceListGraph::createIncidenceListVertex()
     return new IncidenceListVertex(this);
 }
 
-IncidenceListVertex *castVertex(Vertex *v, IncidenceListGraph *graph) {
-    auto vertex = dynamic_cast<IncidenceListVertex*>(v);
+const IncidenceListVertex *castVertex(const Vertex *v, const IncidenceListGraph *graph) {
+    auto vertex = dynamic_cast<const IncidenceListVertex*>(v);
+    checkVertex(vertex, graph);
+    return vertex;
+}
 
-    if (!vertex || vertex->getParent() != graph) {
+IncidenceListVertex *castVertex(Vertex *v, const IncidenceListGraph *graph) {
+    auto vertex = dynamic_cast<IncidenceListVertex*>(v);
+    checkVertex(vertex, graph);
+    return vertex;
+}
+
+void checkVertex(const Vertex *v, const IncidenceListGraph *graph) {
+    if (!v || v->getParent() != graph) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
-    return vertex;
 }
 
 }
