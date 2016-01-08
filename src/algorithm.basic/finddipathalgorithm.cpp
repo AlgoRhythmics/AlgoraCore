@@ -28,6 +28,7 @@
 #include "graph/arc.h"
 #include "property/propertymap.h"
 #include <deque>
+#include <algorithm>
 
 namespace Algora {
 

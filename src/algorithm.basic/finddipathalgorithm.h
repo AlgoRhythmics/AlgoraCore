@@ -27,7 +27,6 @@
 #include "algorithm/valuecomputingalgorithm.h"
 
 #include <vector>
-#include <algorithm>
 
 namespace Algora {
 
@@ -37,6 +36,9 @@ class Arc;
 class FindDiPathAlgorithm : public ValueComputingAlgorithm<bool>
 {
 public:
+    typedef std::vector<Vertex*>::const_iterator VertexIterator;
+    typedef std::vector<Arc*>::const_iterator ArcIterator;
+
     FindDiPathAlgorithm(bool constructPath = true);
     virtual ~FindDiPathAlgorithm();
 
@@ -52,13 +54,28 @@ public:
         to = t;
     }
 
-    template<typename Container>
-    void getVerticesOnDiPath(Container &c) {
-        std::copy (vertexPath.cbegin(), vertexPath.cend(), std::back_inserter(c));
+    ArcIterator begin() const {
+        return arcsOnPathBegin();
     }
-    template<typename Container>
-    void getArcsOnDiPath(Container &c) {
-        std::copy(arcPath.cbegin(), arcPath.cend(), std::back_inserter(c));
+
+    ArcIterator end() const {
+        return arcsOnPathEnd();
+    }
+
+    VertexIterator verticesOnPathBegin() const {
+        return vertexPath.cbegin();
+    }
+
+    VertexIterator verticesOnPathEnd() const {
+        return vertexPath.cend();
+    }
+
+    ArcIterator arcsOnPathBegin() const {
+        return arcPath.cbegin();
+    }
+
+    ArcIterator arcsOnPathEnd() const {
+        return arcPath.cend();
     }
 
     // DiGraphAlgorithm interface
