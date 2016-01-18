@@ -7,7 +7,8 @@ HEADERS += \
     $$PWD/arc.h \
     $$PWD/parallelarcsbundle.h \
     $$PWD/graph.h \
-    $$PWD/subdigraph.h
+    $$PWD/subdigraph.h \
+    $$PWD/superdigraph.h
 
 SOURCES += \
     $$PWD/digraph.cpp \
@@ -16,4 +17,5 @@ SOURCES += \
     $$PWD/graphartifact.cpp \
     $$PWD/parallelarcsbundle.cpp \
     $$PWD/subdigraph.cpp \
-    $$PWD/graph.cpp
+    $$PWD/graph.cpp \
+    $$PWD/superdigraph.cpp
