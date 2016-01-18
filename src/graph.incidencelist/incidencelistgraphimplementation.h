@@ -21,8 +21,8 @@
  */
 
 
-#ifndef INCIDENCELISTGRAPHIMPL_H
-#define INCIDENCELISTGRAPHIMPL_H
+#ifndef INCIDENCELISTGRAPHIMPLEMENTATION_H
+#define INCIDENCELISTGRAPHIMPLEMENTATION_H
 
 #include "incidencelistgraph.h"
 #include <vector>
@@ -33,11 +33,11 @@ class IncidenceListVertex;
 
 typedef typename std::vector<IncidenceListVertex*> VertexList;
 
-class IncidenceListGraph::CheshireCat {
+class IncidenceListGraphImplementation {
 
 public:
-    explicit CheshireCat();
-    ~CheshireCat();
+    explicit IncidenceListGraphImplementation(Graph *handle);
+    ~IncidenceListGraphImplementation();
 
     void addVertex(IncidenceListVertex *vertex);
     void removeVertex(IncidenceListVertex *v);
@@ -61,7 +61,10 @@ public:
     int getSize() const;
     void bundleParallelArcs();
 
+    IncidenceListVertex *createIncidenceListVertex() const;
+
 private:
+    Graph *graph;
     VertexList vertices;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
@@ -69,5 +72,5 @@ private:
 
 }
 
-#endif // INCIDENCELISTGRAPHIMPL_H
+#endif // INCIDENCELISTGRAPHIMPLEMENTATION_H
 

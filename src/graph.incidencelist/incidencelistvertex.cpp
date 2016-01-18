@@ -47,8 +47,8 @@ public:
     ArcList incomingArcs;
 };
 
-IncidenceListVertex::IncidenceListVertex(IncidenceListGraph *graph)
-    : Vertex(graph), grin(new CheshireCat)
+IncidenceListVertex::IncidenceListVertex(GraphArtifact *parent)
+    : Vertex(parent), grin(new CheshireCat)
 {
 
 }

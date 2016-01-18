@@ -38,8 +38,8 @@ public:
 int GraphArtifact::CheshireCat::nextId = 0;
 
 GraphArtifact::GraphArtifact(GraphArtifact *parent)
+    : grin(new CheshireCat(parent))
 {
-    grin = new CheshireCat(parent);
 }
 
 GraphArtifact::~GraphArtifact()

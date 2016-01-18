@@ -26,7 +26,7 @@
 #include "graph/arc.h"
 #include "graph/parallelarcsbundle.h"
 
-#include "incidencelistgraphimpl.h"
+#include "incidencelistgraphimplementation.h"
 
 #include <stdexcept>
 
@@ -36,21 +36,22 @@ const IncidenceListVertex *castVertex(const Vertex *v, const IncidenceListGraph 
 IncidenceListVertex *castVertex(Vertex *v, const IncidenceListGraph *graph);
 void checkVertex(const Vertex *v, const IncidenceListGraph *graph);
 
+
 IncidenceListGraph::IncidenceListGraph(GraphArtifact *parent)
-    : DiGraph(parent), grin(new CheshireCat)
+    : DiGraph(parent), impl(new IncidenceListGraphImplementation(this))
 {
 
 }
 
 IncidenceListGraph::~IncidenceListGraph()
 {
-    delete grin;
+    delete impl;
 }
 
 Vertex *IncidenceListGraph::addVertex()
 {
     auto v = createIncidenceListVertex();
-    grin->addVertex(v);
+    impl->addVertex(v);
     return v;
 }
 
@@ -58,7 +59,7 @@ void IncidenceListGraph::removeVertex(Vertex *v)
 {
     auto vertex = castVertex(v, this);
 
-    grin->removeVertex(vertex);
+    impl->removeVertex(vertex);
 }
 
 bool IncidenceListGraph::containsVertex(Vertex *v) const
@@ -73,17 +74,17 @@ bool IncidenceListGraph::containsVertex(Vertex *v) const
         return false;
     }
 
-    return grin->containsVertex(vertex);
+    return impl->containsVertex(vertex);
 }
 
 Vertex *IncidenceListGraph::getAnyVertex() const
 {
-    return grin->getFirstVertex();
+    return impl->getFirstVertex();
 }
 
 void IncidenceListGraph::visitVerticesUntil(VertexVisitorFunc vvFun, VertexPredicate breakCondition)
 {
-    grin->visitVertices(vvFun, breakCondition);
+    impl->visitVertices(vvFun, breakCondition);
 }
 
 Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
@@ -93,7 +94,7 @@ Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
 
     Arc *a = createArc(t, h);
 
-    grin->addArc(a, t, h);
+    impl->addArc(a, t, h);
     return a;
 }
 
@@ -107,7 +108,7 @@ void IncidenceListGraph::removeArc(Arc *a)
     auto tail = castVertex(a->getTail(), this);
     auto head = castVertex(a->getHead(), this);
 
-    grin->removeArc(a, tail, head);
+    impl->removeArc(a, tail, head);
 }
 
 bool IncidenceListGraph::containsArc(Arc *a) const
@@ -121,56 +122,56 @@ bool IncidenceListGraph::containsArc(Arc *a) const
         return false;
     }
 
-    return grin->containsArc(a, tail);
+    return impl->containsArc(a, tail);
 }
 
 int IncidenceListGraph::getOutDegree(const Vertex *v) const
 {
     auto vertex = castVertex(v, this);
-    return grin->getOutDegree(vertex);
+    return impl->getOutDegree(vertex);
 }
 
 int IncidenceListGraph::getInDegree(const Vertex *v) const
 {
     auto vertex = castVertex(v, this);
-    return grin->getInDegree(vertex);
+    return impl->getInDegree(vertex);
 }
 
 void IncidenceListGraph::visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
-    grin->visitArcs(avFun, breakCondition);
+    impl->visitArcs(avFun, breakCondition);
 }
 
 void IncidenceListGraph::visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
     auto vertex = castVertex(v, this);
-    grin->visitOutgoingArcs(vertex, avFun, breakCondition);
+    impl->visitOutgoingArcs(vertex, avFun, breakCondition);
 }
 
 void IncidenceListGraph::visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
     auto vertex = castVertex(v, this);
-    grin->visitIncomingArcs(vertex, avFun, breakCondition);
+    impl->visitIncomingArcs(vertex, avFun, breakCondition);
 }
 
 bool IncidenceListGraph::isEmpty() const
 {
-    return grin->isEmpty();
+    return impl->isEmpty();
 }
 
 int IncidenceListGraph::getSize() const
 {
-    return grin->getSize();
+    return impl->getSize();
 }
 
 void IncidenceListGraph::bundleParallelArcs()
 {
-    grin->bundleParallelArcs();
+    impl->bundleParallelArcs();
 }
 
 IncidenceListVertex *IncidenceListGraph::createIncidenceListVertex()
 {
-    return new IncidenceListVertex(this);
+    return impl->createIncidenceListVertex();
 }
 
 const IncidenceListVertex *castVertex(const Vertex *v, const IncidenceListGraph *graph) {

@@ -36,6 +36,7 @@ class ArcVisitor;
 class IncidenceListVertex : public Vertex
 {
     friend class IncidenceListGraph;
+    friend class IncidenceListGraphImplementation;
 
 public:
     virtual bool hasOutgoingArc(Arc *a) const;
@@ -50,7 +51,7 @@ public:
     int getInDegree() const;
 
 protected:
-    explicit IncidenceListVertex(IncidenceListGraph *graph = 0);
+    explicit IncidenceListVertex(GraphArtifact *parent = 0);
     virtual ~IncidenceListVertex();
 
     virtual void addOutgoingArc(Arc *a);

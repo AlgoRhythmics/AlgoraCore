@@ -29,6 +29,7 @@
 namespace Algora {
 
 class IncidenceListVertex;
+class IncidenceListGraphImplementation;
 
 class IncidenceListGraph : public DiGraph
 {
@@ -68,8 +69,7 @@ protected:
     IncidenceListVertex *createIncidenceListVertex();
 
 private:
-    class CheshireCat;
-    CheshireCat *grin;  
+    IncidenceListGraphImplementation *impl;
 };
 
 }

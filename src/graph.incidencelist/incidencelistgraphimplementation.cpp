@@ -20,7 +20,7 @@
  *   http://algora.xaikal.org
  */
 
-#include "incidencelistgraphimpl.h"
+#include "incidencelistgraphimplementation.h"
 
 #include "incidencelistvertex.h"
 
@@ -37,12 +37,13 @@
 
 namespace Algora {
 
-IncidenceListGraph::CheshireCat::CheshireCat()
+IncidenceListGraphImplementation::IncidenceListGraphImplementation(Graph *handle)
+    : graph(handle)
 {
 
 }
 
-IncidenceListGraph::CheshireCat::~CheshireCat()
+IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
 {
     for (IncidenceListVertex *v : vertices) {
         v->visitOutgoingArcs([](Arc *a) { delete a; });
@@ -53,12 +54,12 @@ IncidenceListGraph::CheshireCat::~CheshireCat()
     vertices.clear();
 }
 
-void IncidenceListGraph::CheshireCat::addVertex(IncidenceListVertex *vertex)
+void IncidenceListGraphImplementation::addVertex(IncidenceListVertex *vertex)
 {
     vertices.push_back(vertex);
 }
 
-void IncidenceListGraph::CheshireCat::removeVertex(IncidenceListVertex *v)
+void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
 {
     v->visitOutgoingArcs([](Arc *a) {
         IncidenceListVertex *head = dynamic_cast<IncidenceListVertex*>(a->getHead());
@@ -76,12 +77,12 @@ void IncidenceListGraph::CheshireCat::removeVertex(IncidenceListVertex *v)
     delete v;
 }
 
-bool IncidenceListGraph::CheshireCat::containsVertex(IncidenceListVertex *v) const
+bool IncidenceListGraphImplementation::containsVertex(IncidenceListVertex *v) const
 {
     return std::find(vertices.cbegin(), vertices.cend(), v) != vertices.cend();
 }
 
-IncidenceListVertex *IncidenceListGraph::CheshireCat::getFirstVertex() const
+IncidenceListVertex *IncidenceListGraphImplementation::getFirstVertex() const
 {
     if (vertices.empty()) {
         return 0;
@@ -89,35 +90,35 @@ IncidenceListVertex *IncidenceListGraph::CheshireCat::getFirstVertex() const
     return vertices.at(0);
 }
 
-void IncidenceListGraph::CheshireCat::addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
+void IncidenceListGraphImplementation::addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     tail->addOutgoingArc(a);
     head->addIncomingArc(a);
 }
 
-void IncidenceListGraph::CheshireCat::removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
+void IncidenceListGraphImplementation::removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     tail->removeOutgoingArc(a);
     head->removeIncomingArc(a);
     delete a;
 }
 
-bool IncidenceListGraph::CheshireCat::containsArc(Arc *a, IncidenceListVertex *tail) const
+bool IncidenceListGraphImplementation::containsArc(Arc *a, IncidenceListVertex *tail) const
 {
     return tail->hasOutgoingArc(a);
 }
 
-int IncidenceListGraph::CheshireCat::getOutDegree(const IncidenceListVertex *v) const
+int IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v) const
 {
     return v->getOutDegree();
 }
 
-int IncidenceListGraph::CheshireCat::getInDegree(const IncidenceListVertex *v) const
+int IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v) const
 {
     return v->getInDegree();
 }
 
-void IncidenceListGraph::CheshireCat::visitVertices(VertexVisitorFunc vvFun, VertexPredicate breakCondition)
+void IncidenceListGraphImplementation::visitVertices(VertexVisitorFunc vvFun, VertexPredicate breakCondition)
 {
     for (Vertex *v : vertices) {
         if (breakCondition(v)) {
@@ -127,7 +128,7 @@ void IncidenceListGraph::CheshireCat::visitVertices(VertexVisitorFunc vvFun, Ver
     }
 }
 
-void IncidenceListGraph::CheshireCat::visitArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void IncidenceListGraphImplementation::visitArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
     for (IncidenceListVertex *v : vertices) {
         if (!v->visitOutgoingArcs(avFun, breakCondition)) {
@@ -136,27 +137,29 @@ void IncidenceListGraph::CheshireCat::visitArcs(ArcVisitorFunc avFun, ArcPredica
     }
 }
 
-void IncidenceListGraph::CheshireCat::visitOutgoingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void IncidenceListGraphImplementation::visitOutgoingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun,
+                                                         ArcPredicate breakCondition)
 {
     v->visitOutgoingArcs(avFun, breakCondition);
 }
 
-void IncidenceListGraph::CheshireCat::visitIncomingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void IncidenceListGraphImplementation::visitIncomingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun,
+                                                         ArcPredicate breakCondition)
 {
     v->visitIncomingArcs(avFun, breakCondition);
 }
 
-bool IncidenceListGraph::CheshireCat::isEmpty() const
+bool IncidenceListGraphImplementation::isEmpty() const
 {
     return vertices.empty();
 }
 
-int IncidenceListGraph::CheshireCat::getSize() const
+int IncidenceListGraphImplementation::getSize() const
 {
     return vertices.size();
 }
 
-void IncidenceListGraph::CheshireCat::bundleParallelArcs()
+void IncidenceListGraphImplementation::bundleParallelArcs()
 {
     for (IncidenceListVertex *vertex : vertices) {
         vertex->clearIncomingArcs();
@@ -167,7 +170,12 @@ void IncidenceListGraph::CheshireCat::bundleParallelArcs()
     }
 }
 
-void IncidenceListGraph::CheshireCat::bundleOutgoingArcs(IncidenceListVertex *vertex)
+IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex() const
+{
+    return new IncidenceListVertex(graph);
+}
+
+void IncidenceListGraphImplementation::bundleOutgoingArcs(IncidenceListVertex *vertex)
 {
     std::vector<Arc*> outArcs;
     CollectArcsVisitor collector(&outArcs);
