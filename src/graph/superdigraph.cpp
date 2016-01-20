@@ -26,12 +26,31 @@
 #include "graph.incidencelist/incidencelistgraphimplementation.h"
 #include "graph.incidencelist/incidencelistvertex.h"
 
+#include <unordered_map>
+
 namespace Algora {
+
+IncidenceListVertex *findVertex(Vertex *v,
+                                std::unordered_map<const Vertex *, IncidenceListVertex *> &map,
+                                const DiGraph *graph);
+const IncidenceListVertex *findVertex(const Vertex *v,
+                                std::unordered_map<const Vertex *, IncidenceListVertex *> &map,
+                                const DiGraph *graph);
+IncidenceListVertex *findOrCreateVertex(Vertex *v,
+                                  std::unordered_map<const Vertex *, IncidenceListVertex *> &map,
+                                  IncidenceListGraphImplementation *impl, const DiGraph *graph);
+
+class DummyVertex : public IncidenceListVertex {
+public:
+    DummyVertex() : IncidenceListVertex(0) { }
+    virtual ~DummyVertex() { }
+};
 
 class SuperDiGraph::CheshireCat {
 public:
     DiGraph *subGraph;
     IncidenceListGraphImplementation *extra;
+    std::unordered_map<const Vertex*,IncidenceListVertex*> map;
 
     CheshireCat(DiGraph *subGraph) : subGraph(subGraph) { }
     ~CheshireCat() { delete extra; }
@@ -45,6 +64,9 @@ SuperDiGraph::SuperDiGraph(DiGraph *graph)
 
 SuperDiGraph::~SuperDiGraph()
 {
+    grin->extra->visitArcs([&](Arc *a) {
+        removeArc(a);
+    }, arcFalse);
     delete grin;
 }
 
@@ -92,7 +114,11 @@ Vertex *SuperDiGraph::getAnyVertex() const
 
 void SuperDiGraph::visitVerticesUntil(VertexVisitorFunc vvFun, VertexPredicate breakCondition)
 {
-    grin->extra->visitVertices(vvFun, breakCondition);
+    grin->extra->visitVertices([&](Vertex *v) {
+        if (!dynamic_cast<DummyVertex*>(v)) {
+            vvFun(v);
+        }
+    }, breakCondition);
     grin->subGraph->visitVerticesUntil(vvFun, breakCondition);
 }
 
@@ -103,18 +129,15 @@ bool SuperDiGraph::isEmpty() const
 
 int SuperDiGraph::getSize() const
 {
-    return grin->extra->getSize() + grin->subGraph->getSize();
+    return grin->extra->getSize() + grin->subGraph->getSize() - grin->map.size();
 }
 
 Arc *SuperDiGraph::addArc(Vertex *tail, Vertex *head)
 {
-    auto t = dynamic_cast<IncidenceListVertex*>(tail);
-    auto h = dynamic_cast<IncidenceListVertex*>(head);
-    if (!t || !h) {
-        throw std::invalid_argument("Vertex is not a part of this graph.");
-    }
+    IncidenceListVertex *t = findOrCreateVertex(tail, grin->map, grin->extra, this);
+    IncidenceListVertex *h = findOrCreateVertex(head, grin->map, grin->extra, this);
 
-    Arc *a = createArc(t, h);
+    Arc *a = createArc(tail, head);
     grin->extra->addArc(a, t, h);
     return a;
 }
@@ -124,11 +147,13 @@ void SuperDiGraph::removeArc(Arc *a)
     if (a->getParent() != this) {
         grin->subGraph->removeArc(a);
     }
-    auto t = dynamic_cast<IncidenceListVertex*>(a->getTail());
-    auto h = dynamic_cast<IncidenceListVertex*>(a->getHead());
+    auto t = findVertex(a->getTail(), grin->map, this);
+    auto h = findVertex(a->getHead(), grin->map, this);
+
     if (!t || !h) {
-        throw std::invalid_argument("Vertex is not a part of this graph.");
+        throw std::invalid_argument("Arc is not a part of this graph.");
     }
+
     grin->extra->removeArc(a, t, h);
 }
 
@@ -138,42 +163,50 @@ bool SuperDiGraph::containsArc(Arc *a) const
         return grin->subGraph->containsArc(a);
     }
 
-    if (a->getParent() != this) {
-        return false;
-    }
+    auto tail = findVertex(a->getTail(), grin->map, this);
 
-    auto tail = dynamic_cast<IncidenceListVertex*>(a->getTail());
     if (!tail) {
         return false;
     }
-
     return grin->extra->containsArc(a, tail);
 }
 
 int SuperDiGraph::getOutDegree(const Vertex *v) const
 {
-    if (v->getParent() != this) {
-        return grin->subGraph->getOutDegree(v);
+    const IncidenceListVertex *vertex;
+    if (v->getParent() == this) {
+        vertex = dynamic_cast<const IncidenceListVertex*>(v);
+        if (!vertex) {
+            throw std::invalid_argument("Vertex is not a part of this graph.");
+        }
+        return grin->extra->getOutDegree(vertex);
     }
 
-    auto vertex = dynamic_cast<const IncidenceListVertex*>(v);
-    if (!vertex) {
-        throw std::invalid_argument("Vertex is not a part of this graph.");
+    vertex = findVertex(v, grin->map, this);
+    if (vertex) {
+        return grin->extra->getOutDegree(vertex) + grin->subGraph->getOutDegree(v);
     }
-    return grin->extra->getOutDegree(vertex);
+
+    return grin->subGraph->getOutDegree(v);
 }
 
 int SuperDiGraph::getInDegree(const Vertex *v) const
 {
-    if (v->getParent() != this) {
-        return grin->subGraph->getInDegree(v);
+    const IncidenceListVertex *vertex;
+    if (v->getParent() == this) {
+        vertex = dynamic_cast<const IncidenceListVertex*>(v);
+        if (!vertex) {
+            throw std::invalid_argument("Vertex is not a part of this graph.");
+        }
+        return grin->extra->getInDegree(vertex);
     }
 
-    auto vertex = dynamic_cast<const IncidenceListVertex*>(v);
-    if (!vertex) {
-        throw std::invalid_argument("Vertex is not a part of this graph.");
+    vertex = findVertex(v, grin->map, this);
+    if (vertex) {
+        return grin->extra->getInDegree(vertex) + grin->subGraph->getInDegree(v);
     }
-    return grin->extra->getInDegree(vertex);
+
+    return grin->subGraph->getInDegree(v);
 }
 
 void SuperDiGraph::visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondition)
@@ -184,22 +217,86 @@ void SuperDiGraph::visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondit
 
 void SuperDiGraph::visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
-    auto vertex = dynamic_cast<const IncidenceListVertex*>(v);
-    if (!vertex) {
-        throw std::invalid_argument("Vertex is not a part of this graph.");
+    const IncidenceListVertex *vertex;
+    if (v->getParent() == this) {
+        vertex = dynamic_cast<const IncidenceListVertex*>(v);
+        if (!vertex) {
+            throw std::invalid_argument("Vertex is not a part of this graph.");
+        }
+        grin->extra->visitOutgoingArcs(vertex, avFun, breakCondition);
+    } else {
+        vertex = findVertex(v, grin->map, this);
+        if (vertex) {
+            grin->extra->visitOutgoingArcs(vertex, avFun, breakCondition);
+        }
+        grin->subGraph->visitOutgoingArcsUntil(v, avFun, breakCondition);
     }
-    grin->extra->visitOutgoingArcs(vertex, avFun, breakCondition);
-    grin->subGraph->visitOutgoingArcsUntil(v, avFun, breakCondition);
 }
 
 void SuperDiGraph::visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
-    auto vertex = dynamic_cast<const IncidenceListVertex*>(v);
-    if (!vertex) {
-        throw std::invalid_argument("Vertex is not a part of this graph.");
+    const IncidenceListVertex *vertex;
+    if (v->getParent() == this) {
+        vertex = dynamic_cast<const IncidenceListVertex*>(v);
+        if (!vertex) {
+            throw std::invalid_argument("Vertex is not a part of this graph.");
+        }
+        grin->extra->visitIncomingArcs(vertex, avFun, breakCondition);
+    } else {
+        vertex = findVertex(v, grin->map, this);
+        if (vertex) {
+            grin->extra->visitIncomingArcs(vertex, avFun, breakCondition);
+        }
+        grin->subGraph->visitIncomingArcsUntil(v, avFun, breakCondition);
     }
-    grin->extra->visitIncomingArcs(vertex, avFun, breakCondition);
-    grin->subGraph->visitIncomingArcsUntil(v, avFun, breakCondition);
+}
+
+IncidenceListVertex *findVertex(Vertex *v, std::unordered_map<const Vertex *, IncidenceListVertex *> &map,
+                                const DiGraph *graph) {
+    if (v->getParent() == graph) {
+        auto vertex = dynamic_cast<IncidenceListVertex*>(v);
+        if (!vertex) {
+            throw std::invalid_argument("Vertex is not a part of this graph.");
+        }
+        return vertex;
+    }
+
+    if (map.count(v) > 0) {
+        return map.at(v);
+    }
+
+    return 0;
+}
+
+const IncidenceListVertex *findVertex(const Vertex *v, std::unordered_map<const Vertex *, IncidenceListVertex *> &map,
+                                const DiGraph *graph) {
+    if (v->getParent() == graph) {
+        auto vertex = dynamic_cast<const IncidenceListVertex*>(v);
+        if (!vertex) {
+            throw std::invalid_argument("Vertex is not a part of this graph.");
+        }
+        return vertex;
+    }
+
+    if (map.count(v) > 0) {
+        return map.at(v);
+    }
+
+    return 0;
+}
+
+IncidenceListVertex *findOrCreateVertex(Vertex *v,
+                                  std::unordered_map<const Vertex*,IncidenceListVertex*> &map,
+                                  IncidenceListGraphImplementation *impl, const DiGraph *graph) {
+    IncidenceListVertex *vertex = findVertex(v, map, graph);
+    if (vertex) {
+        return vertex;
+    }
+
+    vertex = new DummyVertex();
+    impl->addVertex(vertex);
+    map[v] = vertex;
+    return vertex;
 }
 
 }
