@@ -38,11 +38,11 @@ const IncidenceListVertex *findVertex(const Vertex *v,
                                 const DiGraph *graph);
 IncidenceListVertex *findOrCreateVertex(Vertex *v,
                                   std::unordered_map<const Vertex *, IncidenceListVertex *> &map,
-                                  IncidenceListGraphImplementation *impl, const DiGraph *graph);
+                                  IncidenceListGraphImplementation *impl, SuperDiGraph *graph);
 
 class DummyVertex : public IncidenceListVertex {
 public:
-    DummyVertex() : IncidenceListVertex(0) { }
+    DummyVertex(SuperDiGraph *g) : IncidenceListVertex(g) { }
     virtual ~DummyVertex() { }
 };
 
@@ -79,28 +79,32 @@ Vertex *SuperDiGraph::addVertex()
 
 void SuperDiGraph::removeVertex(Vertex *v)
 {
-    auto vertex = dynamic_cast<IncidenceListVertex*>(v);
-    if (!vertex) {
-        throw std::invalid_argument("Vertex is not a part of this graph.");
-    }
-    if (vertex->getParent() == this) {
+    if (v->getParent() == this) {
+        auto vertex = dynamic_cast<IncidenceListVertex*>(v);
+        if (!vertex) {
+            throw std::invalid_argument("Vertex is not a part of this graph.");
+        }
         grin->extra->removeVertex(vertex);
     } else {
         grin->subGraph->removeVertex(v);
+        auto i = grin->map.find(v);
+        if (i != grin->map.end()) {
+            grin->extra->removeVertex(i->second);
+            grin->map.erase(i);
+        }
     }
 }
 
 bool SuperDiGraph::containsVertex(Vertex *v) const
 {
+    if (v->getParent() != this) {
+        return grin->subGraph->containsVertex(v);
+    }
     auto vertex = dynamic_cast<IncidenceListVertex*>(v);
     if (!vertex) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
-    if (vertex->getParent() == this) {
-        return grin->extra->containsVertex(vertex);
-    } else {
-        return grin->subGraph->containsVertex(vertex);
-    }
+    return grin->extra->containsVertex(vertex);
 }
 
 Vertex *SuperDiGraph::getAnyVertex() const
@@ -287,13 +291,13 @@ const IncidenceListVertex *findVertex(const Vertex *v, std::unordered_map<const 
 
 IncidenceListVertex *findOrCreateVertex(Vertex *v,
                                   std::unordered_map<const Vertex*,IncidenceListVertex*> &map,
-                                  IncidenceListGraphImplementation *impl, const DiGraph *graph) {
+                                  IncidenceListGraphImplementation *impl, SuperDiGraph *graph) {
     IncidenceListVertex *vertex = findVertex(v, map, graph);
     if (vertex) {
         return vertex;
     }
 
-    vertex = new DummyVertex();
+    vertex = new DummyVertex(graph);
     impl->addVertex(vertex);
     map[v] = vertex;
     return vertex;
