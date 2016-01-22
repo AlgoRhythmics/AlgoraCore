@@ -45,14 +45,19 @@ SubDiGraph::~SubDiGraph()
 
 Vertex *SubDiGraph::addVertex()
 {
-    return superGraph->addVertex();
+    Vertex *v = superGraph->addVertex();
+    if (!inSubGraph(v)) {
+        superGraph->removeVertex(v);
+        throw std::logic_error("Added vertex will not part of this graph.");
+    }
+    return v;
 }
 
 void SubDiGraph::removeVertex(Vertex *v)
 {
-    /*if (!containsVertex(v)) {
+    if (!inSubGraph(v)) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
-    }*/
+    }
     superGraph->removeVertex(v);
 }
 
@@ -107,11 +112,24 @@ int SubDiGraph::getSize() const
 
 Arc *SubDiGraph::addArc(Vertex *tail, Vertex *head)
 {
-    return superGraph->addArc(tail, head);
+    if (!inSubGraph(tail) || !inSubGraph(head)) {
+        throw std::invalid_argument("Vertex is not a part of this graph.");
+    }
+    Arc *a = superGraph->addArc(tail, head);
+    if (!inSubGraph(a)) {
+        superGraph->removeArc(a);
+        throw std::logic_error("Added arc will not part of this graph.");
+    }
+    return a;
 }
 
 void SubDiGraph::removeArc(Arc *a)
 {
+    if (! (inSubGraph(a)
+                && inSubGraph(a->getTail())
+                && inSubGraph(a->getHead()))) {
+        throw std::invalid_argument("Arc is not a part of this graph.");
+    }
     superGraph->removeArc(a);
 }
 
@@ -125,6 +143,9 @@ bool Algora::SubDiGraph::containsArc(Arc *a) const
 
 int SubDiGraph::getOutDegree(const Vertex *v) const
 {
+    if (!inSubGraph(v)) {
+        throw std::invalid_argument("Vertex is not a part of this graph.");
+    }
     int out = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
     me->visitOutgoingArcs(v, [&out](Arc *) { out++;});
@@ -133,6 +154,9 @@ int SubDiGraph::getOutDegree(const Vertex *v) const
 
 int SubDiGraph::getInDegree(const Vertex *v) const
 {
+    if (!inSubGraph(v)) {
+        throw std::invalid_argument("Vertex is not a part of this graph.");
+    }
     int in = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
     me->visitIncomingArcs(v, [&in](Arc *) { in++; });
@@ -150,6 +174,9 @@ void SubDiGraph::visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakConditio
 
 void SubDiGraph::visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
+    if (!inSubGraph(v)) {
+        throw std::invalid_argument("Vertex is not a part of this graph.");
+    }
     superGraph->visitOutgoingArcsUntil(v, [&](Arc *a) {
         if (inSubGraph(a) && inSubGraph(a->getTail()) && inSubGraph(a->getHead())) {
             avFun(a);
@@ -159,6 +186,9 @@ void SubDiGraph::visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, A
 
 void SubDiGraph::visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
 {
+    if (!inSubGraph(v)) {
+        throw std::invalid_argument("Vertex is not a part of this graph.");
+    }
     superGraph->visitIncomingArcsUntil(v, [&](Arc *a) {
         if (inSubGraph(a) && inSubGraph(a->getTail()) && inSubGraph(a->getHead())) {
             avFun(a);
