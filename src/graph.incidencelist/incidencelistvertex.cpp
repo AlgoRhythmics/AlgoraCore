@@ -43,6 +43,7 @@ bool isBundledArc(ArcList &list, Arc *arc);
 
 class IncidenceListVertex::CheshireCat {
 public:
+    bool checkConsisteny;
     ArcList outgoingArcs;
     ArcList incomingArcs;
 };
@@ -50,7 +51,7 @@ public:
 IncidenceListVertex::IncidenceListVertex(GraphArtifact *parent)
     : Vertex(parent), grin(new CheshireCat)
 {
-
+    grin->checkConsisteny = true;
 }
 
 IncidenceListVertex::~IncidenceListVertex()
@@ -65,7 +66,7 @@ int IncidenceListVertex::getOutDegree() const
 
 void IncidenceListVertex::addOutgoingArc(Arc *a)
 {
-    if (a->getTail() != this) {
+    if (grin->checkConsisteny && a->getTail() != this) {
         throw std::invalid_argument("Arc has other tail.");
     }
     grin->outgoingArcs.push_back(a);
@@ -73,7 +74,7 @@ void IncidenceListVertex::addOutgoingArc(Arc *a)
 
 void IncidenceListVertex::removeOutgoingArc(Arc *a)
 {
-    if (a->getTail() != this) {
+    if (grin->checkConsisteny && a->getTail() != this) {
         throw std::invalid_argument("Arc has other tail.");
     }
     if (!removeArcFromList(grin->outgoingArcs, a)) {
@@ -93,7 +94,7 @@ int IncidenceListVertex::getInDegree() const
 
 void IncidenceListVertex::addIncomingArc(Arc *a)
 {
-    if (a->getHead() != this) {
+    if (grin->checkConsisteny && a->getHead() != this) {
         throw std::invalid_argument("Arc has other head.");
     }
     grin->incomingArcs.push_back(a);
@@ -101,7 +102,7 @@ void IncidenceListVertex::addIncomingArc(Arc *a)
 
 void IncidenceListVertex::removeIncomingArc(Arc *a)
 {
-    if (a->getHead() != this) {
+    if (grin->checkConsisteny && a->getHead() != this) {
         throw std::invalid_argument("Arc has other head.");
     }
     if (!removeArcFromList(grin->incomingArcs, a)) {
@@ -112,6 +113,11 @@ void IncidenceListVertex::removeIncomingArc(Arc *a)
 void IncidenceListVertex::clearIncomingArcs()
 {
     grin->incomingArcs.clear();
+}
+
+void IncidenceListVertex::enableConsistencyCheck(bool enable)
+{
+    grin->checkConsisteny = enable;
 }
 
 bool IncidenceListVertex::hasOutgoingArc(Arc *a) const

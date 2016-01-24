@@ -62,6 +62,8 @@ protected:
     virtual void removeIncomingArc(Arc *a);
     virtual void clearIncomingArcs();
 
+    virtual void enableConsistencyCheck(bool enable);
+
 private:
     class CheshireCat;
     CheshireCat *grin;
