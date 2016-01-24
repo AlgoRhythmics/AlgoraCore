@@ -150,6 +150,7 @@ void SuperDiGraph::removeArc(Arc *a)
 {
     if (a->getParent() != this) {
         grin->subGraph->removeArc(a);
+        return;
     }
     auto t = findVertex(a->getTail(), grin->map, this);
     auto h = findVertex(a->getHead(), grin->map, this);
