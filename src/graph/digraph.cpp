@@ -34,6 +34,14 @@ DiGraph::DiGraph(GraphArtifact *parent)
 
 }
 
+int DiGraph::getNumArcs() const
+{
+    DiGraph *me = const_cast<DiGraph*>(this);
+    int numArcs = 0;
+    me->visitArcs([&](Arc *) { numArcs++; });
+    return numArcs;
+}
+
 std::string DiGraph::toString() const
 {
     std::ostringstream strStream;

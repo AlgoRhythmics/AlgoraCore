@@ -46,6 +46,7 @@ public:
 
     virtual int getOutDegree(const Vertex *v) const = 0;
     virtual int getInDegree(const Vertex *v) const = 0;
+    virtual int getNumArcs() const;
 
     // Accomodate visitors
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) {
