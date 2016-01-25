@@ -30,6 +30,8 @@
 #include "graph.visitor/vertexvisitor.h"
 #include "graph.visitor/visitorfunctions.h"
 
+#include <vector>
+
 namespace Algora {
 
 class Vertex;
@@ -47,6 +49,9 @@ public:
     virtual bool containsVertex(Vertex *v) const = 0;
     virtual Vertex *getAnyVertex() const = 0;
 
+    virtual void onVertexAdd(VertexVisitorFunc vvFun) { vertexGreetings.push_back(vvFun); }
+    virtual void onVertexRemove(VertexVisitorFunc vvFun) { vertexFarewells.push_back(vvFun); }
+
     // Accomodate visitors
     virtual void acceptVertexVisitor(VertexVisitor *nVisitor) {
         visitVertices(nVisitor->getVisitorFunction());
@@ -61,6 +66,16 @@ public:
     virtual int getSize() const = 0;
 
 protected:
+   std::vector<VertexVisitorFunc> vertexGreetings;
+   std::vector<VertexVisitorFunc> vertexFarewells;
+
+   virtual void greetVertex(Vertex *v) {
+       for (const VertexVisitorFunc &f : vertexGreetings) { f(v); }
+   }
+   virtual void dismissVertex(Vertex *v) {
+       for (const VertexVisitorFunc &f : vertexFarewells) { f(v); }
+   }
+
     Vertex *createVertex() {
         return new Vertex(this);
     }

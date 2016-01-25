@@ -48,6 +48,9 @@ public:
     virtual int getInDegree(const Vertex *v) const = 0;
     virtual int getNumArcs() const;
 
+    virtual void onArcAdd(ArcVisitorFunc avFun) { arcGreetings.push_back(avFun); }
+    virtual void onArcRemove(ArcVisitorFunc avFun) { arcFarewells.push_back(avFun); }
+
     // Accomodate visitors
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) {
         visitArcs(aVisitor->getVisitorFunction());
@@ -73,6 +76,16 @@ public:
     virtual std::string toString() const override;
 
 protected:
+   std::vector<ArcVisitorFunc> arcGreetings;
+   std::vector<ArcVisitorFunc> arcFarewells;
+
+   virtual void greetArc(Arc *a) {
+       for (const ArcVisitorFunc &f : arcGreetings) { f(a); }
+   }
+   virtual void dismissArc(Arc *a) {
+       for (const ArcVisitorFunc &f : arcFarewells) { f(a); }
+   }
+
     Arc *createArc(Vertex *tail, Vertex *head) {
         return new Arc(tail, head, this);
     }
