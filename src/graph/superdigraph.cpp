@@ -60,6 +60,26 @@ SuperDiGraph::SuperDiGraph(DiGraph *graph)
     : grin(new CheshireCat(graph))
 {
     grin->extra = new IncidenceListGraphImplementation(this);
+    graph->onVertexAdd([&](Vertex *v) {
+        greetVertex(v);
+    });
+    graph->onVertexRemove([&](Vertex *v) {
+        dismissVertex(v);
+        auto i = grin->map.find(v);
+        if (i != grin->map.end()) {
+            IncidenceListVertex *vertex = i->second;
+            vertex->visitOutgoingArcs([&](Arc *a) { removeArc(a); });
+            vertex->visitIncomingArcs([&](Arc *a) { removeArc(a); });
+            grin->extra->removeVertex(vertex);
+            grin->map.erase(i);
+        }
+    });
+    graph->onArcAdd([&](Arc *a) {
+        greetArc(a);
+    });
+    graph->onArcRemove([&](Arc *a) {
+        dismissArc(a);
+    });
 }
 
 SuperDiGraph::~SuperDiGraph()
@@ -74,6 +94,7 @@ Vertex *SuperDiGraph::addVertex()
 {
     auto v = grin->extra->createIncidenceListVertex();
     grin->extra->addVertex(v);
+    greetVertex(v);
     return v;
 }
 
@@ -84,14 +105,10 @@ void SuperDiGraph::removeVertex(Vertex *v)
         if (!vertex) {
             throw std::invalid_argument("Vertex is not a part of this graph.");
         }
+        dismissVertex(vertex);
         grin->extra->removeVertex(vertex);
     } else {
         grin->subGraph->removeVertex(v);
-        auto i = grin->map.find(v);
-        if (i != grin->map.end()) {
-            grin->extra->removeVertex(i->second);
-            grin->map.erase(i);
-        }
     }
 }
 
@@ -143,6 +160,7 @@ Arc *SuperDiGraph::addArc(Vertex *tail, Vertex *head)
 
     Arc *a = createArc(tail, head);
     grin->extra->addArc(a, t, h);
+    greetArc(a);
     return a;
 }
 
@@ -158,6 +176,7 @@ void SuperDiGraph::removeArc(Arc *a)
     if (!t || !h) {
         throw std::invalid_argument("Arc is not a part of this graph.");
     }
+    dismissArc(a);
 
     grin->extra->removeArc(a, t, h);
 }

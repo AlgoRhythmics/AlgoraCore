@@ -35,7 +35,26 @@ namespace Algora {
 SubDiGraph::SubDiGraph(DiGraph *graph, Property<bool> &inherit)
     : superGraph(graph), inSubGraph(inherit)
 {
-
+    graph->onVertexAdd([&](Vertex *v) {
+        if (inSubGraph(v)) {
+          greetVertex(v);
+        }
+    });
+    graph->onVertexRemove([&](Vertex *v) {
+        if (inSubGraph(v)) {
+            dismissVertex(v);
+        }
+    });
+    graph->onArcAdd([&](Arc *a) {
+        if (inSubGraph(a) && inSubGraph(a->getTail()) && inSubGraph(a->getHead())) {
+            greetArc(a);
+        }
+    });
+    graph->onArcRemove([&](Arc *a) {
+        if (inSubGraph(a) && inSubGraph(a->getTail()) && inSubGraph(a->getHead())) {
+            dismissArc(a);
+        }
+    });
 }
 
 SubDiGraph::~SubDiGraph()

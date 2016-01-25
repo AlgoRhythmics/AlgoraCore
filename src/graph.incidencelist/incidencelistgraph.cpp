@@ -52,12 +52,21 @@ Vertex *IncidenceListGraph::addVertex()
 {
     auto v = createIncidenceListVertex();
     impl->addVertex(v);
+    greetVertex(v);
     return v;
 }
 
 void IncidenceListGraph::removeVertex(Vertex *v)
 {
     auto vertex = castVertex(v, this);
+
+    impl->visitOutgoingArcs(vertex, [&](Arc *a) {
+        removeArc(a);
+    }, arcFalse);
+    impl->visitIncomingArcs(vertex, [&](Arc *a) {
+        removeArc(a);
+    }, arcFalse);
+    dismissVertex(vertex);
 
     impl->removeVertex(vertex);
 }
@@ -95,6 +104,7 @@ Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
     Arc *a = createArc(t, h);
 
     impl->addArc(a, t, h);
+    greetArc(a);
     return a;
 }
 
@@ -108,6 +118,7 @@ void IncidenceListGraph::removeArc(Arc *a)
     auto tail = castVertex(a->getTail(), this);
     auto head = castVertex(a->getHead(), this);
 
+    dismissArc(a);
     impl->removeArc(a, tail, head);
 }
 
