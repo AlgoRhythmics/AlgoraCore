@@ -39,6 +39,7 @@ public:
     virtual ~PropertyMap() { }
 
     T getDefaultValue() const { return defaultValue; }
+    void setDefaultValue(const T &val) { defaultValue = val; }
 
     bool isSetExplicitly(const GraphArtifact *ga) const {
         return map.count(ga) > 0;
