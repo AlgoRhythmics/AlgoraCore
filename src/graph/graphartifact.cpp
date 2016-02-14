@@ -20,6 +20,7 @@
  *   http://algora.xaikal.org
  */
 
+
 #include "graphartifact.h"
 
 #include <sstream>

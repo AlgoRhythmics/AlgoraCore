@@ -20,6 +20,7 @@
  *   http://algora.xaikal.org
  */
 
+
 #include "incidencelistgraphimplementation.h"
 
 #include "incidencelistvertex.h"

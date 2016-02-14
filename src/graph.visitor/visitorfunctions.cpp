@@ -20,6 +20,7 @@
  *   http://algora.xaikal.org
  */
 
+
 #include "visitorfunctions.h"
 
 namespace Algora {
