@@ -57,7 +57,7 @@ void AdjacencyListStringWriter::processGraph(const DiGraph *graph)
     outputStream << ncGraph->getSize() << grin->format.getVertexSeparator();
 
     std::vector<Vertex*> vertices;
-    ncGraph->visitVertices([&](Vertex *v) { vertices.push_back(v); });
+    ncGraph->mapVertices([&](Vertex *v) { vertices.push_back(v); });
     PropertyMap<int> vIndex(-1);
     for (unsigned int i = 0; i < vertices.size(); i++) {
         vIndex.setValue(vertices.at(i), i);
@@ -65,14 +65,14 @@ void AdjacencyListStringWriter::processGraph(const DiGraph *graph)
 
     if (grin->format.useOutgoingArcs()) {
         for (unsigned int v = 0; v < vertices.size(); v++) {
-            ncGraph->visitOutgoingArcs(vertices.at(v), [&](Arc *a) {
+            ncGraph->mapOutgoingArcs(vertices.at(v), [&](Arc *a) {
                 outputStream << vIndex.getValue(a->getHead()) << grin->format.getArcSeparator();
             });
             outputStream << grin->format.getVertexSeparator();
         }
     } else {
         for (unsigned int v = 0; v < vertices.size(); v++) {
-            ncGraph->visitIncomingArcs(vertices.at(v), [&](Arc *a) {
+            ncGraph->mapIncomingArcs(vertices.at(v), [&](Arc *a) {
                 outputStream << vIndex.getValue(a->getTail()) << grin->format.getArcSeparator();
             });
             outputStream << grin->format.getVertexSeparator();

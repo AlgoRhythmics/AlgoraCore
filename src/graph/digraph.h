@@ -48,42 +48,42 @@ public:
     virtual int getInDegree(const Vertex *v) const = 0;
     virtual int getNumArcs() const;
 
-    virtual void onArcAdd(ArcVisitorFunc avFun) { arcGreetings.push_back(avFun); }
-    virtual void onArcRemove(ArcVisitorFunc avFun) { arcFarewells.push_back(avFun); }
+    virtual void onArcAdd(ArcMapping avFun) { arcGreetings.push_back(avFun); }
+    virtual void onArcRemove(ArcMapping avFun) { arcFarewells.push_back(avFun); }
 
     // Accomodate visitors
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) {
-        visitArcs(aVisitor->getVisitorFunction());
+        mapArcs(aVisitor->getVisitorFunction());
     }
     virtual void acceptOutgoingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) {
-        visitOutgoingArcs(v, aVisitor->getVisitorFunction());
+        mapOutgoingArcs(v, aVisitor->getVisitorFunction());
     }
     virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) {
-        visitIncomingArcs(v, aVisitor->getVisitorFunction());
+        mapIncomingArcs(v, aVisitor->getVisitorFunction());
     }
-    virtual void visitArcs(ArcVisitorFunc avFun) {
-        visitArcsUntil(avFun, arcFalse);
+    virtual void mapArcs(ArcMapping avFun) {
+        mapArcsUntil(avFun, arcFalse);
     }
-    virtual void visitOutgoingArcs(const Vertex *v, ArcVisitorFunc avFun) { visitOutgoingArcsUntil(v, avFun, arcFalse); }
-    virtual void visitIncomingArcs(const Vertex *v, ArcVisitorFunc avFun) { visitIncomingArcsUntil(v, avFun, arcFalse); }
+    virtual void mapOutgoingArcs(const Vertex *v, ArcMapping avFun) { mapOutgoingArcsUntil(v, avFun, arcFalse); }
+    virtual void mapIncomingArcs(const Vertex *v, ArcMapping avFun) { mapIncomingArcsUntil(v, avFun, arcFalse); }
 
-    virtual void visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondition) = 0;
-    virtual void visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition) = 0;
-    virtual void visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition) = 0;
+    virtual void mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition) = 0;
+    virtual void mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) = 0;
+    virtual void mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) = 0;
 
     // GraphArtifact interface
 public:
     virtual std::string toString() const override;
 
 protected:
-   std::vector<ArcVisitorFunc> arcGreetings;
-   std::vector<ArcVisitorFunc> arcFarewells;
+   std::vector<ArcMapping> arcGreetings;
+   std::vector<ArcMapping> arcFarewells;
 
    virtual void greetArc(Arc *a) {
-       for (const ArcVisitorFunc &f : arcGreetings) { f(a); }
+       for (const ArcMapping &f : arcGreetings) { f(a); }
    }
    virtual void dismissArc(Arc *a) {
-       for (const ArcVisitorFunc &f : arcFarewells) { f(a); }
+       for (const ArcMapping &f : arcFarewells) { f(a); }
    }
 
     Arc *createArc(Vertex *tail, Vertex *head) {

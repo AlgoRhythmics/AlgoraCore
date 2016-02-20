@@ -40,7 +40,7 @@ public:
     virtual void removeVertex(Vertex *v) override;
     virtual bool containsVertex(Vertex *v) const override;
     virtual Vertex *getAnyVertex() const override;
-    virtual void visitVerticesUntil(VertexVisitorFunc vvFun, VertexPredicate breakCondition) override;
+    virtual void mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition) override;
     virtual bool isEmpty() const override;
     virtual int getSize() const override;
 
@@ -51,9 +51,9 @@ public:
     virtual bool containsArc(Arc *a) const override;
     virtual int getOutDegree(const Vertex *v) const override;
     virtual int getInDegree(const Vertex *v) const override;
-    virtual void visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondition) override;
-    virtual void visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition) override;
-    virtual void visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition) override;
+    virtual void mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition) override;
+    virtual void mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) override;
+    virtual void mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) override;
 
 private:
     class CheshireCat;

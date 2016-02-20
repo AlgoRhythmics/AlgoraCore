@@ -57,7 +57,7 @@ void TarjanSCCAlgorithm::run()
     numSccs = tarjanRecursive(diGraph, *this->propertyMap);
 
     if (numSccs > 1) {
-        diGraph->visitVertices([&](Vertex *v) {
+        diGraph->mapVertices([&](Vertex *v) {
             propertyMap->setValue(v, numSccs - propertyMap->getValue(v) - 1);
         });
     }
@@ -76,7 +76,7 @@ int tarjanRecursive(DiGraph *diGraph, PropertyMap<int> &sccNumber) {
     PropertyMap<int> lowLink(-1);
     PropertyMap<bool> onStack(false);
 
-    diGraph->visitVertices([&](Vertex *v) {
+    diGraph->mapVertices([&](Vertex *v) {
         if (vertexIndex(v) == -1) {
             strongconnect(diGraph, v, nextIndex, nextScc, stack, vertexIndex, lowLink, onStack, sccNumber);
         }
@@ -99,7 +99,7 @@ void strongconnect(DiGraph *graph, Vertex *v,
     stack.push_back(v);
     onStack[v] = true;
 
-    graph->visitOutgoingArcs(v, [&](Arc *a) {
+    graph->mapOutgoingArcs(v, [&](Arc *a) {
         Vertex *head = a->getHead();
         if (vertexIndex(head) == -1) {
             strongconnect(graph, head, nextIndex, nextScc, stack, vertexIndex, lowLink, onStack, sccNumber);

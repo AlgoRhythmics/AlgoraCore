@@ -8,7 +8,8 @@ HEADERS += \
     $$PWD/parallelarcsbundle.h \
     $$PWD/graph.h \
     $$PWD/subdigraph.h \
-    $$PWD/superdigraph.h
+    $$PWD/superdigraph.h \
+    $$PWD/graph_functional.h
 
 SOURCES += \
     $$PWD/digraph.cpp \
@@ -18,4 +19,5 @@ SOURCES += \
     $$PWD/parallelarcsbundle.cpp \
     $$PWD/subdigraph.cpp \
     $$PWD/graph.cpp \
-    $$PWD/superdigraph.cpp
+    $$PWD/superdigraph.cpp \
+    $$PWD/graph_functional.cpp

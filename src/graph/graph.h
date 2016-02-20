@@ -28,7 +28,7 @@
 #include "vertex.h"
 
 #include "graph.visitor/vertexvisitor.h"
-#include "graph.visitor/visitorfunctions.h"
+#include "graph_functional.h"
 
 #include <vector>
 
@@ -49,31 +49,31 @@ public:
     virtual bool containsVertex(Vertex *v) const = 0;
     virtual Vertex *getAnyVertex() const = 0;
 
-    virtual void onVertexAdd(VertexVisitorFunc vvFun) { vertexGreetings.push_back(vvFun); }
-    virtual void onVertexRemove(VertexVisitorFunc vvFun) { vertexFarewells.push_back(vvFun); }
+    virtual void onVertexAdd(VertexMapping vvFun) { vertexGreetings.push_back(vvFun); }
+    virtual void onVertexRemove(VertexMapping vvFun) { vertexFarewells.push_back(vvFun); }
 
     // Accomodate visitors
     virtual void acceptVertexVisitor(VertexVisitor *nVisitor) {
-        visitVertices(nVisitor->getVisitorFunction());
+        mapVertices(nVisitor->getVisitorFunction());
     }
-    virtual void visitVertices(VertexVisitorFunc vvFun) {
-        visitVerticesUntil(vvFun, vertexFalse);
+    virtual void mapVertices(VertexMapping vvFun) {
+        mapVerticesUntil(vvFun, vertexFalse);
     }
-    virtual void visitVerticesUntil(VertexVisitorFunc vvFun, VertexPredicate breakCondition) = 0;
+    virtual void mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition) = 0;
 
     // Misc
     virtual bool isEmpty() const = 0;
     virtual int getSize() const = 0;
 
 protected:
-   std::vector<VertexVisitorFunc> vertexGreetings;
-   std::vector<VertexVisitorFunc> vertexFarewells;
+   std::vector<VertexMapping> vertexGreetings;
+   std::vector<VertexMapping> vertexFarewells;
 
    virtual void greetVertex(Vertex *v) {
-       for (const VertexVisitorFunc &f : vertexGreetings) { f(v); }
+       for (const VertexMapping &f : vertexGreetings) { f(v); }
    }
    virtual void dismissVertex(Vertex *v) {
-       for (const VertexVisitorFunc &f : vertexFarewells) { f(v); }
+       for (const VertexMapping &f : vertexFarewells) { f(v); }
    }
 
     Vertex *createVertex() {

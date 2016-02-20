@@ -47,7 +47,7 @@ IncidenceListGraphImplementation::IncidenceListGraphImplementation(Graph *handle
 IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
 {
     for (IncidenceListVertex *v : vertices) {
-        v->visitOutgoingArcs([](Arc *a) { delete a; });
+        v->mapOutgoingArcs([](Arc *a) { delete a; });
         v->clearOutgoingArcs();
         v->clearIncomingArcs();
         delete v;
@@ -62,13 +62,13 @@ void IncidenceListGraphImplementation::addVertex(IncidenceListVertex *vertex)
 
 void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
 {
-    v->visitOutgoingArcs([](Arc *a) {
+    v->mapOutgoingArcs([](Arc *a) {
         IncidenceListVertex *head = dynamic_cast<IncidenceListVertex*>(a->getHead());
         head->removeIncomingArc(a);
         delete a;
     });
     v->clearOutgoingArcs();
-    v->visitIncomingArcs([](Arc *a) {
+    v->mapIncomingArcs([](Arc *a) {
         IncidenceListVertex *tail = dynamic_cast<IncidenceListVertex*>(a->getTail());
         tail->removeOutgoingArc(a);
         delete a;
@@ -119,7 +119,7 @@ int IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v) 
     return v->getInDegree();
 }
 
-void IncidenceListGraphImplementation::visitVertices(VertexVisitorFunc vvFun, VertexPredicate breakCondition)
+void IncidenceListGraphImplementation::mapVertices(VertexMapping vvFun, VertexPredicate breakCondition)
 {
     for (Vertex *v : vertices) {
         if (breakCondition(v)) {
@@ -129,25 +129,25 @@ void IncidenceListGraphImplementation::visitVertices(VertexVisitorFunc vvFun, Ve
     }
 }
 
-void IncidenceListGraphImplementation::visitArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void IncidenceListGraphImplementation::mapArcs(ArcMapping avFun, ArcPredicate breakCondition)
 {
     for (IncidenceListVertex *v : vertices) {
-        if (!v->visitOutgoingArcs(avFun, breakCondition)) {
+        if (!v->mapOutgoingArcs(avFun, breakCondition)) {
             break;
         }
     }
 }
 
-void IncidenceListGraphImplementation::visitOutgoingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun,
+void IncidenceListGraphImplementation::mapOutgoingArcs(const IncidenceListVertex *v, ArcMapping avFun,
                                                          ArcPredicate breakCondition)
 {
-    v->visitOutgoingArcs(avFun, breakCondition);
+    v->mapOutgoingArcs(avFun, breakCondition);
 }
 
-void IncidenceListGraphImplementation::visitIncomingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun,
+void IncidenceListGraphImplementation::mapIncomingArcs(const IncidenceListVertex *v, ArcMapping avFun,
                                                          ArcPredicate breakCondition)
 {
-    v->visitIncomingArcs(avFun, breakCondition);
+    v->mapIncomingArcs(avFun, breakCondition);
 }
 
 bool IncidenceListGraphImplementation::isEmpty() const

@@ -24,7 +24,7 @@
 #ifndef ARCVISITOR_H
 #define ARCVISITOR_H
 
-#include "visitorfunctions.h"
+#include "graph/graph_functional.h"
 
 namespace Algora {
 
@@ -38,7 +38,7 @@ public:
 
     virtual void visitArc(Arc *a) = 0;
 
-    ArcVisitorFunc getVisitorFunction()
+    ArcMapping getVisitorFunction()
     {
         using namespace std::placeholders;
         return std::bind(&ArcVisitor::visitArc, this, _1);

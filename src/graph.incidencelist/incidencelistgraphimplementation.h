@@ -51,11 +51,11 @@ public:
     int getOutDegree(const IncidenceListVertex *v) const;
     int getInDegree(const IncidenceListVertex *v) const;
 
-    void visitVertices(VertexVisitorFunc vvFun, VertexPredicate breakCondition);
+    void mapVertices(VertexMapping vvFun, VertexPredicate breakCondition);
 
-    void visitArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition);
-    void visitOutgoingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition);
-    void visitIncomingArcs(const IncidenceListVertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition);
+    void mapArcs(ArcMapping avFun, ArcPredicate breakCondition);
+    void mapOutgoingArcs(const IncidenceListVertex *v, ArcMapping avFun, ArcPredicate breakCondition);
+    void mapIncomingArcs(const IncidenceListVertex *v, ArcMapping avFun, ArcPredicate breakCondition);
 
     bool isEmpty() const;
     int getSize() const;

@@ -132,15 +132,15 @@ bool IncidenceListVertex::hasIncomingArc(Arc *a) const
 
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
 {
-    visitOutgoingArcs(aVisitor->getVisitorFunction(), arcFalse);
+    mapOutgoingArcs(aVisitor->getVisitorFunction(), arcFalse);
 }
 
 void IncidenceListVertex::acceptIncomingArcVisitor(ArcVisitor *aVisitor) const
 {
-    visitIncomingArcs(aVisitor->getVisitorFunction(), arcFalse);
+    mapIncomingArcs(aVisitor->getVisitorFunction(), arcFalse);
 }
 
-bool IncidenceListVertex::visitOutgoingArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition) const
+bool IncidenceListVertex::mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCondition) const
 {
     for (Arc *a : grin->outgoingArcs) {
         if (breakCondition(a)) {
@@ -151,7 +151,7 @@ bool IncidenceListVertex::visitOutgoingArcs(ArcVisitorFunc avFun, ArcPredicate b
     return true;
 }
 
-bool IncidenceListVertex::visitIncomingArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition) const
+bool IncidenceListVertex::mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCondition) const
 {
     for (Arc *a : grin->incomingArcs) {
         if (breakCondition(a)) {

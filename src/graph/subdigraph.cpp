@@ -88,7 +88,7 @@ bool SubDiGraph::containsVertex(Vertex *v) const
 Vertex *SubDiGraph::getAnyVertex() const
 {
     Vertex *vertex = 0;
-    superGraph->visitVerticesUntil([&](Vertex *v) {
+    superGraph->mapVerticesUntil([&](Vertex *v) {
         if (vertex == 0 && inSubGraph(v)) {
             vertex = v;
         }
@@ -98,9 +98,9 @@ Vertex *SubDiGraph::getAnyVertex() const
     return vertex;
 }
 
-void SubDiGraph::visitVerticesUntil(VertexVisitorFunc vvFun, VertexPredicate breakCondition)
+void SubDiGraph::mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition)
 {
-    superGraph->visitVerticesUntil([&](Vertex *v) {
+    superGraph->mapVerticesUntil([&](Vertex *v) {
         if (inSubGraph(v)) {
             vvFun(v);
         }
@@ -113,7 +113,7 @@ bool Algora::SubDiGraph::isEmpty() const
         return true;
     }
     bool empty = true;
-    superGraph->visitVertices([&](Vertex *v) {
+    superGraph->mapVertices([&](Vertex *v) {
         if (inSubGraph(v)) {
             empty = false;
         }
@@ -125,7 +125,7 @@ int SubDiGraph::getSize() const
 {
     int n = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
-    me->visitVertices([&n](Vertex *){ n++; });
+    me->mapVertices([&n](Vertex *){ n++; });
     return n;
 }
 
@@ -167,7 +167,7 @@ int SubDiGraph::getOutDegree(const Vertex *v) const
     }
     int out = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
-    me->visitOutgoingArcs(v, [&out](Arc *) { out++;});
+    me->mapOutgoingArcs(v, [&out](Arc *) { out++;});
     return out;
 }
 
@@ -178,37 +178,37 @@ int SubDiGraph::getInDegree(const Vertex *v) const
     }
     int in = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
-    me->visitIncomingArcs(v, [&in](Arc *) { in++; });
+    me->mapIncomingArcs(v, [&in](Arc *) { in++; });
     return in;
 }
 
-void SubDiGraph::visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void SubDiGraph::mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition)
 {
-    superGraph->visitArcsUntil([&](Arc *a) {
+    superGraph->mapArcsUntil([&](Arc *a) {
         if (inSubGraph(a) && inSubGraph(a->getTail()) && inSubGraph(a->getHead())) {
             avFun(a);
         }
     }, breakCondition);
 }
 
-void SubDiGraph::visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void SubDiGraph::mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
 {
     if (!inSubGraph(v)) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
-    superGraph->visitOutgoingArcsUntil(v, [&](Arc *a) {
+    superGraph->mapOutgoingArcsUntil(v, [&](Arc *a) {
         if (inSubGraph(a) && inSubGraph(a->getTail()) && inSubGraph(a->getHead())) {
             avFun(a);
         }
     }, breakCondition);
 }
 
-void SubDiGraph::visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void SubDiGraph::mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
 {
     if (!inSubGraph(v)) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
-    superGraph->visitIncomingArcsUntil(v, [&](Arc *a) {
+    superGraph->mapIncomingArcsUntil(v, [&](Arc *a) {
         if (inSubGraph(a) && inSubGraph(a->getTail()) && inSubGraph(a->getHead())) {
             avFun(a);
         }

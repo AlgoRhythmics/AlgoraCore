@@ -68,7 +68,7 @@ void BreadthFirstSearch::run()
         Vertex *curr = queue.front();
         queue.pop_front();
 
-        diGraph->visitOutgoingArcs(curr, [&](Arc *a) {
+        diGraph->mapOutgoingArcs(curr, [&](Arc *a) {
             Vertex *head = a->getHead();
             if (!discovered(head)) {
                 queue.push_back(a->getHead());

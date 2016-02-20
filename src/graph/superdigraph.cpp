@@ -67,8 +67,8 @@ SuperDiGraph::SuperDiGraph(DiGraph *graph)
         auto i = grin->map.find(v);
         if (i != grin->map.end()) {
             IncidenceListVertex *vertex = i->second;
-            vertex->visitOutgoingArcs([&](Arc *a) { removeArc(a); });
-            vertex->visitIncomingArcs([&](Arc *a) { removeArc(a); });
+            vertex->mapOutgoingArcs([&](Arc *a) { removeArc(a); });
+            vertex->mapIncomingArcs([&](Arc *a) { removeArc(a); });
             grin->extra->removeVertex(vertex);
             grin->map.erase(i);
         }
@@ -83,7 +83,7 @@ SuperDiGraph::SuperDiGraph(DiGraph *graph)
 
 SuperDiGraph::~SuperDiGraph()
 {
-    grin->extra->visitArcs([&](Arc *a) {
+    grin->extra->mapArcs([&](Arc *a) {
         removeArc(a);
     }, arcFalse);
     delete grin;
@@ -132,14 +132,14 @@ Vertex *SuperDiGraph::getAnyVertex() const
     }
 }
 
-void SuperDiGraph::visitVerticesUntil(VertexVisitorFunc vvFun, VertexPredicate breakCondition)
+void SuperDiGraph::mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition)
 {
-    grin->extra->visitVertices([&](Vertex *v) {
+    grin->extra->mapVertices([&](Vertex *v) {
         if (!dynamic_cast<DummyVertex*>(v)) {
             vvFun(v);
         }
     }, breakCondition);
-    grin->subGraph->visitVerticesUntil(vvFun, breakCondition);
+    grin->subGraph->mapVerticesUntil(vvFun, breakCondition);
 }
 
 bool SuperDiGraph::isEmpty() const
@@ -232,13 +232,13 @@ int SuperDiGraph::getInDegree(const Vertex *v) const
     return grin->subGraph->getInDegree(v);
 }
 
-void SuperDiGraph::visitArcsUntil(ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void SuperDiGraph::mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition)
 {
-    grin->extra->visitArcs(avFun, breakCondition);
-    grin->subGraph->visitArcsUntil(avFun, breakCondition);
+    grin->extra->mapArcs(avFun, breakCondition);
+    grin->subGraph->mapArcsUntil(avFun, breakCondition);
 }
 
-void SuperDiGraph::visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void SuperDiGraph::mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
 {
     const IncidenceListVertex *vertex;
     if (v->getParent() == this) {
@@ -246,17 +246,17 @@ void SuperDiGraph::visitOutgoingArcsUntil(const Vertex *v, ArcVisitorFunc avFun,
         if (!vertex) {
             throw std::invalid_argument("Vertex is not a part of this graph.");
         }
-        grin->extra->visitOutgoingArcs(vertex, avFun, breakCondition);
+        grin->extra->mapOutgoingArcs(vertex, avFun, breakCondition);
     } else {
         vertex = findVertex(v, grin->map, this);
         if (vertex) {
-            grin->extra->visitOutgoingArcs(vertex, avFun, breakCondition);
+            grin->extra->mapOutgoingArcs(vertex, avFun, breakCondition);
         }
-        grin->subGraph->visitOutgoingArcsUntil(v, avFun, breakCondition);
+        grin->subGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
     }
 }
 
-void SuperDiGraph::visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun, ArcPredicate breakCondition)
+void SuperDiGraph::mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
 {
     const IncidenceListVertex *vertex;
     if (v->getParent() == this) {
@@ -264,13 +264,13 @@ void SuperDiGraph::visitIncomingArcsUntil(const Vertex *v, ArcVisitorFunc avFun,
         if (!vertex) {
             throw std::invalid_argument("Vertex is not a part of this graph.");
         }
-        grin->extra->visitIncomingArcs(vertex, avFun, breakCondition);
+        grin->extra->mapIncomingArcs(vertex, avFun, breakCondition);
     } else {
         vertex = findVertex(v, grin->map, this);
         if (vertex) {
-            grin->extra->visitIncomingArcs(vertex, avFun, breakCondition);
+            grin->extra->mapIncomingArcs(vertex, avFun, breakCondition);
         }
-        grin->subGraph->visitIncomingArcsUntil(v, avFun, breakCondition);
+        grin->subGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
     }
 }
 

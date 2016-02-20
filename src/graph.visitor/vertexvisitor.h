@@ -24,7 +24,7 @@
 #ifndef VERTEXVISITOR_H
 #define VERTEXVISITOR_H
 
-#include "visitorfunctions.h"
+#include "graph/graph_functional.h"
 
 namespace Algora {
 
@@ -38,7 +38,7 @@ public:
 
     virtual void visitVertex(Vertex *v) = 0;
 
-    VertexVisitorFunc getVisitorFunction()
+    VertexMapping getVisitorFunction()
     {
         using namespace std::placeholders;
         return std::bind(&VertexVisitor::visitVertex, this, _1);

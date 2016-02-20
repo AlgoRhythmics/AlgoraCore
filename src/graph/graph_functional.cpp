@@ -21,29 +21,15 @@
  */
 
 
-#ifndef VISITORFUNCTIONS_H
-#define VISITORFUNCTIONS_H
-
-#include <functional>
+#include "graph_functional.h"
 
 namespace Algora {
 
-class Vertex;
-class Arc;
+const VertexPredicate vertexTrue = [](const Vertex *) { return true; };
+const VertexPredicate vertexFalse = [](const Vertex *) { return false; };
 
-typedef std::function<void(Vertex *v)> VertexVisitorFunc;
-typedef std::function<void(Arc *a)> ArcVisitorFunc;
-
-typedef std::function<bool(const Vertex *v)> VertexPredicate;
-typedef std::function<bool(const Arc *v)> ArcPredicate;
-
-extern const VertexPredicate vertexTrue;
-extern const VertexPredicate vertexFalse;
-
-extern const ArcPredicate arcTrue;
-extern const ArcPredicate arcFalse;
+const ArcPredicate arcTrue = [](const Arc *) { return true; };
+const ArcPredicate arcFalse = [](const Arc *) { return false; };
 
 }
-
-#endif // VISITORFUNCTIONS_H
 

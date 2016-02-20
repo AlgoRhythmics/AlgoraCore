@@ -51,7 +51,7 @@ void TopSortAlgorithm::run()
 
     std::deque<Vertex*> queue;
 
-    diGraph->visitVertices([&](Vertex *v) {
+    diGraph->mapVertices([&](Vertex *v) {
         int indegree = diGraph->getInDegree(v);
         if (indegree == 0) {
             queue.push_back(v);
@@ -72,7 +72,7 @@ void TopSortAlgorithm::run()
 
         sequence.push_back(v);
 
-        diGraph->visitOutgoingArcs(v, [&](Arc *a) {
+        diGraph->mapOutgoingArcs(v, [&](Arc *a) {
             Vertex *head = a->getHead();
             if (inDegree(head) == 1) {
                 queue.push_back(head);

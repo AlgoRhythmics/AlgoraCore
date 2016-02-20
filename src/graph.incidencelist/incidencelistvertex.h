@@ -25,7 +25,7 @@
 #define INCIDENCELISTVERTEX_H
 
 #include "graph/vertex.h"
-#include "graph.visitor/visitorfunctions.h"
+#include "graph/graph_functional.h"
 
 namespace Algora {
 
@@ -44,8 +44,8 @@ public:
 
     void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
     void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
-    virtual bool visitOutgoingArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition = arcFalse) const;
-    virtual bool visitIncomingArcs(ArcVisitorFunc avFun, ArcPredicate breakCondition = arcFalse) const;
+    virtual bool mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCondition = arcFalse) const;
+    virtual bool mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCondition = arcFalse) const;
 
     int getOutDegree() const;
     int getInDegree() const;
