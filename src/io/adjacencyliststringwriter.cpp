@@ -40,7 +40,7 @@ public:
 };
 
 
-AdjacencyListStringWriter::AdjacencyListStringWriter(std::ostream &output, AdjacencyListStringFormat format)
+AdjacencyListStringWriter::AdjacencyListStringWriter(std::ostream *output, AdjacencyListStringFormat format)
     : StreamDiGraphWriter(output), grin(new CheshireCat(format))
 {
 
@@ -53,6 +53,10 @@ AdjacencyListStringWriter::~AdjacencyListStringWriter()
 
 void AdjacencyListStringWriter::processGraph(const DiGraph *graph)
 {
+    if (StreamDiGraphWriter::outputStream == 0) {
+        return;
+    }
+    std::ostream &outputStream = *(StreamDiGraphWriter::outputStream);
     DiGraph *ncGraph = const_cast<DiGraph*>(graph);
     outputStream << ncGraph->getSize() << grin->format.getVertexSeparator();
 

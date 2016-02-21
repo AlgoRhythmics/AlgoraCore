@@ -32,7 +32,7 @@ namespace Algora {
 class AdjacencyListStringWriter : public StreamDiGraphWriter
 {
 public:
-    AdjacencyListStringWriter(std::ostream &output,
+    AdjacencyListStringWriter(std::ostream *output = 0,
                               AdjacencyListStringFormat format = AdjacencyListStringFormat());
     virtual ~AdjacencyListStringWriter();
 

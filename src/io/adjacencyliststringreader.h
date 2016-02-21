@@ -32,7 +32,7 @@ namespace Algora {
 class AdjacencyListStringReader : public StreamDiGraphReader
 {
 public:
-    AdjacencyListStringReader(std::istream &input,
+    AdjacencyListStringReader(std::istream *input,
                               AdjacencyListStringFormat format = AdjacencyListStringFormat());
     virtual ~AdjacencyListStringReader();
 

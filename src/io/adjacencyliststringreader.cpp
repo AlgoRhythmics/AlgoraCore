@@ -41,7 +41,7 @@ public:
 
 bool parseInt(std::string s, int *i, std::string &err);
 
-AdjacencyListStringReader::AdjacencyListStringReader(std::istream &input, AdjacencyListStringFormat format)
+AdjacencyListStringReader::AdjacencyListStringReader(std::istream *input, AdjacencyListStringFormat format)
     : StreamDiGraphReader(input), grin(new CheshireCat(format))
 {
 
@@ -59,11 +59,15 @@ std::string AdjacencyListStringReader::getLastError() const
 
 bool AdjacencyListStringReader::isGraphAvailable()
 {
-    return inputStream.good() && inputStream.rdbuf()->in_avail() > 0;
+    return inputStream != 0 && inputStream->good() && inputStream->rdbuf()->in_avail() > 0;
 }
 
 bool AdjacencyListStringReader::provideDiGraph(DiGraph *graph)
 {
+    if (StreamDiGraphReader::inputStream == 0) {
+        return false;
+    }
+    std::istream &inputStream = *(StreamDiGraphReader::inputStream);
     using namespace std;
     string token;
 

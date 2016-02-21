@@ -32,11 +32,13 @@ namespace Algora {
 class StreamDiGraphWriter : public DiGraphProcessor
 {
 public:
-    explicit StreamDiGraphWriter(std::ostream &output) : outputStream(output) { }
+    explicit StreamDiGraphWriter(std::ostream *output = 0) : outputStream(output) { }
     virtual ~StreamDiGraphWriter() { }
 
+    void setOutputStream(std::ostream *output) { outputStream = output; }
+
 protected:
-    std::ostream &outputStream;
+    std::ostream *outputStream;
 };
 
 }
