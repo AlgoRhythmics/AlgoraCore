@@ -60,11 +60,11 @@ void IncidenceListGraph::removeVertex(Vertex *v)
 {
     auto vertex = castVertex(v, this);
 
-    impl->visitOutgoingArcs(vertex, [&](Arc *a) {
-        removeArc(a);
+    impl->mapOutgoingArcs(vertex, [&](Arc *a) {
+        dismissArc(a);
     }, arcFalse);
-    impl->visitIncomingArcs(vertex, [&](Arc *a) {
-        removeArc(a);
+    impl->mapIncomingArcs(vertex, [&](Arc *a) {
+        dismissArc(a);
     }, arcFalse);
     dismissVertex(vertex);
 
