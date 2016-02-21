@@ -66,11 +66,13 @@ int ParallelArcsBundle::getSize() const
     return grin->arcsBundle.size();
 }
 
-void ParallelArcsBundle::acceptArcVisitor(ArcVisitor *aVisitor) const
+void ParallelArcsBundle::mapArcsUntil(ArcMapping am, ArcPredicate ap) const
 {
-    for (auto i = grin->arcsBundle.cbegin();
-         i != grin->arcsBundle.cend(); i++) {
-        aVisitor->visitArc(*i);
+    for (Arc *a : grin->arcsBundle) {
+        if (ap(a)) {
+            break;
+        }
+        am(a);
     }
 }
 

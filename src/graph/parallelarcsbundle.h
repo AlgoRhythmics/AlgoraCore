@@ -25,11 +25,12 @@
 #define PARALLELARCSBUNDLE_H
 
 #include "arc.h"
+#include "graph_functional.h"
+#include "graph.visitor/arcvisitor.h"
+
 #include <vector>
 
 namespace Algora {
-
-class ArcVisitor;
 
 class ParallelArcsBundle : public Arc
 {
@@ -40,7 +41,13 @@ public:
 
     virtual void getArcs(std::vector<Arc*> *l) const;
     virtual int getSize() const;
-    virtual void acceptArcVisitor(ArcVisitor *aVisitor) const;
+    virtual void acceptArcVisitor(ArcVisitor *aVisitor) const {
+        mapArcs(aVisitor->getVisitorFunction());
+    }
+    virtual void mapArcs(ArcMapping am) const {
+        mapArcsUntil(am, arcFalse);
+    }
+    virtual void mapArcsUntil(ArcMapping am, ArcPredicate ap) const;
 
     virtual bool addArc(Arc *a);
     virtual void removeArc(Arc *a);
