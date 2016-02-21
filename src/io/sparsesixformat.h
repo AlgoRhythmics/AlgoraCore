@@ -35,6 +35,24 @@ void sparseSixN(unsigned long long n, std::vector<int> &result);
 
 void printAscii(std::ostream &out, std::vector<int> &bytes);
 
+void prependBitset(boost::dynamic_bitset<> &bitset, boost::dynamic_bitset<> &p);
+
+void prependBitset(boost::dynamic_bitset<> &bitset, bool b);
+
+void reverseBitset(boost::dynamic_bitset<> &bitset);
+
+void splitAndConvertBitset(boost::dynamic_bitset<> &bitset, int chunkSize, std::vector<int> &result);
+
+void asciiToInts(std::istream &in, std::vector<int> &bytes, char breakAt);
+
+unsigned long long extractSparseSixN(std::vector<int> &bytes);
+
+void bytesToBitset(std::vector<int> &bytes, boost::dynamic_bitset<> &bitset);
+
+bool extractLeftMostBit(boost::dynamic_bitset<> &bitset);
+
+void extractLeftMostKBits(boost::dynamic_bitset<> &bitset, unsigned int k, boost::dynamic_bitset<> &kbits);
+
 }
 
 #endif // SPARSESIXFORMAT_H

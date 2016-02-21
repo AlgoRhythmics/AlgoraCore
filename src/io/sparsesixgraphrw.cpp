@@ -33,7 +33,7 @@
 #include <tuple>
 #include <algorithm>
 
-#include <iostream>
+//#include <iostream>
 
 namespace Algora {
 
@@ -102,22 +102,18 @@ void SparseSixGraphRW::processGraph(const DiGraph *graph)
     for (auto t : arcs) {
         std::tie(v, u, direction) = t;
         //std::cout << "Processing (" << v << "," << u << "," << direction << ")" << std::endl;
-        edgeBits.resize(edgeBits.size() + 1);
-        edgeBits <<= 1;
         if (v == cur) {
-            edgeBits[0] = false;
+            prependBitset(edgeBits, false);
             extendEdgeBits(u);
         } else if (v == cur + 1) {
             cur++;
-            edgeBits[0] = true;
+            prependBitset(edgeBits, true);
             extendEdgeBits(u);
         } else {
-           cur = v;
-            edgeBits[0] = true;
+            cur = v;
+            prependBitset(edgeBits, true);
             extendEdgeBits(v);
-            edgeBits.resize(edgeBits.size() + 1);
-            edgeBits <<= 1;
-            edgeBits[0] = false;
+            prependBitset(edgeBits, false);
             extendEdgeBits(u);
         }
         //std::cout << edgeBits << std::endl;
@@ -140,11 +136,7 @@ void SparseSixGraphRW::processGraph(const DiGraph *graph)
     }
     // reverse direction bits
     //std::cout << "direction: " << directionBits << std::endl;
-    for (unsigned int i = 0; i < directionBits.size() / 2; i++) {
-        bool x = directionBits[i];
-        directionBits[i] = directionBits[directionBits.size() - i];
-        directionBits[directionBits.size() - i] = x;
-    }
+    reverseBitset(directionBits);
     //std::cout << "direction: " << directionBits << std::endl;
 
     //std::cout << "edge bits: " << edgeBits << std::endl;
@@ -157,14 +149,69 @@ void SparseSixGraphRW::processGraph(const DiGraph *graph)
     outputStream << std::endl;
 }
 
-bool SparseSixGraphRW::isGraphAvailable()
-{
-    return false;
-}
-
 bool SparseSixGraphRW::provideDiGraph(DiGraph *graph)
 {
-    return false;
+    if (StreamDiGraphReader::inputStream == 0) {
+        return false;
+    }
+    std::istream &inputStream = *(StreamDiGraphReader::inputStream);
+    char colon;
+    inputStream >> colon;
+    if (colon != ':') {
+        return false;
+    }
+    std::vector<int> bytes;
+    std::vector<int> direction;
+    asciiToInts(inputStream, bytes, ':');
+    inputStream >> colon;
+    if (colon != ':') {
+        return false;
+    }
+    asciiToInts(inputStream, direction, '\n');
+    int n = extractSparseSixN(bytes);
+    //std::cout << "n = " << n << std::endl;
+    unsigned int k = 1;
+    while ((1 << k) < n) k++;
+    //std::cout << "k = " << k << std::endl;
+
+    std::vector<Vertex*> vertices;
+    for (int i = 0; i < n; i++) {
+        vertices.push_back(graph->addVertex());
+    }
+    boost::dynamic_bitset<> edgeBits;
+    boost::dynamic_bitset<> directionBits;
+    bytesToBitset(bytes, edgeBits);
+    bytesToBitset(direction, directionBits);
+
+    int cur = 0;
+    bool b;
+    boost::dynamic_bitset<> vBits;
+    int v;
+    while (edgeBits.size() > k) {
+        b = extractLeftMostBit(edgeBits);
+        extractLeftMostKBits(edgeBits, k, vBits);
+        v = vBits.to_ulong();
+        //std::cout << b << " " << v << std::endl;
+        if (b) {
+            cur++;
+        }
+        if (v >= n || cur >= n) {
+            break;
+        } else if (v > cur) {
+            cur = v;
+        } else {
+            bool d = extractLeftMostBit(directionBits);
+            if (d) {
+                graph->addArc(vertices.at(cur), vertices.at(v));
+                //std::cout << "(" << cur << "," << v << ")" << std::endl;
+            } else {
+                graph->addArc(vertices.at(v), vertices.at(cur));
+                //std::cout << "(" << v << "," << cur << ")" << std::endl;
+            }
+        }
+    }
+
+    return true;
 }
 
 }
