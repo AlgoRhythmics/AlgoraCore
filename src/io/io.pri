@@ -5,8 +5,12 @@ HEADERS += \
     $$PWD/adjacencyliststringwriter.h \
     $$PWD/streamdigraphwriter.h \
     $$PWD/adjacencyliststringformat.h \
-    $$PWD/adjacencyliststringreader.h
+    $$PWD/adjacencyliststringreader.h \
+    $$PWD/sparsesixgraphrw.h \
+    $$PWD/sparsesixformat.h
 
 SOURCES += \     
     $$PWD/adjacencyliststringwriter.cpp \
-    $$PWD/adjacencyliststringreader.cpp
+    $$PWD/adjacencyliststringreader.cpp \
+    $$PWD/sparsesixgraphrw.cpp \
+    $$PWD/sparsesixformat.cpp
