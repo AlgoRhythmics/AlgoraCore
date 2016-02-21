@@ -40,7 +40,6 @@ public:
 
     // DiGraphProvider interface
 public:
-    virtual bool isGraphAvailable() override;
     virtual bool provideDiGraph(DiGraph *graph) override;
 
 private:

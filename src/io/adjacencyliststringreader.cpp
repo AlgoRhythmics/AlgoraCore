@@ -57,11 +57,6 @@ std::string AdjacencyListStringReader::getLastError() const
     return grin->lastError;
 }
 
-bool AdjacencyListStringReader::isGraphAvailable()
-{
-    return inputStream != 0 && inputStream->good() && inputStream->rdbuf()->in_avail() > 0;
-}
-
 bool AdjacencyListStringReader::provideDiGraph(DiGraph *graph)
 {
     if (StreamDiGraphReader::inputStream == 0) {
