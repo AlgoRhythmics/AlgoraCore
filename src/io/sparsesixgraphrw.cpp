@@ -24,6 +24,16 @@
 #include "sparsesixgraphrw.h"
 
 #include "sparsesixformat.h"
+#include "graph/digraph.h"
+#include "graph/parallelarcsbundle.h"
+#include "property/propertymap.h"
+
+#include <ostream>
+#include <cmath>
+#include <tuple>
+#include <algorithm>
+
+#include <iostream>
 
 namespace Algora {
 
@@ -34,7 +44,117 @@ SparseSixGraphRW::SparseSixGraphRW()
 
 void SparseSixGraphRW::processGraph(const DiGraph *graph)
 {
+    if (StreamDiGraphWriter::outputStream == 0) {
+        return;
+    }
 
+    std::ostream &outputStream = *(StreamDiGraphWriter::outputStream);
+    DiGraph *ncGraph = const_cast<DiGraph*>(graph);
+
+    PropertyMap<int> vertexId(-1);
+    int i = 0;
+    ncGraph->mapVertices([&](Vertex *v) { vertexId[v] = i++; });
+
+    int n = ncGraph->getSize();
+    outputStream << ":";
+    std::vector<int> bytes;
+    sparseSixN(n, bytes);
+    printAscii(outputStream, bytes);
+    bytes.clear();
+
+    std::vector<std::tuple<int,int,bool> > arcs;
+    ArcMapping createTuple = [&](Arc *a) {
+        int h = vertexId[a->getHead()];
+        int t = vertexId[a->getTail()];
+        if (h <= t) {
+            arcs.push_back(std::make_tuple(t, h, true));
+        } else {
+            arcs.push_back(std::make_tuple(h, t, false));
+        }
+    };
+
+    ncGraph->mapArcs([&](Arc *arc) {
+        ParallelArcsBundle *pa = dynamic_cast<ParallelArcsBundle*>(arc);
+        if (!pa) {
+            createTuple(arc);
+        } else {
+            pa->mapArcs(createTuple);
+        }
+    });
+    std::sort(arcs.begin(), arcs.end());
+
+    int k = 1;
+    while ((1 << k) < n) k++; //ceil(log2(n));
+    //std::cout << "k: " << k << std::endl;
+    boost::dynamic_bitset<> edgeBits;
+    boost::dynamic_bitset<> directionBits;
+
+    auto extendEdgeBits = [&](int w) {
+        edgeBits.resize(edgeBits.size() + k);
+        edgeBits <<= k;
+        boost::dynamic_bitset<> enc(edgeBits.size(), w);
+        edgeBits |= enc;
+    };
+
+    int cur = 0;
+    int v, u;
+    bool direction;
+    for (auto t : arcs) {
+        std::tie(v, u, direction) = t;
+        //std::cout << "Processing (" << v << "," << u << "," << direction << ")" << std::endl;
+        edgeBits.resize(edgeBits.size() + 1);
+        edgeBits <<= 1;
+        if (v == cur) {
+            edgeBits[0] = false;
+            extendEdgeBits(u);
+        } else if (v == cur + 1) {
+            cur++;
+            edgeBits[0] = true;
+            extendEdgeBits(u);
+        } else {
+           cur = v;
+            edgeBits[0] = true;
+            extendEdgeBits(v);
+            edgeBits.resize(edgeBits.size() + 1);
+            edgeBits <<= 1;
+            edgeBits[0] = false;
+            extendEdgeBits(u);
+        }
+        //std::cout << edgeBits << std::endl;
+        directionBits.push_back(direction);
+    }
+    int pad = 6 - (edgeBits.size() % 6);
+    if (pad < 6) {
+        edgeBits.resize(edgeBits.size() + pad);
+        edgeBits <<= pad;
+        if (k < 6 && n == (1 << k) && pad > k && cur < n-1) {
+            edgeBits[pad - 1] = false;
+            for (int i = 0; i < pad - 1; i++) {
+                edgeBits[i] = true;
+            }
+        } else {
+            for (int i = 0; i < pad; i++) {
+                edgeBits[i] = true;
+            }
+        }
+    }
+    // reverse direction bits
+    //std::cout << "direction: " << directionBits << std::endl;
+    for (unsigned int i = 0; i < directionBits.size() / 2; i++) {
+        bool x = directionBits[i];
+        directionBits[i] = directionBits[directionBits.size() - i];
+        directionBits[directionBits.size() - i] = x;
+    }
+    //std::cout << "direction: " << directionBits << std::endl;
+
+    //std::cout << "edge bits: " << edgeBits << std::endl;
+    sparseSixR(edgeBits, bytes);
+    printAscii(outputStream, bytes);
+    outputStream << ":";
+    bytes.clear();
+    sparseSixR(directionBits, bytes);
+    printAscii(outputStream, bytes);
+    outputStream << std::endl;
 }
 
 bool SparseSixGraphRW::isGraphAvailable()

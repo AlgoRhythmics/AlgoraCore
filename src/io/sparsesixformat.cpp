@@ -23,6 +23,8 @@
 
 #include "sparsesixformat.h"
 
+//#include <iostream>
+
 namespace Algora {
 
 void sparseSixR(boost::dynamic_bitset<> &bits, std::vector<int> &result) {
@@ -30,16 +32,46 @@ void sparseSixR(boost::dynamic_bitset<> &bits, std::vector<int> &result) {
     if (bits.size() > blocks * 6) {
         blocks++;
     }
-    boost::dynamic_bitset<> bpad(6 * blocks);
-    bpad = bits;
+    //std::cout << "blocks: " << blocks << std::endl;
+    boost::dynamic_bitset<> bpad(bits);
+    bpad.resize(6 * blocks);
+    bpad <<= (6 * blocks - bits.size());
     boost::dynamic_bitset<> mask(bpad.size(), 63); // 63 = 111111
-    for (unsigned int i = 0; i < blocks; i++) {
-        mask <<= i*6;
+    mask <<= (blocks - 1) * 6;
+    //std::cout << "bpad: " << bpad << std::endl;
+    for (unsigned int i = blocks; i > 0; i--) {
+        //std::cout << "mask: " << mask << std::endl;
         boost::dynamic_bitset<> chunk(bpad.size());
-        chunk = (bpad & mask) >> i*6;
+        chunk = (bpad & mask) >> (i-1)*6;
         chunk.resize(6);
         int value = chunk.to_ulong() + 63;
         result.push_back(value);
+        //std::cout << "value: " << value << std::endl;
+        mask >>= 6;
+    }
+}
+
+void sparseSixN(unsigned long long n, std::vector<int> &result)
+{
+   if (n <= 62ull) {
+       result.push_back((int) n + 63);
+   } else if (n <= 258047ull) {
+        result.push_back(126);
+        boost::dynamic_bitset<> bits(18,n);
+        sparseSixR(bits, result);
+   } else if (n <= 68719476735ull) {
+        result.push_back(126);
+        result.push_back(126);
+        boost::dynamic_bitset<> bits(36,n);
+        sparseSixR(bits, result);
+   }
+}
+
+void printAscii(std::ostream &out, std::vector<int> &bytes)
+{
+    for(int b : bytes) {
+       char c = b;
+       out << c;
     }
 }
 

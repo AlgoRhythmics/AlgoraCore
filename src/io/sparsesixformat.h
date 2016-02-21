@@ -31,6 +31,10 @@ namespace Algora {
 
 void sparseSixR(boost::dynamic_bitset<> &bits, std::vector<int> &result);
 
+void sparseSixN(unsigned long long n, std::vector<int> &result);
+
+void printAscii(std::ostream &out, std::vector<int> &bytes);
+
 }
 
 #endif // SPARSESIXFORMAT_H
