@@ -38,7 +38,7 @@
 
 namespace Algora {
 
-IncidenceListGraphImplementation::IncidenceListGraphImplementation(Graph *handle)
+IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *handle)
     : graph(handle)
 {
 

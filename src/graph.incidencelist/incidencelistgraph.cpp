@@ -108,6 +108,21 @@ Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
     return a;
 }
 
+MultiArc *IncidenceListGraph::addMultiArc(Vertex *tail, Vertex *head, int size)
+{
+    if (size <= 0) {
+        throw std::invalid_argument("Multiarcs must be of size at least 1.");
+    }
+    auto t = castVertex(tail, this);
+    auto h = castVertex(head, this);
+
+    MultiArc *a = createMultiArc(t, h, size);
+
+    impl->addArc(a, t, h);
+    greetArc(a);
+    return a;
+}
+
 void IncidenceListGraph::removeArc(Arc *a)
 {
     if (a->getParent() != this) {

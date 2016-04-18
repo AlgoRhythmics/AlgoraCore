@@ -35,17 +35,24 @@
 namespace Algora {
 
 typedef typename std::vector<Arc*> ArcList;
+typedef typename std::vector<MultiArc*> MultiArcList;
 
-bool removeArcFromList(ArcList &list, Arc *arc);
-bool removeBundledArcFromList(ArcList &list, Arc *arc);
-bool isArcInList(ArcList &list, Arc *arc);
-bool isBundledArc(ArcList &list, Arc *arc);
+template <typename AL>
+bool removeArcFromList(AL &list, Arc *arc);
+template <typename AL>
+bool removeBundledArcFromList(AL &list, Arc *arc);
+template <typename AL>
+bool isArcInList(AL &list, Arc *arc);
+template <typename AL>
+bool isBundledArc(AL &list, Arc *arc);
 
 class IncidenceListVertex::CheshireCat {
 public:
     bool checkConsisteny;
     ArcList outgoingArcs;
     ArcList incomingArcs;
+    MultiArcList outgoingMultiArcs;
+    MultiArcList incomingMultiArcs;
 };
 
 IncidenceListVertex::IncidenceListVertex(GraphArtifact *parent)
@@ -61,7 +68,11 @@ IncidenceListVertex::~IncidenceListVertex()
 
 int IncidenceListVertex::getOutDegree() const
 {
-    return grin->outgoingArcs.size();
+    int deg = grin->outgoingArcs.size();
+    for (MultiArc *ma : grin->outgoingMultiArcs) {
+        deg += ma->getSize();
+    }
+    return deg;
 }
 
 void IncidenceListVertex::addOutgoingArc(Arc *a)
@@ -69,7 +80,12 @@ void IncidenceListVertex::addOutgoingArc(Arc *a)
     if (grin->checkConsisteny && a->getTail() != this) {
         throw std::invalid_argument("Arc has other tail.");
     }
-    grin->outgoingArcs.push_back(a);
+    MultiArc *ma = dynamic_cast<MultiArc*>(a);
+    if (ma) {
+        grin->outgoingMultiArcs.push_back(ma);
+    } else {
+        grin->outgoingArcs.push_back(a);
+    }
 }
 
 void IncidenceListVertex::removeOutgoingArc(Arc *a)
@@ -77,19 +93,25 @@ void IncidenceListVertex::removeOutgoingArc(Arc *a)
     if (grin->checkConsisteny && a->getTail() != this) {
         throw std::invalid_argument("Arc has other tail.");
     }
-    if (!removeArcFromList(grin->outgoingArcs, a)) {
-        removeBundledArcFromList(grin->outgoingArcs, a);
+    if (!removeArcFromList(grin->outgoingArcs, a)
+            && !removeArcFromList(grin->outgoingMultiArcs, a)) {
+        removeBundledArcFromList(grin->outgoingMultiArcs, a);
     }
 }
 
 void IncidenceListVertex::clearOutgoingArcs()
 {
     grin->outgoingArcs.clear();
+    grin->outgoingMultiArcs.clear();
 }
 
 int IncidenceListVertex::getInDegree() const
 {
-    return grin->incomingArcs.size();
+    int deg = grin->incomingArcs.size();
+    for (MultiArc *ma : grin->incomingMultiArcs) {
+        deg += ma->getSize();
+    }
+    return deg;
 }
 
 void IncidenceListVertex::addIncomingArc(Arc *a)
@@ -97,7 +119,12 @@ void IncidenceListVertex::addIncomingArc(Arc *a)
     if (grin->checkConsisteny && a->getHead() != this) {
         throw std::invalid_argument("Arc has other head.");
     }
-    grin->incomingArcs.push_back(a);
+    MultiArc *ma = dynamic_cast<MultiArc*>(a);
+    if (ma) {
+        grin->incomingMultiArcs.push_back(ma);
+    } else {
+        grin->incomingArcs.push_back(a);
+    }
 }
 
 void IncidenceListVertex::removeIncomingArc(Arc *a)
@@ -105,14 +132,16 @@ void IncidenceListVertex::removeIncomingArc(Arc *a)
     if (grin->checkConsisteny && a->getHead() != this) {
         throw std::invalid_argument("Arc has other head.");
     }
-    if (!removeArcFromList(grin->incomingArcs, a)) {
-        removeBundledArcFromList(grin->incomingArcs, a);
+    if (!removeArcFromList(grin->incomingArcs, a)
+            && !removeArcFromList(grin->incomingMultiArcs, a)) {
+        removeBundledArcFromList(grin->incomingMultiArcs, a);
     }
 }
 
 void IncidenceListVertex::clearIncomingArcs()
 {
     grin->incomingArcs.clear();
+    grin->incomingMultiArcs.clear();
 }
 
 void IncidenceListVertex::enableConsistencyCheck(bool enable)
@@ -122,12 +151,16 @@ void IncidenceListVertex::enableConsistencyCheck(bool enable)
 
 bool IncidenceListVertex::hasOutgoingArc(Arc *a) const
 {
-    return isArcInList(grin->outgoingArcs, a) || isBundledArc(grin->outgoingArcs, a);
+    return isArcInList(grin->outgoingArcs, a)
+            || isArcInList(grin->outgoingMultiArcs, a)
+            || isBundledArc(grin->outgoingMultiArcs, a);
 }
 
 bool IncidenceListVertex::hasIncomingArc(Arc *a) const
 {
-    return isArcInList(grin->incomingArcs, a) || isBundledArc(grin->incomingArcs, a);
+    return isArcInList(grin->incomingArcs, a)
+            || isArcInList(grin->incomingMultiArcs, a)
+            || isBundledArc(grin->incomingArcs, a);
 }
 
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
@@ -148,6 +181,12 @@ bool IncidenceListVertex::mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCo
         }
         avFun(a);
     }
+    for (Arc *a : grin->outgoingMultiArcs) {
+        if (breakCondition(a)) {
+            return false;
+        }
+        avFun(a);
+    }
     return true;
 }
 
@@ -159,10 +198,17 @@ bool IncidenceListVertex::mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCo
         }
         avFun(a);
     }
+    for (Arc *a : grin->incomingMultiArcs) {
+        if (breakCondition(a)) {
+            return false;
+        }
+        avFun(a);
+    }
     return true;
 }
 
-bool removeArcFromList(ArcList &list, Arc *arc) {
+template <typename AL>
+bool removeArcFromList(AL &list, Arc *arc) {
     auto it = std::find(list.cbegin(), list.cend(), arc);
     if (it != list.cend()) {
         list.erase(it);
@@ -171,7 +217,8 @@ bool removeArcFromList(ArcList &list, Arc *arc) {
     return false;
 }
 
-bool removeBundledArcFromList(ArcList &list, Arc *arc) {
+template <typename AL>
+bool removeBundledArcFromList(AL &list, Arc *arc) {
     for (Arc *a : list) {
         if (a->getHead() == arc->getHead() && a->getTail() == arc->getTail()) {
             ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(a);
@@ -184,11 +231,13 @@ bool removeBundledArcFromList(ArcList &list, Arc *arc) {
     return false;
 }
 
-bool isArcInList(ArcList &list, Arc *arc) {
+template <typename AL>
+bool isArcInList(AL &list, Arc *arc) {
     return std::find(list.cbegin(), list.cend(), arc) != list.cend();
 }
 
-bool isBundledArc(ArcList &list, Arc *arc) {
+template <typename AL>
+bool isBundledArc(AL &list, Arc *arc) {
     for (Arc *a : list) {
         if (a->getHead() == arc->getHead() && a->getTail() == arc->getTail()) {
             ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(a);

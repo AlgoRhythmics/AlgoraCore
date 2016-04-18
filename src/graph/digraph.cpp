@@ -38,7 +38,7 @@ int DiGraph::getNumArcs() const
 {
     DiGraph *me = const_cast<DiGraph*>(this);
     int numArcs = 0;
-    me->mapArcs([&](Arc *) { numArcs++; });
+    me->mapArcs([&](Arc *a) { numArcs += a->getSize(); });
     return numArcs;
 }
 

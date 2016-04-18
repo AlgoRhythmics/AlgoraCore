@@ -39,9 +39,15 @@ public:
 
     virtual Vertex *getTail() const;
     virtual Vertex *getHead() const;
+    virtual int getSize() const {
+        return 1;
+    }
 
     // GraphArtifact interface
 public:
+    virtual std::string typeString() const override {
+        return "Arc";
+    }
     virtual std::string toString() const override;
 
 protected:

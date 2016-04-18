@@ -20,40 +20,35 @@
  *   http://algora.xaikal.org
  */
 
+#ifndef MULTIARC_H
+#define MULTIARC_H
 
-#ifndef GRAPHARTIFACT_H
-#define GRAPHARTIFACT_H
-
-#include <string>
+#include "arc.h"
 
 namespace Algora {
 
-class GraphArtifact
+class Vertex;
+
+class MultiArc : public Arc
 {
+    friend class DiGraph;
+
 public:
-    explicit GraphArtifact(GraphArtifact *parent = 0);
-    virtual ~GraphArtifact();
+    virtual ~MultiArc();
 
-    int getId() const;
-    GraphArtifact *getParent() const;
+    virtual int getSize() const override = 0;
 
-    virtual std::string typeString() const {
-        return "GraphArtifact";
+    // GraphArtifact interface
+public:
+    virtual std::string typeString() const override {
+        return "MultiArc";
     }
-    virtual std::string toString() const = 0;
+    virtual std::string toString() const override;
 
 protected:
-    std::string idString() const;
-
-private:
-    GraphArtifact(const GraphArtifact&);
-    GraphArtifact& operator=(const GraphArtifact&);
-
-private:
-    class CheshireCat;
-    CheshireCat *grin;
+    explicit MultiArc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
 };
 
 }
 
-#endif // GRAPHARTIFACT_H
+#endif // MULTIARC_H

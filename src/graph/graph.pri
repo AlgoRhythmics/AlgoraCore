@@ -9,7 +9,9 @@ HEADERS += \
     $$PWD/graph.h \
     $$PWD/subdigraph.h \
     $$PWD/superdigraph.h \
-    $$PWD/graph_functional.h
+    $$PWD/graph_functional.h \
+    $$PWD/multiarc.h \
+    $$PWD/weightedarc.h
 
 SOURCES += \
     $$PWD/digraph.cpp \
@@ -20,4 +22,6 @@ SOURCES += \
     $$PWD/subdigraph.cpp \
     $$PWD/graph.cpp \
     $$PWD/superdigraph.cpp \
-    $$PWD/graph_functional.cpp
+    $$PWD/graph_functional.cpp \
+    $$PWD/multiarc.cpp \
+    $$PWD/weightedarc.cpp

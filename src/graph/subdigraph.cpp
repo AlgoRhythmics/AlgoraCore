@@ -142,6 +142,23 @@ Arc *SubDiGraph::addArc(Vertex *tail, Vertex *head)
     return a;
 }
 
+MultiArc *SubDiGraph::addMultiArc(Vertex *tail, Vertex *head, int size)
+{
+    if (size <= 0) {
+        throw std::invalid_argument("Multiarcs must be of size at least 1.");
+    }
+
+    if (!inSubGraph(tail) || !inSubGraph(head)) {
+        throw std::invalid_argument("Vertex is not a part of this graph.");
+    }
+    MultiArc *a = superGraph->addMultiArc(tail, head, size);
+    if (!inSubGraph(a)) {
+        superGraph->removeArc(a);
+        throw std::logic_error("Added arc will not part of this graph.");
+    }
+    return a;
+}
+
 void SubDiGraph::removeArc(Arc *a)
 {
     if (! (inSubGraph(a)
@@ -167,7 +184,7 @@ int SubDiGraph::getOutDegree(const Vertex *v) const
     }
     int out = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
-    me->mapOutgoingArcs(v, [&out](Arc *) { out++;});
+    me->mapOutgoingArcs(v, [&out](Arc *a) { out += a->getSize();});
     return out;
 }
 
@@ -178,7 +195,7 @@ int SubDiGraph::getInDegree(const Vertex *v) const
     }
     int in = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
-    me->mapIncomingArcs(v, [&in](Arc *) { in++; });
+    me->mapIncomingArcs(v, [&in](Arc *a) { in += a->getSize(); });
     return in;
 }
 

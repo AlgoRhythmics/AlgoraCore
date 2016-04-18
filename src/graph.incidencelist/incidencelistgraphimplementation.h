@@ -36,7 +36,7 @@ typedef typename std::vector<IncidenceListVertex*> VertexList;
 class IncidenceListGraphImplementation {
 
 public:
-    explicit IncidenceListGraphImplementation(Graph *handle);
+    explicit IncidenceListGraphImplementation(DiGraph *handle);
     ~IncidenceListGraphImplementation();
 
     void addVertex(IncidenceListVertex *vertex);
@@ -64,7 +64,7 @@ public:
     IncidenceListVertex *createIncidenceListVertex() const;
 
 private:
-    Graph *graph;
+    DiGraph *graph;
     VertexList vertices;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);

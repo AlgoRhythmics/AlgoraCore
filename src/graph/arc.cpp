@@ -61,12 +61,13 @@ Vertex *Arc::getHead() const
 std::string Arc::toString() const
 {
     std::ostringstream strStream;
-    strStream << "Arc ("
-        << grin->tail->toString()
-        << " -> "
-        << grin->head->toString()
-        << ") ["
-        << idString() << "]";
+    strStream << typeString()
+              << " ("
+              << grin->tail->toString()
+              << " -> "
+              << grin->head->toString()
+              << ") ["
+              << idString() << "]";
 
     return strStream.str();
 }

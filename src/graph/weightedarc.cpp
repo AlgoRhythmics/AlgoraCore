@@ -20,40 +20,36 @@
  *   http://algora.xaikal.org
  */
 
-
-#ifndef GRAPHARTIFACT_H
-#define GRAPHARTIFACT_H
-
-#include <string>
+#include "weightedarc.h"
 
 namespace Algora {
 
-class GraphArtifact
-{
-public:
-    explicit GraphArtifact(GraphArtifact *parent = 0);
-    virtual ~GraphArtifact();
+struct WeightedArc::CheshireCat {
+    int weight;
 
-    int getId() const;
-    GraphArtifact *getParent() const;
-
-    virtual std::string typeString() const {
-        return "GraphArtifact";
-    }
-    virtual std::string toString() const = 0;
-
-protected:
-    std::string idString() const;
-
-private:
-    GraphArtifact(const GraphArtifact&);
-    GraphArtifact& operator=(const GraphArtifact&);
-
-private:
-    class CheshireCat;
-    CheshireCat *grin;
+    CheshireCat(int w = 0) : weight(w) { }
 };
+
+WeightedArc::WeightedArc(Vertex *tail, Vertex *head, int weight, GraphArtifact *parent)
+    : MultiArc(tail, head, parent), grin(new CheshireCat(weight))
+{
 
 }
 
-#endif // GRAPHARTIFACT_H
+int WeightedArc::getSize() const
+{
+    return grin->weight;
+}
+
+WeightedArc::~WeightedArc()
+{
+    delete grin;
+}
+
+void WeightedArc::setWeight(int weight)
+{
+    grin->weight = weight;
+}
+
+
+}

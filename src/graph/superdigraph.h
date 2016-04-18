@@ -47,6 +47,7 @@ public:
     // DiGraph interface
 public:
     virtual Arc *addArc(Vertex *tail, Vertex *head) override;
+    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, int size) override;
     virtual void removeArc(Arc *a) override;
     virtual bool containsArc(Arc *a) const override;
     virtual int getOutDegree(const Vertex *v) const override;

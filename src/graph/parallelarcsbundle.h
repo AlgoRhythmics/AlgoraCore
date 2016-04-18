@@ -24,7 +24,7 @@
 #ifndef PARALLELARCSBUNDLE_H
 #define PARALLELARCSBUNDLE_H
 
-#include "arc.h"
+#include "multiarc.h"
 #include "graph_functional.h"
 #include "graph.visitor/arcvisitor.h"
 
@@ -32,15 +32,16 @@
 
 namespace Algora {
 
-class ParallelArcsBundle : public Arc
+class ParallelArcsBundle : public MultiArc
 {
+
 public:
     explicit ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
     explicit ParallelArcsBundle(Arc *arc);
+
     virtual ~ParallelArcsBundle();
 
     virtual void getArcs(std::vector<Arc*> *l) const;
-    virtual int getSize() const;
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) const {
         mapArcs(aVisitor->getVisitorFunction());
     }
@@ -53,14 +54,20 @@ public:
     virtual void removeArc(Arc *a);
     virtual bool containsArc(Arc *a) const;
 
+    // MultiArc interface
+public:
+    virtual int getSize() const override;
+
     // GraphArtifact interface
 public:
+    virtual std::string typeString() const override {
+        return "Parallel Arcs Bundle";
+    }
     virtual std::string toString() const override;
 
 private:
     struct CheshireCat;
     CheshireCat *grin;
-
 };
 
 }

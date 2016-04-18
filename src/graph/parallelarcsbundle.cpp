@@ -36,13 +36,13 @@ struct ParallelArcsBundle::CheshireCat {
 };
 
 ParallelArcsBundle::ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent)
-    : Arc(tail, head, parent), grin(new CheshireCat)
+    : MultiArc(tail, head, parent), grin(new CheshireCat)
 {
 
 }
 
 ParallelArcsBundle::ParallelArcsBundle(Arc *arc)
-    : Arc(arc->getTail(), arc->getHead(), arc->getParent()), grin(new CheshireCat)
+    : MultiArc(arc->getTail(), arc->getHead(), arc->getParent()), grin(new CheshireCat)
 {
     grin->arcsBundle.push_back(arc);
 }
@@ -115,4 +115,3 @@ std::string ParallelArcsBundle::toString() const
 }
 
 }
-

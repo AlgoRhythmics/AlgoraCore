@@ -61,8 +61,9 @@ GraphArtifact *GraphArtifact::getParent() const
 std::string GraphArtifact::idString() const
 {
     std::ostringstream strStream;
-    strStream << "GraphArtifact#";
-    strStream << std::to_string(getId());
+    strStream << this->typeString()
+              << "#"
+              << std::to_string(getId());
     return strStream.str();
 }
 

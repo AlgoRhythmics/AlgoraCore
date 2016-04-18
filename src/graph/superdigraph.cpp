@@ -163,6 +163,21 @@ Arc *SuperDiGraph::addArc(Vertex *tail, Vertex *head)
     return a;
 }
 
+MultiArc *SuperDiGraph::addMultiArc(Vertex *tail, Vertex *head, int size)
+{
+    if (size <= 0) {
+        throw std::invalid_argument("Multiarcs must be of size at least 1.");
+    }
+
+    IncidenceListVertex *t = findOrCreateVertex(tail, grin->map, grin->extra, this);
+    IncidenceListVertex *h = findOrCreateVertex(head, grin->map, grin->extra, this);
+
+    MultiArc *a = createMultiArc(tail, head, size);
+    grin->extra->addArc(a, t, h);
+    greetArc(a);
+    return a;
+}
+
 void SuperDiGraph::removeArc(Arc *a)
 {
     if (a->getParent() != this) {

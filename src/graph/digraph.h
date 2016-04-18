@@ -26,6 +26,8 @@
 
 #include "graph.h"
 #include "arc.h"
+#include "weightedarc.h"
+#include "parallelarcsbundle.h"
 
 #include "graph.visitor/arcvisitor.h"
 
@@ -41,6 +43,7 @@ public:
 
     // Arcs
     virtual Arc *addArc(Vertex *tail, Vertex *head) = 0;
+    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, int size) = 0;
     virtual void removeArc(Arc *a) = 0;
     virtual bool containsArc(Arc *a) const = 0;
 
@@ -86,8 +89,12 @@ protected:
        for (const ArcMapping &f : arcFarewells) { f(a); }
    }
 
-    Arc *createArc(Vertex *tail, Vertex *head) {
+    virtual Arc *createArc(Vertex *tail, Vertex *head) {
         return new Arc(tail, head, this);
+    }
+
+    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, int size) {
+        return new WeightedArc(tail, head, size, this);
     }
 };
 
