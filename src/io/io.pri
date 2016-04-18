@@ -7,10 +7,12 @@ HEADERS += \
     $$PWD/adjacencyliststringformat.h \
     $$PWD/adjacencyliststringreader.h \
     $$PWD/sparsesixgraphrw.h \
-    $$PWD/sparsesixformat.h
+    $$PWD/sparsesixformat.h \
+    $$PWD/adjacencymatrixrw.h
 
 SOURCES += \     
     $$PWD/adjacencyliststringwriter.cpp \
     $$PWD/adjacencyliststringreader.cpp \
     $$PWD/sparsesixgraphrw.cpp \
-    $$PWD/sparsesixformat.cpp
+    $$PWD/sparsesixformat.cpp \
+    $$PWD/adjacencymatrixrw.cpp
