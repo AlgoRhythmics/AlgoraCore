@@ -42,7 +42,7 @@ struct AdjacencyMatrixRW::CheshireCat {
           includeDiagonal(diag) { }
 };
 
-bool writeGraphOneLine(std::ostream &os, const DiGraph *graph, bool upperTriangleOnly, bool includeDiagonal);
+bool writeGraph(std::ostream &os, const DiGraph *graph, bool oneLine, bool upperTriangleOnly, bool includeDiagonal);
 
 AdjacencyMatrixRW::AdjacencyMatrixRW(bool oneLine, bool upperTriangleOnly, bool withDiagonal)
     : grin(new CheshireCat(oneLine, upperTriangleOnly, withDiagonal))
@@ -58,10 +58,6 @@ AdjacencyMatrixRW::~AdjacencyMatrixRW()
 void AdjacencyMatrixRW::useOneLineFormat(bool oneLine)
 {
     grin->oneLine = oneLine;
-    if (!oneLine) {
-        grin->upperTriangularMatrix = false;
-        grin->includeDiagonal = true;
-    }
 }
 
 void AdjacencyMatrixRW::writeUpperTriangleOnly(bool upper)
@@ -97,10 +93,7 @@ void AdjacencyMatrixRW::processGraph(const DiGraph *graph)
 
     std::ostream &outputStream = *(StreamDiGraphWriter::outputStream);
 
-    if (grin->oneLine) {
-        return writeGraphOneLine(outputStream, graph, grin->upperTriangularMatrix, grin->includeDiagonal);
-    }
-
+    writeGraph(outputStream, graph, grin->oneLine, grin->upperTriangularMatrix, grin->includeDiagonal);
 }
 
 bool AdjacencyMatrixRW::provideDiGraph(DiGraph *graph)
@@ -109,71 +102,100 @@ bool AdjacencyMatrixRW::provideDiGraph(DiGraph *graph)
         return false;
     }
     std::istream &inputStream = *(StreamDiGraphReader::inputStream);
+
+    return false;
 }
 
-bool writeGraphOneLine(std::ostream &os, const DiGraph *graph, bool oneLine, bool upperTriangleOnly, bool includeDiagonal) {
+bool writeGraph(std::ostream &os, const DiGraph *graph, bool oneLine, bool upperTriangleOnly, bool includeDiagonal) {
 
     DiGraph *ncGraph = const_cast<DiGraph*>(graph);
     int n = ncGraph->getSize();
-    os << ": " << n << " :";
-    if (upperTriangleOnly) {
-        os << "u ";
-    }
-    if (includeDiagonal) {
-        os << "d ";
-    }
-    os << ":";
-
     PropertyMap<int> vertexId(-1);
     int i = 0;
     ncGraph->mapVertices([&](Vertex *v) { vertexId[v] = i++; });
     std::map<std::pair<int,int>, int> arcsToWeight;
 
+    bool ok = true;
     ArcMapping createTuple = [&](Arc *a) {
         int h = vertexId[a->getHead()];
         int t = vertexId[a->getTail()];
         int size = a->getSize();
+        if (oneLine && upperTriangleOnly && !includeDiagonal && h == t) {
+            ok = false;
+            return;
+        }
         if (upperTriangleOnly && h < t) {
             arcsToWeight[std::make_pair(h, t)] = -size;
         } else {
             arcsToWeight[std::make_pair(t, h)] = size;
         }
     };
-    ncGraph->mapArcs([&](Arc *arc) { createTuple(arc); });
+    ncGraph->mapArcsUntil([&](Arc *arc) { createTuple(arc); }, [&](const Arc *) { return !ok; });
+    if (!ok) {
+        return false;
+    }
+
+    if (oneLine) {
+        os << n << " : ";
+        if (upperTriangleOnly) {
+            os << "u ";
+        }
+        if (includeDiagonal) {
+            os << "d ";
+        }
+        os << ":";
+    } else {
+        os << n << std::endl;
+    }
 
     int row = 0;
-    int col = -1;
+    int col = oneLine && upperTriangleOnly && !includeDiagonal ? 1 : 0;
     for (auto it = arcsToWeight.cbegin(); it != arcsToWeight.cend(); ++it) {
         auto p = (*it).first;
         int weight = (*it).second;
 
-        // fill up current row
-        int fillUpEnd = p.first == row ? p.second : n;
-        for (int j = col + 1; j < fillUpEnd; j++) {
-            if (oneLine || j != 0) {
-                out << " ";
-            }
-            out << "0";
-        }
-        if (p.second != 0) {
-            out << " ";
-        }
-
-        out << weight;
-
-        for (int i = row; i <= p.first; i++) {
-            int jStart = i == row ?
-                        col + 1 : (!upperTriangleOnly ? 0 : (includeDiagonal ? i : i + 1));
-            for (int j = jStart; j < p.second; j++) {
-                if (oneLine || j != jStart) {
-                    out << " ";
+        while (row < p.first) {
+            while (col < n) {
+                if (oneLine || col != 0) {
+                    os << " ";
                 }
-                out << "0";
+                os << "0";
+                col++;
             }
             if (!oneLine) {
-                out << std::endl;
+                os << std::endl;
             }
+            row++;
+            col = (!oneLine || !upperTriangleOnly) ? 0 : (includeDiagonal ? row : row + 1);
+        }
+        while (col < p.second) {
+            if (oneLine || col != 0) {
+                os << " ";
+            }
+            os << "0";
+            col++;
+        }
+        if (oneLine || col != 0) {
+            os << " ";
+        }
+        os << weight;
+        col++;
     }
+    while (row < n) {
+        while (col < n) {
+            if (oneLine || col != 0) {
+                os << " ";
+            }
+            os << "0";
+            col++;
+        }
+        if (!oneLine) {
+            os << std::endl;
+        }
+        row++;
+        col = (!oneLine || !upperTriangleOnly) ? 0 : (includeDiagonal ? row : row + 1);
+    }
+    return true;
 }
 
 }

@@ -31,7 +31,7 @@ namespace Algora {
 class AdjacencyMatrixRW : public StreamDiGraphReader, public StreamDiGraphWriter
 {
 public:
-    AdjacencyMatrixRW(bool oneLine, bool upperTriangleOnly = false, bool withDiagonal = true);
+    AdjacencyMatrixRW(bool oneLine = false, bool upperTriangleOnly = false, bool withDiagonal = false);
     virtual ~AdjacencyMatrixRW();
 
     void useOneLineFormat(bool oneLine);
