@@ -42,6 +42,7 @@ struct AdjacencyMatrixRW::CheshireCat {
           includeDiagonal(diag) { }
 };
 
+bool readGraph(std::istream &is, DiGraph *graph);
 bool writeGraph(std::ostream &os, const DiGraph *graph, bool oneLine, bool upperTriangleOnly, bool includeDiagonal);
 
 AdjacencyMatrixRW::AdjacencyMatrixRW(bool oneLine, bool upperTriangleOnly, bool withDiagonal)
@@ -103,7 +104,88 @@ bool AdjacencyMatrixRW::provideDiGraph(DiGraph *graph)
     }
     std::istream &inputStream = *(StreamDiGraphReader::inputStream);
 
-    return false;
+    return readGraph(inputStream, graph);
+}
+
+bool readGraph(std::istream &is, DiGraph *graph) {
+
+    int n = 0;
+    bool oneLine = false;
+    bool upperTriangle = false;
+    bool diagonal = false;
+
+    if (!(is >> n)) {
+        return false;
+    }
+    if (n <= 0) {
+        return false;
+    }
+    is >> std::skipws;
+
+    int p = is.peek();
+    oneLine = std::isdigit(p);
+    if (oneLine) {
+        char c;
+        is >> c;
+        if (c != ':') {
+            return false;
+        }
+        while ((is.peek() != ':') && (is >> c)) {
+            if (!std::isspace(c)) {
+                switch (c) {
+                case 'u' :
+                    upperTriangle = true;
+                    break;
+                case 'd':
+                    diagonal = true;
+                    break;
+                default:
+                    return false;
+                }
+            }
+        }
+        if ((!is.good()) || (diagonal && !upperTriangle)) {
+            return false;
+        }
+        is >> c;
+        if (c != ':') {
+            return false;
+        }
+    }
+    std::vector<Vertex*> vertices;
+    for (int i = 0; i < n; i++) {
+        vertices.push_back(graph->addVertex());
+    }
+
+    int weight;
+    for (int i = 0; i < n; i++) {
+        int jStart = upperTriangle ? (diagonal ? i : i + 1) : 0;
+        for (int j = jStart; j < n; j++) {
+            if (!(is >> weight)) {
+                return false;
+            }
+            if (weight == 0) {
+                continue;
+            }
+            Vertex *from;
+            Vertex *to;
+            if (upperTriangle && weight < 0) {
+                weight = -weight;
+                from = vertices.at(j);
+                to = vertices.at(i);
+            } else {
+                from = vertices.at(i);
+                to = vertices.at(j);
+            }
+            if (weight == 1) {
+                graph->addArc(from, to);
+            } else {
+               graph->addMultiArc(from, to, weight);
+            }
+        }
+    }
+
+    return true;
 }
 
 bool writeGraph(std::ostream &os, const DiGraph *graph, bool oneLine, bool upperTriangleOnly, bool includeDiagonal) {
