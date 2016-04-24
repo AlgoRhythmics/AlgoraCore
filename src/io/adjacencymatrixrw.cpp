@@ -29,6 +29,8 @@
 #include <tuple>
 #include <algorithm>
 
+//#include <iostream>
+
 namespace Algora {
 
 struct AdjacencyMatrixRW::CheshireCat {
@@ -120,34 +122,42 @@ bool readGraph(std::istream &is, DiGraph *graph) {
     if (n <= 0) {
         return false;
     }
-    is >> std::skipws;
+    //std::cout << "n " << n << std::endl;
+    is >> std::ws;
 
     int p = is.peek();
-    oneLine = std::isdigit(p);
+    //std::cout << "p \"" << (char) p << "\"" << std::endl;
+    oneLine = !std::isdigit(p);
     if (oneLine) {
+        //std::cout << "one line" << std::endl;
         char c;
         is >> c;
+        //std::cout << "next char " << c << std::endl;
         if (c != ':') {
             return false;
         }
+        is >> std::ws;
         while ((is.peek() != ':') && (is >> c)) {
-            if (!std::isspace(c)) {
-                switch (c) {
-                case 'u' :
-                    upperTriangle = true;
-                    break;
-                case 'd':
-                    diagonal = true;
-                    break;
-                default:
-                    return false;
-                }
+            //std::cout << "next char " << c << std::endl;
+            switch (c) {
+            case 'u' :
+                upperTriangle = true;
+                break;
+            case 'd':
+                diagonal = true;
+                break;
+            default:
+                return false;
             }
+            is >> std::ws;
         }
+        //std::cout << "upper triangle " << upperTriangle << std::endl;
+        //std::cout << "diagonal " << diagonal << std::endl;
         if ((!is.good()) || (diagonal && !upperTriangle)) {
             return false;
         }
         is >> c;
+        //std::cout << "next char " << c << std::endl;
         if (c != ':') {
             return false;
         }
