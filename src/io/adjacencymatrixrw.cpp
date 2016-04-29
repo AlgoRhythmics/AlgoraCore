@@ -29,7 +29,7 @@
 #include <tuple>
 #include <algorithm>
 
-//#include <iostream>
+#include <iostream>
 
 namespace Algora {
 
@@ -117,9 +117,11 @@ bool readGraph(std::istream &is, DiGraph *graph) {
     bool diagonal = false;
 
     if (!(is >> n)) {
+        std::cerr << "io: Could not read n." << std::endl;
         return false;
     }
     if (n <= 0) {
+        std::cerr << "io: n <= 0." << std::endl;
         return false;
     }
     //std::cout << "n " << n << std::endl;
@@ -134,6 +136,7 @@ bool readGraph(std::istream &is, DiGraph *graph) {
         is >> c;
         //std::cout << "next char " << c << std::endl;
         if (c != ':') {
+            std::cerr << "io: Missing first ':'." << std::endl;
             return false;
         }
         is >> std::ws;
@@ -147,6 +150,7 @@ bool readGraph(std::istream &is, DiGraph *graph) {
                 diagonal = true;
                 break;
             default:
+                std::cerr << "io: Unsupported option " << c << "." << std::endl;
                 return false;
             }
             is >> std::ws;
@@ -154,11 +158,13 @@ bool readGraph(std::istream &is, DiGraph *graph) {
         //std::cout << "upper triangle " << upperTriangle << std::endl;
         //std::cout << "diagonal " << diagonal << std::endl;
         if ((!is.good()) || (diagonal && !upperTriangle)) {
+            std::cerr << "io: Stream error or illegal option combination." << std::endl;
             return false;
         }
         is >> c;
         //std::cout << "next char " << c << std::endl;
         if (c != ':') {
+            std::cerr << "io: Missing second ':'." << std::endl;
             return false;
         }
     }
@@ -168,10 +174,13 @@ bool readGraph(std::istream &is, DiGraph *graph) {
     }
 
     int weight;
+    int numValues = 0;
     for (int i = 0; i < n; i++) {
         int jStart = upperTriangle ? (diagonal ? i : i + 1) : 0;
         for (int j = jStart; j < n; j++) {
+            numValues++;
             if (!(is >> weight)) {
+                std::cerr << "io: Could not read entry #" << numValues << "=(" << i << ", " << j << ")." << std::endl;
                 return false;
             }
             if (weight == 0) {
