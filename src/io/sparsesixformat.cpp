@@ -123,30 +123,41 @@ unsigned long long extractSparseSixN(std::vector<int> &bytes)
     if (bytes.size() < 1) {
         return 0;
     }
+    //std::cout << "first byte: " << bytes[0] << std::endl;
     if (bytes[0] != 126) {
         int value = bytes[0] - 63;
+        //std::cout << "value: " << value << std::endl;
         bytes.erase (bytes.begin());
         return value;
     } else if (bytes.size() < 4) {
         return 0;
     }
+    //std::cout << "second byte: " << bytes[1] << std::endl;
+    //std::cout << "third byte: " << bytes[2] << std::endl;
+    //std::cout << "forth byte: " << bytes[3] << std::endl;
     if (bytes[1] != 126) {
-        boost::dynamic_bitset<> b1(6, bytes[1]);
-        boost::dynamic_bitset<> b2(6, bytes[2]);
-        boost::dynamic_bitset<> b3(6, bytes[3]);
+        boost::dynamic_bitset<> b1(6, bytes[1] - 63);
+        boost::dynamic_bitset<> b2(6, bytes[2] - 63);
+        boost::dynamic_bitset<> b3(6, bytes[3] - 63);
+        //std::cout << "bits 1: " << b1 << std::endl;
+        //std::cout << "bits 2: " << b2 << std::endl;
+        //std::cout << "bits 3: " << b3 << std::endl;
         bytes.erase(bytes.begin(), bytes.begin()+4);
         prependBitset(b1, b2);
+        //std::cout << "bits 1+2: " << b1 << std::endl;
         prependBitset(b1, b3);
+        //std::cout << "bits: " << b1 << std::endl;
+        //std::cout << "ulong: " << b1.to_ulong() << std::endl;
         return b1.to_ulong();
     } else if (bytes.size() < 8) {
         return 0;
     }
-    boost::dynamic_bitset<> b1(6, bytes[2]);
-    boost::dynamic_bitset<> b2(6, bytes[3]);
-    boost::dynamic_bitset<> b3(6, bytes[4]);
-    boost::dynamic_bitset<> b4(6, bytes[5]);
-    boost::dynamic_bitset<> b5(6, bytes[6]);
-    boost::dynamic_bitset<> b6(6, bytes[7]);
+    boost::dynamic_bitset<> b1(6, bytes[2] - 63);
+    boost::dynamic_bitset<> b2(6, bytes[3] - 63);
+    boost::dynamic_bitset<> b3(6, bytes[4] - 63);
+    boost::dynamic_bitset<> b4(6, bytes[5] - 63);
+    boost::dynamic_bitset<> b5(6, bytes[6] - 63);
+    boost::dynamic_bitset<> b6(6, bytes[7] - 63);
     bytes.erase (bytes.begin(), bytes.begin() + 8);
     prependBitset(b1, b2);
     prependBitset(b1, b3);

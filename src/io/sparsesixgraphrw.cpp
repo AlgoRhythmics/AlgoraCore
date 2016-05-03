@@ -33,7 +33,7 @@
 #include <tuple>
 #include <algorithm>
 
-//#include <iostream>
+#include <iostream>
 
 namespace Algora {
 
@@ -158,6 +158,7 @@ bool SparseSixGraphRW::provideDiGraph(DiGraph *graph)
     char colon;
     inputStream >> colon;
     if (colon != ':') {
+        std::cerr << "io: Missing first ':'." << std::endl;
         return false;
     }
     std::vector<int> bytes;
@@ -165,6 +166,7 @@ bool SparseSixGraphRW::provideDiGraph(DiGraph *graph)
     asciiToInts(inputStream, bytes, ':');
     inputStream >> colon;
     if (colon != ':') {
+        std::cerr << "io: Missing second ':'." << std::endl;
         return false;
     }
     asciiToInts(inputStream, direction, '\n');
