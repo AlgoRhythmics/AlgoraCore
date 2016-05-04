@@ -151,16 +151,16 @@ bool IncidenceListGraph::containsArc(Arc *a) const
     return impl->containsArc(a, tail);
 }
 
-int IncidenceListGraph::getOutDegree(const Vertex *v) const
+int IncidenceListGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);
-    return impl->getOutDegree(vertex);
+    return impl->getOutDegree(vertex, multiArcsAsSimple);
 }
 
-int IncidenceListGraph::getInDegree(const Vertex *v) const
+int IncidenceListGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);
-    return impl->getInDegree(vertex);
+    return impl->getInDegree(vertex, multiArcsAsSimple);
 }
 
 void IncidenceListGraph::mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition)

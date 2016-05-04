@@ -209,7 +209,7 @@ bool SuperDiGraph::containsArc(Arc *a) const
     return grin->extra->containsArc(a, tail);
 }
 
-int SuperDiGraph::getOutDegree(const Vertex *v) const
+int SuperDiGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     const IncidenceListVertex *vertex;
     if (v->getParent() == this) {
@@ -217,18 +217,18 @@ int SuperDiGraph::getOutDegree(const Vertex *v) const
         if (!vertex) {
             throw std::invalid_argument("Vertex is not a part of this graph.");
         }
-        return grin->extra->getOutDegree(vertex);
+        return grin->extra->getOutDegree(vertex, multiArcsAsSimple);
     }
 
     vertex = findVertex(v, grin->map, this);
     if (vertex) {
-        return grin->extra->getOutDegree(vertex) + grin->subGraph->getOutDegree(v);
+        return grin->extra->getOutDegree(vertex, multiArcsAsSimple) + grin->subGraph->getOutDegree(v, multiArcsAsSimple);
     }
 
     return grin->subGraph->getOutDegree(v);
 }
 
-int SuperDiGraph::getInDegree(const Vertex *v) const
+int SuperDiGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     const IncidenceListVertex *vertex;
     if (v->getParent() == this) {
@@ -236,12 +236,12 @@ int SuperDiGraph::getInDegree(const Vertex *v) const
         if (!vertex) {
             throw std::invalid_argument("Vertex is not a part of this graph.");
         }
-        return grin->extra->getInDegree(vertex);
+        return grin->extra->getInDegree(vertex, multiArcsAsSimple);
     }
 
     vertex = findVertex(v, grin->map, this);
     if (vertex) {
-        return grin->extra->getInDegree(vertex) + grin->subGraph->getInDegree(v);
+        return grin->extra->getInDegree(vertex, multiArcsAsSimple) + grin->subGraph->getInDegree(v, multiArcsAsSimple);
     }
 
     return grin->subGraph->getInDegree(v);

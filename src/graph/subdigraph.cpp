@@ -177,25 +177,25 @@ bool Algora::SubDiGraph::containsArc(Arc *a) const
             && superGraph->containsArc(a);
 }
 
-int SubDiGraph::getOutDegree(const Vertex *v) const
+int SubDiGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     if (!inSubGraph(v)) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
     int out = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
-    me->mapOutgoingArcs(v, [&out](Arc *a) { out += a->getSize();});
+    me->mapOutgoingArcs(v, [&](Arc *a) { out += multiArcsAsSimple ? 1 : a->getSize();});
     return out;
 }
 
-int SubDiGraph::getInDegree(const Vertex *v) const
+int SubDiGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     if (!inSubGraph(v)) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
     int in = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
-    me->mapIncomingArcs(v, [&in](Arc *a) { in += a->getSize(); });
+    me->mapIncomingArcs(v, [&](Arc *a) { in += multiArcsAsSimple ? 1 : a->getSize(); });
     return in;
 }
 

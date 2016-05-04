@@ -47,8 +47,8 @@ public:
     virtual bool mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCondition = arcFalse) const;
     virtual bool mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCondition = arcFalse) const;
 
-    int getOutDegree() const;
-    int getInDegree() const;
+    int getOutDegree(bool multiArcsAsSimple = false) const;
+    int getInDegree(bool multiArcsAsSimple = false) const;
 
 protected:
     explicit IncidenceListVertex(GraphArtifact *parent = 0);

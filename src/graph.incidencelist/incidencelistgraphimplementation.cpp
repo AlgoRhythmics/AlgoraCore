@@ -109,14 +109,14 @@ bool IncidenceListGraphImplementation::containsArc(Arc *a, IncidenceListVertex *
     return tail->hasOutgoingArc(a);
 }
 
-int IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v) const
+int IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
-    return v->getOutDegree();
+    return v->getOutDegree(multiArcsAsSimple);
 }
 
-int IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v) const
+int IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
-    return v->getInDegree();
+    return v->getInDegree(multiArcsAsSimple);
 }
 
 void IncidenceListGraphImplementation::mapVertices(VertexMapping vvFun, VertexPredicate breakCondition)

@@ -48,8 +48,8 @@ public:
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     bool containsArc(Arc *a, IncidenceListVertex *tail) const;
 
-    int getOutDegree(const IncidenceListVertex *v) const;
-    int getInDegree(const IncidenceListVertex *v) const;
+    int getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
+    int getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
 
     void mapVertices(VertexMapping vvFun, VertexPredicate breakCondition);
 

@@ -47,9 +47,9 @@ public:
     virtual void removeArc(Arc *a) = 0;
     virtual bool containsArc(Arc *a) const = 0;
 
-    virtual int getOutDegree(const Vertex *v) const = 0;
-    virtual int getInDegree(const Vertex *v) const = 0;
-    virtual int getNumArcs() const;
+    virtual int getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
+    virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
+    virtual int getNumArcs(bool multiArcsAsSimple = false) const;
 
     virtual void onArcAdd(ArcMapping avFun) { arcGreetings.push_back(avFun); }
     virtual void onArcRemove(ArcMapping avFun) { arcFarewells.push_back(avFun); }
