@@ -41,6 +41,15 @@ bool isAcyclic(DiGraph *diGraph) {
     return maxTs == diGraph->getSize();
 }
 
+bool isStronglyConnected(DiGraph *diGraph)
+{
+   //return createAndRunAlgorithm<TarjanSCCAlgorithm,int>(diGraph) == 1;
+    TarjanSCCAlgorithm tarjan;
+    PropertyMap<int> sccs(-1);
+    tarjan.usePropertyMap(&sccs);
+    return runAlgorithm(tarjan, diGraph) == 1;
+}
+
 }
 
 

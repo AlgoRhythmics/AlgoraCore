@@ -38,6 +38,8 @@ bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to);
 
 bool isAcyclic(DiGraph *diGraph);
 
+bool isStronglyConnected(DiGraph *diGraph);
+
 }
 
 #endif // BASIC_ALGORITHMS_H
