@@ -31,6 +31,7 @@ namespace Algora {
 class Vertex : public GraphArtifact
 {
     friend class Graph;
+    friend std::ostream &operator<<(std::ostream &, const Vertex *);
 
 public:
     virtual ~Vertex();
@@ -40,6 +41,8 @@ public:
 protected:
     explicit Vertex(GraphArtifact *parent = 0);
 };
+
+std::ostream &operator<<(std::ostream &out, const Vertex *v);
 
 }
 
