@@ -43,11 +43,15 @@ bool isAcyclic(DiGraph *diGraph) {
 
 bool isStronglyConnected(DiGraph *diGraph)
 {
-   //return createAndRunAlgorithm<TarjanSCCAlgorithm,int>(diGraph) == 1;
+    return countStrongComponents(diGraph) == 1;
+}
+
+int countStrongComponents(DiGraph *diGraph)
+{
     TarjanSCCAlgorithm tarjan;
     PropertyMap<int> sccs(-1);
     tarjan.usePropertyMap(&sccs);
-    return runAlgorithm(tarjan, diGraph) == 1;
+    return runAlgorithm(tarjan, diGraph);
 }
 
 }

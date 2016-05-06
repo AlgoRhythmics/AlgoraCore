@@ -26,6 +26,7 @@
 
 #include "finddipathalgorithm.h"
 #include "breadthfirstsearch.h"
+#include "depthfirstsearch.h"
 #include "tarjansccalgorithm.h"
 #include "topsortalgorithm.h"
 
@@ -39,6 +40,8 @@ bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to);
 bool isAcyclic(DiGraph *diGraph);
 
 bool isStronglyConnected(DiGraph *diGraph);
+
+int countStrongComponents(DiGraph *diGraph);
 
 }
 
