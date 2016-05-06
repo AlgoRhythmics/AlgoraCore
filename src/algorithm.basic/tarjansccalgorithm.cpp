@@ -30,6 +30,8 @@
 
 #include <deque>
 
+//#include <iostream>
+
 namespace Algora {
 
 int tarjanRecursive(DiGraph *diGraph, PropertyMap<int> &sccNumber);
@@ -92,39 +94,54 @@ void strongconnect(DiGraph *graph, Vertex *v,
                    PropertyMap<bool> &onStack,
                    PropertyMap<int> &sccNumber) {
 
+    //std::cout << "strongconnect on " << v << std::endl;
     int vLowLink = nextIndex;
     vertexIndex[v] = nextIndex;
     lowLink[v] = nextIndex;
+    //std::cout << "index is " << nextIndex << std::endl;
+    //std::cout << "lolink is " << nextIndex << std::endl;
     nextIndex++;
     stack.push_back(v);
     onStack[v] = true;
 
     graph->mapOutgoingArcs(v, [&](Arc *a) {
         Vertex *head = a->getHead();
+        //std::cout << "considering out-neighbor " << head << std::endl;
         if (vertexIndex(head) == -1) {
+            //std::cout << "neighbor has no index yet." << std::endl;
             strongconnect(graph, head, nextIndex, nextScc, stack, vertexIndex, lowLink, onStack, sccNumber);
             int hLowLink = lowLink(head);
+            //std::cout << "neighbor has lowlink " << hLowLink << std::endl;
             if (hLowLink < vLowLink) {
-                lowLink[v] = hLowLink;
+                vLowLink = hLowLink;
+                //std::cout << "lowlink updated." << std::endl;
             }
         } else if (onStack(head)) {
+            //std::cout << "neighbor is already on stack." << std::endl;
             int hIndex = vertexIndex(head);
+            //std::cout << "neighbor has index " << hIndex << std::endl;
             if (hIndex < vLowLink) {
-                lowLink[v] = hIndex;
+                vLowLink = hIndex;
+                //std::cout << "lowlink updated." << std::endl;
             }
         }
     });
+    lowLink[v] = vLowLink;
 
     if (lowLink(v) == vertexIndex(v)) {
+        //std::cout << "Found SCC #" << nextScc << " with members: ";
         Vertex *w;
         do {
             w  = stack.back();
+            //std::cout << w << " ";
             stack.pop_back();
             onStack[w] = false;
             sccNumber[w] = nextScc;
         } while (w != v);
+        //std::cout << std::endl;
         nextScc++;
     }
+    //std::cout << "done with " << v << std::endl;
 }
 
 }
