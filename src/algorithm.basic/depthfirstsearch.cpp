@@ -9,11 +9,11 @@
 
 namespace Algora {
 
-void dfs(DiGraph *g, Vertex *v, int &depth, PropertyMap<std::pair<int, int> > &pm,
-         PropertyMap<Vertex *> &parent, PropertyMap<bool> &discovered, bool ignoreDirection);
+void dfs(DiGraph *g, Vertex *v, int &depth, PropertyMap<DFSResult> &pm,
+         PropertyMap<bool> &discovered, bool ignoreDirection);
 
 DepthFirstSearch::DepthFirstSearch()
-    : startVertex(0), maxDfsNumber(-1), ignoreArcDirections(false), parentMap(0)
+    : startVertex(0), maxDfsNumber(-1), ignoreArcDirections(false)
 {
 
 }
@@ -25,7 +25,7 @@ DepthFirstSearch::~DepthFirstSearch()
 
 bool DepthFirstSearch::prepare()
 {
-    return PropertyComputingAlgorithm<bool, std::pair<int, int> >::prepare()
+    return PropertyComputingAlgorithm<bool, DFSResult>::prepare()
             && (startVertex == 0 || diGraph->containsVertex(startVertex));
 }
 
@@ -36,14 +36,9 @@ void DepthFirstSearch::run()
     }
 
     int nextDepth = 0;
-    PropertyMap<std::pair<int, int> > &pm = *propertyMap;
+    PropertyMap<DFSResult> &pm = *propertyMap;
     PropertyMap<bool> discovered(false);
-    if (!parentMap) {
-        PropertyMap<Vertex*> parent(0);
-        dfs(diGraph, startVertex, nextDepth, pm, parent, discovered, ignoreArcDirections);
-    } else {
-        dfs(diGraph, startVertex, nextDepth, pm, *parentMap, discovered, ignoreArcDirections);
-    }
+    dfs(diGraph, startVertex, nextDepth, pm, discovered, ignoreArcDirections);
     maxDfsNumber = nextDepth - 1;
 }
 
@@ -52,32 +47,31 @@ bool DepthFirstSearch::deliver()
     return maxDfsNumber + 1 == diGraph->getSize();
 }
 
-void dfs(DiGraph *g, Vertex *v, int &depth, PropertyMap<std::pair<int, int> > &pm,
-         PropertyMap<Vertex*> &parent,
+void dfs(DiGraph *g, Vertex *v, int &depth, PropertyMap<DFSResult> &pm,
          PropertyMap<bool> &discovered, bool ignoreDirection) {
 
     discovered[v] = true;
-    int low = depth;
-    pm[v] = std::make_pair(depth, low);
+    DFSResult &cur = pm[v];
+    cur.dfsNumber = depth;
+    cur.lowNumber = depth;
     depth++;
-    std::cout << v << " : low = " << low << std::endl;
+    //std::cout << v << " : low = " << cur.lowNumber << std::endl;
 
     auto vm = [&](Vertex *v, Vertex *u) {
-        std::cout << "Considering child " << u << std::endl;
+        //std::cout << "Considering child " << u << std::endl;
         if (!discovered(u)) {
-            parent[u] = v;
-            dfs(g, u, depth, pm, parent, discovered, ignoreDirection);
-            if (pm(u).second < low) {
-                std::cout << "Updating low from " << low << " to " << pm(u).second << std::endl;
-                low = pm(u).second;
-                pm[v].second = low;
-                std::cout << "Low is now " << pm(v).second << std::endl;
+            pm[u] = DFSResult(v);
+            //std::cout << "Set parent of " << u << " to " << pm(u).parent << std::endl;
+            dfs(g, u, depth, pm, discovered, ignoreDirection);
+            if (pm(u).lowNumber < cur.lowNumber) {
+                //std::cout << "Updating low from " << cur.lowNumber << " to " << pm(u).lowNumber << std::endl;
+                cur.lowNumber = pm(u).lowNumber;
+                //std::cout << "Low is now " << pm(v).lowNumber << std::endl;
             }
-        } else if (parent(v) != u && pm(u).first < low) {
-            std::cout << "Updating low from " << low << " to " << pm(u).first << std::endl;
-            low = pm(u).first;
-            pm[v].second = low;
-            std::cout << "Low is now " << pm(v).second << std::endl;
+        } else if (cur.parent != u && pm(u).dfsNumber < cur.lowNumber) {
+            //std::cout << "Updating low from " << cur.lowNumber << " to " << pm(u).dfsNumber << std::endl;
+            cur.lowNumber = pm(u).dfsNumber;
+            //std::cout << "Low is now " << pm(v).lowNumber << std::endl;
         }
     };
     g->mapOutgoingArcs(v, [&](Arc *a) { vm(v, a->getHead()); });

@@ -8,7 +8,16 @@ namespace Algora {
 
 class Vertex;
 
-class DepthFirstSearch : public PropertyComputingAlgorithm<bool, std::pair<int, int> >
+struct DFSResult {
+    int dfsNumber = -1;
+    int lowNumber = -1;
+    Vertex *parent = 0;
+    DFSResult(int dfs=-1, int low=-1, Vertex *p=0) :
+        dfsNumber(dfs), lowNumber(low), parent(p) {}
+    DFSResult(Vertex *p) : parent(p) {}
+};
+
+class DepthFirstSearch : public PropertyComputingAlgorithm<bool, DFSResult>
 {
 public:
     DepthFirstSearch();
@@ -20,10 +29,6 @@ public:
 
     void setIgnoreArcDirections(bool ignore) {
        ignoreArcDirections = ignore;
-    }
-
-    virtual void rememberParents(PropertyMap<Vertex*> *pMap) {
-        parentMap = pMap;
     }
 
     // DiGraphAlgorithm interface
@@ -39,7 +44,6 @@ private:
     Vertex *startVertex;
     int maxDfsNumber;
     bool ignoreArcDirections;
-    PropertyMap<Vertex*> *parentMap;
 };
 
 }
