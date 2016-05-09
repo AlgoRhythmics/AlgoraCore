@@ -44,6 +44,10 @@ bool isStronglyConnected(DiGraph *diGraph);
 
 int countStrongComponents(DiGraph *diGraph);
 
+bool isBiconnected(DiGraph *diGraph);
+
+int countBiconnectedComponents(DiGraph *diGraph);
+
 }
 
 #endif // BASIC_ALGORITHMS_H

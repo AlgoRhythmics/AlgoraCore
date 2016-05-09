@@ -54,6 +54,20 @@ int countStrongComponents(DiGraph *diGraph)
     return runAlgorithm(tarjan, diGraph);
 }
 
+bool isBiconnected(DiGraph *diGraph)
+{
+    return countBiconnectedComponents(diGraph) == 1;
+}
+
+int countBiconnectedComponents(DiGraph *diGraph)
+{
+    BiconnectedComponentsAlgorithm bic;
+    std::vector<int> empty;
+    PropertyMap<std::vector<int> > bics(empty);
+    bic.usePropertyMap(&bics);
+    return runAlgorithm(bic, diGraph);
+}
+
 }
 
 
