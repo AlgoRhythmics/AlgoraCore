@@ -25,7 +25,7 @@ DepthFirstSearch::~DepthFirstSearch()
 
 bool DepthFirstSearch::prepare()
 {
-    return PropertyComputingAlgorithm<bool, DFSResult>::prepare()
+    return PropertyComputingAlgorithm<int, DFSResult>::prepare()
             && (startVertex == 0 || diGraph->containsVertex(startVertex));
 }
 
@@ -42,9 +42,9 @@ void DepthFirstSearch::run()
     maxDfsNumber = nextDepth - 1;
 }
 
-bool DepthFirstSearch::deliver()
+int DepthFirstSearch::deliver()
 {
-    return maxDfsNumber + 1 == diGraph->getSize();
+    return maxDfsNumber + 1;
 }
 
 void dfs(DiGraph *g, Vertex *v, int &depth, PropertyMap<DFSResult> &pm,

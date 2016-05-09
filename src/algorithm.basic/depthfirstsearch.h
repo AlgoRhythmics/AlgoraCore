@@ -17,7 +17,7 @@ struct DFSResult {
     DFSResult(Vertex *p) : parent(p) {}
 };
 
-class DepthFirstSearch : public PropertyComputingAlgorithm<bool, DFSResult>
+class DepthFirstSearch : public PropertyComputingAlgorithm<int, DFSResult>
 {
 public:
     DepthFirstSearch();
@@ -38,7 +38,7 @@ public:
 
     // ValueComputingAlgorithm interface
 public:
-    virtual bool deliver() override;
+    virtual int deliver() override;
 
 private:
     Vertex *startVertex;
