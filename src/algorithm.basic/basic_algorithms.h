@@ -29,6 +29,7 @@
 #include "depthfirstsearch.h"
 #include "tarjansccalgorithm.h"
 #include "topsortalgorithm.h"
+#include "biconnectedcomponentsalgorithm.h"
 
 namespace Algora {
 

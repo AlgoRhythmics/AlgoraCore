@@ -3,10 +3,11 @@
 #define BICONNECTEDCOMPONENTSALGORITHM_H
 
 #include "algorithm/propertycomputingalgorithm.h"
+#include <vector>
 
 namespace Algora {
 
-class BiconnectedComponentsAlgorithm : public PropertyComputingAlgorithm<int, int>
+class BiconnectedComponentsAlgorithm : public PropertyComputingAlgorithm<int, std::vector<int> >
 {
 public:
     BiconnectedComponentsAlgorithm();

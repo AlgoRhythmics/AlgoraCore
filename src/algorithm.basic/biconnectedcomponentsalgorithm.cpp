@@ -5,10 +5,12 @@
 #include "graph/digraph.h"
 #include "property/propertymap.h"
 
+#include <iostream>
+
 namespace Algora {
 
-int findBiconnectedComponents(DiGraph *graph, std::vector<Vertex *> &dfsOrderRev,
-                              PropertyMap<DFSResult> &dfs, PropertyMap<int> &bics);
+int findBiconnectedComponents(std::vector<Vertex *> &dfsOrderRev,
+                              PropertyMap<DFSResult> &dfs, PropertyMap<std::vector<int> > &bics);
 
 BiconnectedComponentsAlgorithm::BiconnectedComponentsAlgorithm()
     : numBics(0)
@@ -30,15 +32,18 @@ void BiconnectedComponentsAlgorithm::run()
 
     int n = diGraph->getSize();
     std::vector<Vertex*> dfsOrderRev(n, 0);
+    int verticesReached = 0;
     diGraph->mapVertices([&](Vertex *v) {
         int dfsNum = dfsResult(v).dfsNumber;
         if (dfsNum == -1) {
+            //std::cout << "Running DFS starting from " << v << std::endl;
             dfs.setStartVertex(v);
-            runAlgorithm(dfs, diGraph);
+            verticesReached += runAlgorithm(dfs, diGraph);
         }
         dfsNum = dfsResult(v).dfsNumber;
-        dfsOrder[n - 1 - dfsNum] = v;
+        dfsOrderRev[verticesReached - 1 - dfsNum] = v;
     });
+    numBics = findBiconnectedComponents(dfsOrderRev, dfsResult, *propertyMap);
 }
 
 int BiconnectedComponentsAlgorithm::deliver()
@@ -46,24 +51,30 @@ int BiconnectedComponentsAlgorithm::deliver()
     return numBics;
 }
 
-int findBiconnectedComponents(DiGraph *graph, std::vector<Vertex*> &dfsOrderRev,
-                              PropertyMap<DFSResult> &dfs, PropertyMap<int> &bics) {
+int findBiconnectedComponents(std::vector<Vertex*> &dfsOrderRev,
+                              PropertyMap<DFSResult> &dfs, PropertyMap<std::vector<int> > &bics) {
+    // cut(v) <=> (v, u) in DfsTree : lowNumber(u) >= dfsNumber(v), if v not root
+    //            v has > 1 child in DfsTree, if v is root
     int curBic = 0;
 
-    Vertex *curRoot = 0;
-    int childrenOfRoot = 0;
-    for (Vertex *v : dfsOrderRev) {
-        Vertex *p = dfs(v).parent;
-        if (!p) {
+    for (Vertex *u : dfsOrderRev) {
+        Vertex *v = dfs(u).parent;
+        if (!v) {
+            // u is root
+            //std::cout << u << " is root." << std::endl;
+            continue;
         }
-            if (curRoot != p) {
-                curRoot = p;
-                childrenOfRoot = 1;
-             } else {
-                childrenOfRoot++;
-            }
+        bics[u].push_back(curBic);
+        //std::cout << u << " belongs to BIC " << curBic << "." << std::endl;
+        // is v cut vertex or root?
+        if (dfs(u).lowNumber >= dfs(v).dfsNumber) {
+            // v is a cut vertex or root and u is its child
+            //std::cout << v << " belongs to BIC " << curBic << " and is cut vertex or root." << std::endl;
+            bics[v].push_back(curBic);
+            curBic++;
         }
     }
+    return curBic;
 }
 
 }
