@@ -62,6 +62,11 @@ int findBiconnectedComponents(std::vector<Vertex*> &dfsOrderRev,
         if (!v) {
             // u is root
             //std::cout << u << " is root." << std::endl;
+            // BUGFIX: If u is isolated, it forms a separate BIC
+            if (bics(u).empty()) {
+                bics[u].push_back(curBic);
+                curBic++;
+            }
             continue;
         }
         bics[u].push_back(curBic);
