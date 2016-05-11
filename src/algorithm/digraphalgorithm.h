@@ -41,8 +41,6 @@ public:
 
 protected:
     DiGraph *diGraph;
-
-private:
     virtual void onDiGraphSet() { }
 };
 
