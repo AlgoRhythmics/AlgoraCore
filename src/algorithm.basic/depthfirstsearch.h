@@ -35,6 +35,7 @@ public:
 public:
     virtual bool prepare() override;
     virtual void run() override;
+    virtual std::string getName() const noexcept override { return "DFS"; }
 
     // ValueComputingAlgorithm interface
 public:

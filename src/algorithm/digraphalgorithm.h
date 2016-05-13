@@ -24,6 +24,8 @@
 #ifndef DIGRAPHALGORITHM_H
 #define DIGRAPHALGORITHM_H
 
+#include <string>
+
 namespace Algora {
 
 class DiGraph;
@@ -38,6 +40,8 @@ public:
 
     virtual bool prepare() { return diGraph != 0; }
     virtual void run() = 0;
+
+    virtual std::string getName() const noexcept = 0;
 
 protected:
     DiGraph *diGraph;

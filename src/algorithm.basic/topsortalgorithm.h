@@ -51,6 +51,7 @@ public:
     // DiGraphAlgorithm interface
 public:
     virtual void run() override;
+    virtual std::string getName() const noexcept override { return "TopSort"; }
 
 private:
     virtual void onDiGraphSet() override { sequence.clear(); }
