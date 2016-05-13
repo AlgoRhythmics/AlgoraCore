@@ -185,7 +185,7 @@ bool IncidenceListGraph::isEmpty() const
     return impl->isEmpty();
 }
 
-int IncidenceListGraph::getSize() const
+Graph::size_type IncidenceListGraph::getSize() const
 {
     return impl->getSize();
 }

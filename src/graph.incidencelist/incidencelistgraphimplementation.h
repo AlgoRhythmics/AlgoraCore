@@ -58,7 +58,7 @@ public:
     void mapIncomingArcs(const IncidenceListVertex *v, ArcMapping avFun, ArcPredicate breakCondition);
 
     bool isEmpty() const;
-    int getSize() const;
+    Graph::size_type getSize() const;
     void bundleParallelArcs();
 
     IncidenceListVertex *createIncidenceListVertex() const;

@@ -39,6 +39,8 @@ class Vertex;
 class Graph : public GraphArtifact
 {
 public:
+    typedef unsigned int size_type;
+
     explicit Graph(GraphArtifact *parent = 0)
         : GraphArtifact(parent) { }
     virtual ~Graph() { }
@@ -63,7 +65,7 @@ public:
 
     // Misc
     virtual bool isEmpty() const = 0;
-    virtual int getSize() const = 0;
+    virtual size_type getSize() const = 0;
 
 protected:
    std::vector<VertexMapping> vertexGreetings;

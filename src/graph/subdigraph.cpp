@@ -121,9 +121,9 @@ bool Algora::SubDiGraph::isEmpty() const
     return empty;
 }
 
-int SubDiGraph::getSize() const
+Graph::size_type SubDiGraph::getSize() const
 {
-    int n = 0;
+    size_type n = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
     me->mapVertices([&n](Vertex *){ n++; });
     return n;

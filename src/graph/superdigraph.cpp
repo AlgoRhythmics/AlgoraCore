@@ -147,7 +147,7 @@ bool SuperDiGraph::isEmpty() const
     return grin->extra->isEmpty() && grin->subGraph->isEmpty();
 }
 
-int SuperDiGraph::getSize() const
+Graph::size_type SuperDiGraph::getSize() const
 {
     return grin->extra->getSize() + grin->subGraph->getSize() - grin->map.size();
 }

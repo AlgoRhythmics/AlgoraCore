@@ -82,7 +82,7 @@ void BreadthFirstSearch::run()
 
 bool BreadthFirstSearch::deliver()
 {
-    return maxBfsNumber + 1 == diGraph->getSize();
+    return maxBfsNumber + 1 == (int) diGraph->getSize();
 }
 
 void BreadthFirstSearch::onDiGraphSet()

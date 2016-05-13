@@ -37,8 +37,8 @@ bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to) {
 
 bool isAcyclic(DiGraph *diGraph) {
     TopSortAlgorithm topSort(false);
-    int maxTs = runAlgorithm(topSort, diGraph);
-    return maxTs == diGraph->getSize();
+    int sortedVertices = runAlgorithm(topSort, diGraph);
+    return sortedVertices == (int) diGraph->getSize();
 }
 
 bool isStronglyConnected(DiGraph *diGraph)

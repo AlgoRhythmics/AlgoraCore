@@ -32,7 +32,7 @@ namespace Algora {
 
 class Vertex;
 
-class TopSortAlgorithm : public PropertyComputingAlgorithm<int,int>
+class TopSortAlgorithm : public PropertyComputingAlgorithm<unsigned int,int>
 {
 public:
     typedef std::vector<Vertex*>::const_iterator VertexIterator;
@@ -57,7 +57,7 @@ private:
 
     // ValueComputingAlgorithm interface
 public:
-    virtual int deliver() override { return sequence.size(); }
+    virtual unsigned int deliver() override { return sequence.size(); }
 
 private:
     std::vector<Vertex*> sequence;

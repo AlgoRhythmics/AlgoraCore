@@ -155,7 +155,7 @@ bool IncidenceListGraphImplementation::isEmpty() const
     return vertices.empty();
 }
 
-int IncidenceListGraphImplementation::getSize() const
+Graph::size_type IncidenceListGraphImplementation::getSize() const
 {
     return vertices.size();
 }

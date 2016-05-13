@@ -42,7 +42,7 @@ public:
     virtual Vertex *getAnyVertex() const override;
     virtual void mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition) override;
     virtual bool isEmpty() const override;
-    virtual int getSize() const override;
+    virtual size_type getSize() const override;
 
     // DiGraph interface
 public:
