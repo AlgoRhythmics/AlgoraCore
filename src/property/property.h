@@ -32,9 +32,18 @@ template<typename T>
 class Property : public GraphArtifactProperty
 {
 public:
-    Property(const std::string &name = "")
+    explicit Property(const std::string &name = "")
         : GraphArtifactProperty(name) { }
+    explicit Property(const Property<T> &other) : GraphArtifactProperty(other) { }
     virtual ~Property() { }
+
+    Property &operator=(const Property<T> &rhs) {
+        if (this == &rhs) {
+            return *this;
+        }
+        GraphArtifactProperty::operator=(rhs);
+        return *this;
+    }
 
     T operator()(const GraphArtifact *ga) const {
         return getValue(ga);

@@ -34,9 +34,23 @@ template<typename T>
 class PropertyMap : public Property<T>
 {
 public:
-    PropertyMap(const T &defaultValue, const std::string &name = "")
+    PropertyMap(const T &defaultValue = T(), const std::string &name = "")
         : Property<T>(name), defaultValue(defaultValue) { }
+    PropertyMap(const PropertyMap<T> &other)
+        : Property<T>(other),
+          defaultValue(other.defaultValue),
+          map(other.map) { }
     virtual ~PropertyMap() { }
+
+    PropertyMap &operator=(const PropertyMap<T> &rhs) {
+        if (this == &rhs) {
+            return *this;
+        }
+        Property<T>::operator=(rhs);
+        defaultValue = rhs.defaultValue;
+        map = rhs.map;
+        return *this;
+    }
 
     T getDefaultValue() const { return defaultValue; }
     void setDefaultValue(const T &val) { defaultValue = val; }
@@ -52,6 +66,10 @@ public:
     void resetToDefault(const GraphArtifact *ga) {
         auto i = map.find(ga);
         if (i != map.end()) { map.erase(i); }
+    }
+
+    void resetAll() {
+        map.clear();
     }
 
     T &operator[](const GraphArtifact *ga) {
