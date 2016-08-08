@@ -22,6 +22,7 @@
 #   http://algora.xaikal.org                                           #
 ########################################################################
 
+export QT_SELECT=qt5
 PRO_FILE="AlgoraCore.pro"
 
 [ -z "${QMAKE}" ] && QMAKE=$(which qmake)
