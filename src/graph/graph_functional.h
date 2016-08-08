@@ -34,6 +34,9 @@ class Arc;
 typedef std::function<void(Vertex *v)> VertexMapping;
 typedef std::function<void(Arc *a)> ArcMapping;
 
+typedef std::function<void(const Vertex *v)> ConstVertexMapping;
+typedef std::function<void(const Arc *a)> ConstArcMapping;
+
 typedef std::function<bool(const Vertex *v)> VertexPredicate;
 typedef std::function<bool(const Arc *v)> ArcPredicate;
 
