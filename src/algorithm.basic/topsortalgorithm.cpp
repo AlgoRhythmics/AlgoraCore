@@ -30,6 +30,17 @@
 
 #include <deque>
 
+//#define DEBUG_TOPSORT
+
+#ifdef DEBUG_TOPSORT
+#include <iostream>
+#define PRINT_DEBUG(msg) std::cout << msg << std::endl;
+#define IF_DEBUG(cmd) cmd;
+#else
+#define PRINT_DEBUG(msg)
+#define IF_DEBUG(cmd)
+#endif
+
 namespace Algora {
 
 TopSortAlgorithm::TopSortAlgorithm(bool computeValues)
@@ -52,13 +63,14 @@ void TopSortAlgorithm::run()
     std::deque<Vertex*> queue;
 
     diGraph->mapVertices([&](Vertex *v) {
-        int indegree = diGraph->getInDegree(v);
+        int indegree = diGraph->getInDegree(v, true);
         if (indegree == 0) {
             queue.push_back(v);
         } else {
             inDegree[v] = indegree;
         }
     });
+    PRINT_DEBUG( "Queue contains " << queue.size() << " sources." );
 
     int ts = 0;
     while (!queue.empty()) {
