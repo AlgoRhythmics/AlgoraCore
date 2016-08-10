@@ -30,9 +30,7 @@ namespace Algora {
 
 bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to) {
     FindDiPathAlgorithm findDiPath(false);
-    findDiPath.setSourceVertex(from);
-    findDiPath.setTargetVertex(to);
-    return runAlgorithm(findDiPath, diGraph);
+    return runDiPathAlgorithm(diGraph, from, to, findDiPath);
 }
 
 bool isAcyclic(DiGraph *diGraph) {
@@ -66,6 +64,13 @@ int countBiconnectedComponents(DiGraph *diGraph)
     PropertyMap<std::vector<int> > bics(empty);
     bic.usePropertyMap(&bics);
     return runAlgorithm(bic, diGraph);
+}
+
+bool runDiPathAlgorithm(DiGraph *diGraph, Vertex *from, Vertex *to, FindDiPathAlgorithm &a)
+{
+    a.setSourceVertex(from);
+    a.setTargetVertex(to);
+    return runAlgorithm(a, diGraph);
 }
 
 }

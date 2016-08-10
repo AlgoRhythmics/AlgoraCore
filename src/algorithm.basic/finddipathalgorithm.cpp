@@ -45,11 +45,12 @@ FindDiPathAlgorithm::~FindDiPathAlgorithm()
 
 bool FindDiPathAlgorithm::prepare()
 {
-    return ValueComputingAlgorithm<bool>::prepare()
+    bool ok = ValueComputingAlgorithm<bool>::prepare()
             && from != 0
             && to != 0
             && diGraph->containsVertex(from)
             && diGraph->containsVertex(to);
+    return ok;
 }
 
 void FindDiPathAlgorithm::run()

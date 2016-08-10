@@ -38,6 +38,8 @@ class Vertex;
 
 bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to);
 
+bool runDiPathAlgorithm(DiGraph *diGraph, Vertex *from, Vertex *to, FindDiPathAlgorithm &a);
+
 bool isAcyclic(DiGraph *diGraph);
 
 bool isStronglyConnected(DiGraph *diGraph);
