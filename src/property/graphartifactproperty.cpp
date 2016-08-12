@@ -39,7 +39,7 @@ GraphArtifactProperty::GraphArtifactProperty(const std::string &name)
 }
 
 GraphArtifactProperty::GraphArtifactProperty(const GraphArtifactProperty &rhs)
-    : grin(new CheshireCat(rhs.getName()))
+    : grin(new CheshireCat(*rhs.grin))
 {
 
 }
@@ -54,7 +54,8 @@ GraphArtifactProperty &GraphArtifactProperty::operator=(const GraphArtifactPrope
     if (this == &rhs) {
         return *this;
     }
-    grin->name = rhs.grin->name;
+    //grin->name = rhs.grin->name;
+    *grin = *(rhs.grin);
     return *this;
 }
 
