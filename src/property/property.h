@@ -34,7 +34,7 @@ class Property : public GraphArtifactProperty
 public:
     explicit Property(const std::string &name = "")
         : GraphArtifactProperty(name) { }
-    explicit Property(const Property<T> &other) : GraphArtifactProperty(other) { }
+    Property(const Property<T> &other) : GraphArtifactProperty(other) { }
     virtual ~Property() { }
 
     Property &operator=(const Property<T> &rhs) {
