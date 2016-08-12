@@ -35,9 +35,20 @@ class FunctionProperty : public Property<T>
 public:
     typedef std::function<T(const GraphArtifact *ga)> PropertyFunction;
 
-    FunctionProperty(PropertyFunction fun, const std::string &name = "")
+    explicit FunctionProperty(PropertyFunction fun, const std::string &name = "")
         : Property<T>(name), fun(fun) { }
+    FunctionProperty(const FunctionProperty<T> &other)
+        : Property<T>(other), fun(other.fun) { }
     virtual ~FunctionProperty() { }
+
+    FunctionProperty &operator=(const FunctionProperty &rhs) {
+        if (this == &rhs) {
+            return *this;
+        }
+        Property<T>::operator =(rhs);
+        fun = rhs.fun;
+        return *this;
+    }
 
     // Property interface
 public:
