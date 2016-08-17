@@ -34,12 +34,16 @@
 namespace Algora {
 
 class Vertex;
+template <typename T>
+class PropertyMap;
 
 class DiGraph : public Graph
 {
 public:
     explicit DiGraph(GraphArtifact *parent = 0);
     virtual ~DiGraph() { }
+
+    virtual DiGraph *createReversedGraph(PropertyMap<GraphArtifact*> &) const { return 0; }
 
     // Arcs
     virtual Arc *addArc(Vertex *tail, Vertex *head) = 0;

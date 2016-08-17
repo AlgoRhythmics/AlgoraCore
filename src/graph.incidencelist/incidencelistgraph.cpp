@@ -25,6 +25,7 @@
 #include "incidencelistvertex.h"
 #include "graph/arc.h"
 #include "graph/parallelarcsbundle.h"
+#include "property/propertymap.h"
 
 #include "incidencelistgraphimplementation.h"
 
@@ -188,6 +189,29 @@ bool IncidenceListGraph::isEmpty() const
 Graph::size_type IncidenceListGraph::getSize() const
 {
     return impl->getSize();
+}
+
+DiGraph *IncidenceListGraph::createReversedGraph(PropertyMap<GraphArtifact *> &map) const
+{
+    IncidenceListGraph *reversed = new IncidenceListGraph(this->getParent());
+    impl->mapVertices([&](Vertex *v) {
+        Vertex *vr = reversed->addVertex();
+        map[v] = vr;
+        map[vr] = v;
+    } , vertexFalse);
+    impl->mapArcs([&](Arc *a) {
+        Arc *ar;
+        Vertex *headr = dynamic_cast<Vertex*>(map[a->getTail()]);
+        Vertex *tailr = dynamic_cast<Vertex*>(map[a->getHead()]);
+        if (dynamic_cast<MultiArc*>(a)) {
+            ar = reversed->addMultiArc(tailr, headr, a->getSize());
+        } else {
+            ar = reversed->addArc(tailr, headr);
+        }
+        map[a] = ar;
+        map[ar] = a;
+    }, arcFalse);
+    return reversed;
 }
 
 void IncidenceListGraph::bundleParallelArcs()

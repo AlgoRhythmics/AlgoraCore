@@ -51,6 +51,7 @@ public:
 
     // DiGraph interface
 public:
+    DiGraph *createReversedGraph(PropertyMap<GraphArtifact *> &map) const;
     virtual Arc *addArc(Vertex *tail, Vertex *head) override;
     virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, int size) override;
     virtual void removeArc(Arc *a) override;
