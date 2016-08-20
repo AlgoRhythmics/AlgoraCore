@@ -232,4 +232,32 @@ void SubDiGraph::mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPred
     }, breakCondition);
 }
 
+DiGraph *SubDiGraph::createReversedGraph(PropertyMap<GraphArtifact *> &map) const
+{
+    DiGraph *superRev = superGraph->createReversedGraph(map);
+    std::vector<Vertex*> rmVertices;
+    superRev->mapVertices([&](Vertex *v) {
+        if (!inSubGraph(map(v))) {
+            rmVertices.push_back(v);
+        }
+    });
+    for (Vertex *v : rmVertices) {
+        superRev->removeVertex(v);
+        map.resetToDefault(map(v));
+        map.resetToDefault(v);
+    }
+    std::vector<Arc*> rmArcs;
+    superRev->mapArcs([&](Arc *a) {
+        if (!inSubGraph(map(a))) {
+            rmArcs.push_back(a);
+        }
+    });
+    for (Arc *a : rmArcs) {
+        superRev->removeArc(a);
+        map.resetToDefault(map(a));
+        map.resetToDefault(a);
+    }
+    return superRev;
+}
+
 }

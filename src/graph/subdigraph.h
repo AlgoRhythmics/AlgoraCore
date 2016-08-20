@@ -52,6 +52,8 @@ public:
     using DiGraph::mapArcs;
     using DiGraph::mapOutgoingArcsUntil;
     using DiGraph::mapIncomingArcsUntil;
+
+    virtual DiGraph *createReversedGraph(PropertyMap<GraphArtifact*> &map) const override;
     virtual Arc *addArc(Vertex *tail, Vertex *head) override;
     virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, int size) override;
     virtual void removeArc(Arc *a) override;
