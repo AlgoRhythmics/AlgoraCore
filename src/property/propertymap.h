@@ -26,7 +26,8 @@
 
 #include "property.h"
 
-#include <unordered_map>
+//#include <unordered_map>
+#include <map>
 
 namespace Algora {
 
@@ -87,7 +88,8 @@ public:
 
 private:
     T defaultValue;
-    typename std::unordered_map<const GraphArtifact*,T> map;
+    //typename std::unordered_map<const GraphArtifact*,T> map;
+    typename std::map<const GraphArtifact*,T> map;
 };
 
 }
