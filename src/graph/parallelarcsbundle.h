@@ -53,6 +53,7 @@ public:
     virtual bool addArc(Arc *a);
     virtual void removeArc(Arc *a);
     virtual bool containsArc(Arc *a) const;
+    virtual void clear();
 
     // MultiArc interface
 public:

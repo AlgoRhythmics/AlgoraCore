@@ -33,6 +33,9 @@ namespace Algora {
 
 struct ParallelArcsBundle::CheshireCat {
     std::vector<Arc*> arcsBundle;
+    int size;
+
+    CheshireCat() : size(0) { }
 };
 
 ParallelArcsBundle::ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent)
@@ -45,6 +48,7 @@ ParallelArcsBundle::ParallelArcsBundle(Arc *arc)
     : MultiArc(arc->getTail(), arc->getHead(), arc->getParent()), grin(new CheshireCat)
 {
     grin->arcsBundle.push_back(arc);
+    grin->size += arc->getSize();
 }
 
 ParallelArcsBundle::~ParallelArcsBundle()
@@ -63,7 +67,8 @@ void ParallelArcsBundle::getArcs(std::vector<Arc *> *l) const
 
 int ParallelArcsBundle::getSize() const
 {
-    return grin->arcsBundle.size();
+    //return grin->arcsBundle.size();
+    return grin->size;
 }
 
 void ParallelArcsBundle::mapArcsUntil(ArcMapping am, ArcPredicate ap) const
@@ -83,18 +88,29 @@ bool ParallelArcsBundle::addArc(Arc *a)
     }
 
     grin->arcsBundle.push_back(a);
+    grin->size += a->getSize();
     return true;
 }
 
 void ParallelArcsBundle::removeArc(Arc *a)
 {
+    unsigned int ol = grin->arcsBundle.size();
     grin->arcsBundle.erase(std::remove(grin->arcsBundle.begin(), grin->arcsBundle.end(), a), grin->arcsBundle.end());
+    if (grin->arcsBundle.size() < ol) {
+        grin->size -= a->getSize();
+    }
 }
 
 bool ParallelArcsBundle::containsArc(Arc *a) const
 {
     auto i = std::find(grin->arcsBundle.cbegin(), grin->arcsBundle.cend(), a);
     return i != grin->arcsBundle.end();
+}
+
+void ParallelArcsBundle::clear()
+{
+   grin->arcsBundle.clear();
+   grin->size = 0;
 }
 
 
