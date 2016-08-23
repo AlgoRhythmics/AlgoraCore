@@ -219,6 +219,11 @@ void IncidenceListGraph::bundleParallelArcs()
     impl->bundleParallelArcs();
 }
 
+void IncidenceListGraph::unbundleParallelArcs()
+{
+    impl->unbundleParallelArcs();
+}
+
 IncidenceListVertex *IncidenceListGraph::createIncidenceListVertex()
 {
     return impl->createIncidenceListVertex();

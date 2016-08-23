@@ -60,6 +60,7 @@ public:
     bool isEmpty() const;
     Graph::size_type getSize() const;
     void bundleParallelArcs();
+    void unbundleParallelArcs();
 
     IncidenceListVertex *createIncidenceListVertex() const;
 
@@ -68,6 +69,7 @@ private:
     VertexList vertices;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
+    void unbundleOutgoingArcs(IncidenceListVertex *vertex);
 };
 
 }

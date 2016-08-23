@@ -66,6 +66,7 @@ public:
 
 public:
     void bundleParallelArcs();
+    void unbundleParallelArcs();
 
 protected:
     IncidenceListVertex *createIncidenceListVertex();

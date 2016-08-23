@@ -162,12 +162,21 @@ Graph::size_type IncidenceListGraphImplementation::getSize() const
 
 void IncidenceListGraphImplementation::bundleParallelArcs()
 {
+    unbundleParallelArcs();
+
     for (IncidenceListVertex *vertex : vertices) {
         vertex->clearIncomingArcs();
     }
 
     for (IncidenceListVertex *vertex : vertices) {
         bundleOutgoingArcs(vertex);
+    }
+}
+
+void IncidenceListGraphImplementation::unbundleParallelArcs()
+{
+    for (IncidenceListVertex *vertex : vertices) {
+        unbundleOutgoingArcs(vertex);
     }
 }
 
@@ -204,6 +213,26 @@ void IncidenceListGraphImplementation::bundleOutgoingArcs(IncidenceListVertex *v
         Arc *arc = i.second;
         vertex->addOutgoingArc(arc);
         i.first->addIncomingArc(arc);
+    }
+}
+
+void IncidenceListGraphImplementation::unbundleOutgoingArcs(IncidenceListVertex *vertex)
+{
+    std::vector<Arc*> arcs;
+    std::vector<ParallelArcsBundle*> arcBundles;
+    vertex->mapOutgoingArcs([&](Arc *a) {
+        ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(a);
+        if (pab) {
+            arcBundles.push_back(pab);
+            pab->getArcs(&arcs);
+            pab->clear();
+        }
+    });
+    for (ParallelArcsBundle *pab : arcBundles) {
+        removeArc(pab, vertex, dynamic_cast<IncidenceListVertex*>(pab->getHead()));
+    }
+    for (Arc *a : arcs) {
+        addArc(a, vertex, dynamic_cast<IncidenceListVertex*>(a->getHead()));
     }
 }
 
