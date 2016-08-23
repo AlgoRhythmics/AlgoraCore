@@ -55,8 +55,28 @@ public:
     virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
     virtual int getNumArcs(bool multiArcsAsSimple = false) const;
 
-    virtual void onArcAdd(ArcMapping avFun) { arcGreetings.push_back(avFun); }
-    virtual void onArcRemove(ArcMapping avFun) { arcFarewells.push_back(avFun); }
+    virtual void onArcAdd(void *id, ArcMapping avFun) { arcGreetings.push_back(std::make_pair(id, avFun)); }
+    virtual void onArcRemove(void *id, ArcMapping avFun) { arcFarewells.push_back(std::make_pair(id, avFun)); }
+    virtual void removeOnArcAdd(void *id) {
+        auto i = arcGreetings.begin();
+        while (i != arcGreetings.end()) {
+            if (id == i->first) {
+                i = arcGreetings.erase(i);
+            } else {
+                i++;
+            }
+        }
+    }
+    virtual void removeOnArcRemove(void *id) {
+        auto i = arcFarewells.begin();
+        while (i != arcFarewells.end()) {
+            if (id == i->first) {
+                i = arcFarewells.erase(i);
+            } else {
+                i++;
+            }
+        }
+    }
 
     // Accomodate visitors
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) {
@@ -83,14 +103,14 @@ public:
     virtual std::string toString() const override;
 
 protected:
-   std::vector<ArcMapping> arcGreetings;
-   std::vector<ArcMapping> arcFarewells;
+   std::vector<std::pair<void*,ArcMapping>> arcGreetings;
+   std::vector<std::pair<void*,ArcMapping>> arcFarewells;
 
    virtual void greetArc(Arc *a) {
-       for (const ArcMapping &f : arcGreetings) { f(a); }
+       for (const std::pair<void*,ArcMapping> &p : arcGreetings) { p.second(a); }
    }
    virtual void dismissArc(Arc *a) {
-       for (const ArcMapping &f : arcFarewells) { f(a); }
+       for (const std::pair<void*,ArcMapping> &p : arcFarewells) { p.second(a); }
    }
 
     virtual Arc *createArc(Vertex *tail, Vertex *head) {

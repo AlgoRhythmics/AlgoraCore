@@ -59,10 +59,10 @@ SuperDiGraph::SuperDiGraph(DiGraph *graph)
     : grin(new CheshireCat(graph))
 {
     grin->extra = new IncidenceListGraphImplementation(this);
-    graph->onVertexAdd([&](Vertex *v) {
+    graph->onVertexAdd(this, [&](Vertex *v) {
         greetVertex(v);
     });
-    graph->onVertexRemove([&](Vertex *v) {
+    graph->onVertexRemove(this, [&](Vertex *v) {
         dismissVertex(v);
         auto i = grin->map.find(v);
         if (i != grin->map.end()) {
@@ -73,10 +73,10 @@ SuperDiGraph::SuperDiGraph(DiGraph *graph)
             grin->map.erase(i);
         }
     });
-    graph->onArcAdd([&](Arc *a) {
+    graph->onArcAdd(this, [&](Arc *a) {
         greetArc(a);
     });
-    graph->onArcRemove([&](Arc *a) {
+    graph->onArcRemove(this, [&](Arc *a) {
         dismissArc(a);
     });
 }
@@ -86,6 +86,10 @@ SuperDiGraph::~SuperDiGraph()
     grin->extra->mapArcs([&](Arc *a) {
         removeArc(a);
     }, arcFalse);
+    grin->subGraph->removeOnVertexAdd(this);
+    grin->subGraph->removeOnVertexRemove(this);
+    grin->subGraph->removeOnArcAdd(this);
+    grin->subGraph->removeOnArcRemove(this);
     delete grin;
 }
 

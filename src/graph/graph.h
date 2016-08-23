@@ -51,8 +51,28 @@ public:
     virtual bool containsVertex(Vertex *v) const = 0;
     virtual Vertex *getAnyVertex() const = 0;
 
-    virtual void onVertexAdd(VertexMapping vvFun) { vertexGreetings.push_back(vvFun); }
-    virtual void onVertexRemove(VertexMapping vvFun) { vertexFarewells.push_back(vvFun); }
+    virtual void onVertexAdd(void *id, VertexMapping vvFun) { vertexGreetings.push_back(std::make_pair(id, vvFun)); }
+    virtual void onVertexRemove(void *id, VertexMapping vvFun) { vertexFarewells.push_back(std::make_pair(id, vvFun)); }
+    virtual void removeOnVertexAdd(void *id) {
+        auto i = vertexGreetings.begin();
+        while (i != vertexGreetings.end()) {
+            if (id == i->first) {
+                i = vertexGreetings.erase(i);
+            } else {
+                i++;
+            }
+        }
+    }
+    virtual void removeOnVertexRemove(void *id) {
+        auto i = vertexFarewells.begin();
+        while (i != vertexFarewells.end()) {
+            if (id == i->first) {
+                i = vertexFarewells.erase(i);
+            } else {
+                i++;
+            }
+        }
+    }
 
     // Accomodate visitors
     virtual void acceptVertexVisitor(VertexVisitor *nVisitor) {
@@ -68,14 +88,16 @@ public:
     virtual size_type getSize() const = 0;
 
 protected:
-   std::vector<VertexMapping> vertexGreetings;
-   std::vector<VertexMapping> vertexFarewells;
+   std::vector<std::pair<void*,VertexMapping>> vertexGreetings;
+   std::vector<std::pair<void*,VertexMapping>> vertexFarewells;
 
    virtual void greetVertex(Vertex *v) {
-       for (const VertexMapping &f : vertexGreetings) { f(v); }
+       //for (const VertexMapping &f : vertexGreetings) { f(v); }
+       for (const std::pair<void*,VertexMapping> &p : vertexGreetings) { p.second(v); }
    }
    virtual void dismissVertex(Vertex *v) {
-       for (const VertexMapping &f : vertexFarewells) { f(v); }
+       //for (const VertexMapping &f : vertexFarewells) { f(v); }
+       for (const std::pair<void*,VertexMapping> &p : vertexFarewells) { p.second(v); }
    }
 
     Vertex *createVertex() {
