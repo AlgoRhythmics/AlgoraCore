@@ -35,6 +35,9 @@ template<typename T>
 class PropertyMap : public Property<T>
 {
 public:
+    typedef typename std::map<const GraphArtifact*,T>::iterator iterator;
+    typedef typename std::map<const GraphArtifact*,T>::const_iterator const_iterator;
+
     PropertyMap(const T &defaultValue = T(), const std::string &name = "")
         : Property<T>(name), defaultValue(defaultValue) { }
     PropertyMap(const PropertyMap<T> &other)
@@ -78,6 +81,30 @@ public:
             map[ga] = defaultValue;
         }
         return map[ga];
+    }
+
+    // iterators
+    iterator begin() {
+        return map.begin();
+    }
+
+    const_iterator begin() const {
+        return map.begin();
+    }
+
+    iterator end() {
+        return map.end();
+    }
+
+    const_iterator end() const {
+        return map.end();
+    }
+
+    const_iterator cbegin() const noexcept {
+        return map.cbegin();
+    }
+    const_iterator cend() const noexcept {
+        return map.cend();
     }
 
     // Property interface
