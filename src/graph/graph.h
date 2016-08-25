@@ -87,6 +87,8 @@ public:
     virtual bool isEmpty() const = 0;
     virtual size_type getSize() const = 0;
 
+    virtual void clear() { vertexGreetings.clear(); vertexFarewells.clear(); }
+
 protected:
    std::vector<std::pair<void*,VertexMapping>> vertexGreetings;
    std::vector<std::pair<void*,VertexMapping>> vertexFarewells;

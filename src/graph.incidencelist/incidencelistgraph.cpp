@@ -191,6 +191,14 @@ Graph::size_type IncidenceListGraph::getSize() const
     return impl->getSize();
 }
 
+void IncidenceListGraph::clear()
+{
+   delete impl;
+   impl = new IncidenceListGraphImplementation(this);
+
+   DiGraph::clear();
+}
+
 DiGraph *IncidenceListGraph::createReversedGraph(PropertyMap<GraphArtifact *> &map) const
 {
     IncidenceListGraph *reversed = new IncidenceListGraph(this->getParent());

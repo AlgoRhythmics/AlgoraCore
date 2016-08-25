@@ -98,6 +98,8 @@ public:
     virtual void mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) = 0;
     virtual void mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) = 0;
 
+    virtual void clear() override { arcGreetings.clear(); arcFarewells.clear(); Graph::clear(); }
+
     // GraphArtifact interface
 public:
     virtual std::string toString() const override;

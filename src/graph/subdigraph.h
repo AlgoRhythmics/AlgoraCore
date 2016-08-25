@@ -67,7 +67,6 @@ public:
 private:
     DiGraph *superGraph;
     Property<bool> &inSubGraph;
-
 };
 
 }

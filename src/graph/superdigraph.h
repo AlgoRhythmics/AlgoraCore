@@ -44,6 +44,8 @@ public:
     virtual bool isEmpty() const override;
     virtual size_type getSize() const override;
 
+    virtual void clear() override;
+
     // DiGraph interface
 public:
     virtual Arc *addArc(Vertex *tail, Vertex *head) override;

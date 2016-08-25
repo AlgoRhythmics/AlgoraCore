@@ -156,6 +156,15 @@ Graph::size_type SuperDiGraph::getSize() const
     return grin->extra->getSize() + grin->subGraph->getSize() - grin->map.size();
 }
 
+void SuperDiGraph::clear()
+{
+    grin->extra->mapArcs([&](Arc *a) {
+        removeArc(a);
+    }, arcFalse);
+    delete grin->extra;
+    grin->extra = new IncidenceListGraphImplementation(this);
+}
+
 Arc *SuperDiGraph::addArc(Vertex *tail, Vertex *head)
 {
     IncidenceListVertex *t = findOrCreateVertex(tail, grin->map, grin->extra, this);
