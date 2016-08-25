@@ -54,6 +54,26 @@ TopSortAlgorithm::~TopSortAlgorithm()
 
 }
 
+bool TopSortAlgorithm::isSortedTopologically(const std::vector<Vertex *> &seq) const
+{
+    PropertyMap<int> inDegree(-1);
+
+    diGraph->mapVertices([&](Vertex *v) {
+        inDegree[v] = diGraph->getInDegree(v, true);
+    });
+
+    for (Vertex *v : seq) {
+        if (inDegree(v) != 0) {
+            return false;
+        }
+        diGraph->mapOutgoingArcs(v, [&](Arc *a) {
+            Vertex *h = a->getHead();
+            inDegree[h] -= a->getSize();
+        });
+    }
+    return true;
+}
+
 void TopSortAlgorithm::run()
 {
     sequence.clear();

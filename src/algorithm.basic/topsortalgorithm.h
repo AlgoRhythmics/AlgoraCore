@@ -48,6 +48,8 @@ public:
         return sequence.cend();
     }
 
+    bool isSortedTopologically(const std::vector<Vertex*> &seq) const;
+
     // DiGraphAlgorithm interface
 public:
     virtual void run() override;
