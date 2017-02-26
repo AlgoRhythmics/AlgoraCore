@@ -78,9 +78,13 @@ void LinearVertexSequenceTikzWriter::processGraph(const DiGraph *graph, const Di
         outputStream << "% outgoing arcs of " << info->getVertexName(cur) << std::endl;
         info->mapOutgoingArcs(cur, [&](Arc *a) {
             outputStream << "\\draw[arc] ("
-                         << vId[cur]
-                         << ") to[bend left] ("
-                         << vId[a->getHead()]
+                         << vId[cur];
+            if (vIndex(a->getHead()) - i == 1) {
+                outputStream << ") to (";
+            } else {
+                outputStream << ") to[bend left] (";
+            }
+            outputStream << vId[a->getHead()]
                          << ");"
                          << std::endl;
 
