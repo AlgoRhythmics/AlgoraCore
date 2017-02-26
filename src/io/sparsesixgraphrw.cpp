@@ -27,6 +27,7 @@
 #include "graph/digraph.h"
 #include "graph/parallelarcsbundle.h"
 #include "property/propertymap.h"
+#include "pipe/digraphinfo.h"
 
 #include <ostream>
 #include <cmath>
@@ -42,7 +43,7 @@ SparseSixGraphRW::SparseSixGraphRW()
 
 }
 
-void SparseSixGraphRW::processGraph(const DiGraph *graph)
+void SparseSixGraphRW::processGraph(const DiGraph *graph, const DiGraphInfo *info)
 {
     if (StreamDiGraphWriter::outputStream == 0) {
         return;
@@ -51,9 +52,15 @@ void SparseSixGraphRW::processGraph(const DiGraph *graph)
     std::ostream &outputStream = *(StreamDiGraphWriter::outputStream);
     DiGraph *ncGraph = const_cast<DiGraph*>(graph);
 
+    DiGraphInfo defaultInfo(ncGraph);
+    if (!info) {
+        info = &defaultInfo;
+    }
+
     PropertyMap<int> vertexId(-1);
     int i = 0;
-    ncGraph->mapVertices([&](Vertex *v) { vertexId[v] = i++; });
+    //ncGraph->mapVertices([&](Vertex *v) { vertexId[v] = i++; });
+    info->mapVertices([&](Vertex *v) { vertexId[v] = i++; });
 
     int n = ncGraph->getSize();
     outputStream << ":";

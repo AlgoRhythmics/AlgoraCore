@@ -24,6 +24,7 @@
 
 #include "graph/digraph.h"
 #include "property/propertymap.h"
+#include "pipe/digraphinfo.h"
 
 #include <map>
 #include <tuple>
@@ -45,7 +46,7 @@ struct AdjacencyMatrixRW::CheshireCat {
 };
 
 bool readGraph(std::istream &is, DiGraph *graph);
-bool writeGraph(std::ostream &os, const DiGraph *graph, bool oneLine, bool upperTriangleOnly, bool includeDiagonal);
+bool writeGraph(std::ostream &os, const DiGraph *graph, const DiGraphInfo *info, bool oneLine, bool upperTriangleOnly, bool includeDiagonal);
 
 AdjacencyMatrixRW::AdjacencyMatrixRW(bool oneLine, bool upperTriangleOnly, bool withDiagonal)
     : grin(new CheshireCat(oneLine, upperTriangleOnly, withDiagonal))
@@ -88,7 +89,7 @@ bool AdjacencyMatrixRW::withDiagonal() const
     return grin->includeDiagonal;
 }
 
-void AdjacencyMatrixRW::processGraph(const DiGraph *graph)
+void AdjacencyMatrixRW::processGraph(const DiGraph *graph, const DiGraphInfo *info)
 {
     if (StreamDiGraphWriter::outputStream == 0) {
         return;
@@ -96,7 +97,7 @@ void AdjacencyMatrixRW::processGraph(const DiGraph *graph)
 
     std::ostream &outputStream = *(StreamDiGraphWriter::outputStream);
 
-    writeGraph(outputStream, graph, grin->oneLine, grin->upperTriangularMatrix, grin->includeDiagonal);
+    writeGraph(outputStream, graph, info, grin->oneLine, grin->upperTriangularMatrix, grin->includeDiagonal);
 }
 
 bool AdjacencyMatrixRW::provideDiGraph(DiGraph *graph)
@@ -207,13 +208,18 @@ bool readGraph(std::istream &is, DiGraph *graph) {
     return true;
 }
 
-bool writeGraph(std::ostream &os, const DiGraph *graph, bool oneLine, bool upperTriangleOnly, bool includeDiagonal) {
+bool writeGraph(std::ostream &os, const DiGraph *graph, const DiGraphInfo *info, bool oneLine, bool upperTriangleOnly, bool includeDiagonal) {
 
     DiGraph *ncGraph = const_cast<DiGraph*>(graph);
     int n = ncGraph->getSize();
+    DiGraphInfo defaultInfo(ncGraph);
+    if (!info) {
+        info = &defaultInfo;
+    }
+
     PropertyMap<int> vertexId(-1);
     int i = 0;
-    ncGraph->mapVertices([&](Vertex *v) { vertexId[v] = i++; });
+    info->mapVertices([&](Vertex *v) { vertexId[v] = i++; });
     std::map<std::pair<int,int>, int> arcsToWeight;
 
     bool ok = true;
@@ -231,7 +237,7 @@ bool writeGraph(std::ostream &os, const DiGraph *graph, bool oneLine, bool upper
             arcsToWeight[std::make_pair(t, h)] = size;
         }
     };
-    ncGraph->mapArcsUntil([&](Arc *arc) { createTuple(arc); }, [&](const Arc *) { return !ok; });
+    info->mapArcsUntil([&](Arc *arc) { createTuple(arc); }, [&](const Arc *) { return !ok; });
     if (!ok) {
         return false;
     }

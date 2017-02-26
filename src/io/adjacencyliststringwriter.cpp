@@ -27,6 +27,7 @@
 #include "graph/vertex.h"
 #include "graph/arc.h"
 #include "property/propertymap.h"
+#include "pipe/digraphinfo.h"
 
 #include <vector>
 
@@ -51,7 +52,7 @@ AdjacencyListStringWriter::~AdjacencyListStringWriter()
     delete grin;
 }
 
-void AdjacencyListStringWriter::processGraph(const DiGraph *graph)
+void AdjacencyListStringWriter::processGraph(const DiGraph *graph, const DiGraphInfo *info)
 {
     if (StreamDiGraphWriter::outputStream == 0) {
         return;
@@ -60,8 +61,14 @@ void AdjacencyListStringWriter::processGraph(const DiGraph *graph)
     DiGraph *ncGraph = const_cast<DiGraph*>(graph);
     outputStream << ncGraph->getSize() << grin->format.getVertexSeparator();
 
+    DiGraphInfo defaultInfo(ncGraph);
+    if (!info) {
+        info = &defaultInfo;
+    }
+
     std::vector<Vertex*> vertices;
-    ncGraph->mapVertices([&](Vertex *v) { vertices.push_back(v); });
+    //ncGraph->mapVertices([&](Vertex *v) { vertices.push_back(v); });
+    info->mapVertices([&](Vertex *v) { vertices.push_back(v); });
     PropertyMap<int> vIndex(-1);
     for (unsigned int i = 0; i < vertices.size(); i++) {
         vIndex.setValue(vertices.at(i), i);
@@ -69,14 +76,16 @@ void AdjacencyListStringWriter::processGraph(const DiGraph *graph)
 
     if (grin->format.useOutgoingArcs()) {
         for (unsigned int v = 0; v < vertices.size(); v++) {
-            ncGraph->mapOutgoingArcs(vertices.at(v), [&](Arc *a) {
+            //ncGraph->mapOutgoingArcs(vertices.at(v), [&](Arc *a) {
+            info->mapOutgoingArcs(vertices.at(v), [&](Arc *a) {
                 outputStream << vIndex.getValue(a->getHead()) << grin->format.getArcSeparator();
             });
             outputStream << grin->format.getVertexSeparator();
         }
     } else {
         for (unsigned int v = 0; v < vertices.size(); v++) {
-            ncGraph->mapIncomingArcs(vertices.at(v), [&](Arc *a) {
+            //ncGraph->mapIncomingArcs(vertices.at(v), [&](Arc *a) {
+            info->mapIncomingArcs(vertices.at(v), [&](Arc *a) {
                 outputStream << vIndex.getValue(a->getTail()) << grin->format.getArcSeparator();
             });
             outputStream << grin->format.getVertexSeparator();

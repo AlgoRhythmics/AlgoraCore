@@ -27,6 +27,7 @@
 namespace Algora {
 
 class DiGraph;
+class DiGraphInfo;
 
 class DiGraphProcessor
 {
@@ -34,7 +35,7 @@ public:
     DiGraphProcessor() { }
     virtual ~DiGraphProcessor() { }
 
-    virtual void processGraph(const DiGraph *graph) = 0;
+    virtual void processGraph(const DiGraph *graph, const DiGraphInfo *info = 0) = 0;
 };
 
 }

@@ -38,7 +38,7 @@ public:
 
     // DiGraphProcessor interface
 public:
-    virtual void processGraph(const DiGraph *graph) override;
+    virtual void processGraph(const DiGraph *graph, const DiGraphInfo *info = 0) override;
 
 private:
     class CheshireCat;
