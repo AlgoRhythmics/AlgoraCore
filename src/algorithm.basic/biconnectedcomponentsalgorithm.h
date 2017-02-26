@@ -17,6 +17,7 @@ public:
 public:
     virtual void run() override;
     virtual std::string getName() const noexcept override { return "BiconnectedComponents"; }
+    virtual std::string getShortName() const noexcept override { return "bic"; }
 
     // ValueComputingAlgorithm interface
 public:

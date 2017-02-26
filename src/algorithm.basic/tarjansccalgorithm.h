@@ -40,6 +40,7 @@ public:
 public:
     virtual void run() override;
     virtual std::string getName() const noexcept override { return "TarjanSCC"; }
+    virtual std::string getShortName() const noexcept override { return "tarjan"; }
 
     // ValueComputingAlgorithm interface
 public:

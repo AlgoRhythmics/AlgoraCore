@@ -49,6 +49,7 @@ public:
     virtual bool prepare() override;
     virtual void run() override;
     virtual std::string getName() const noexcept override { return "BFS"; }
+    virtual std::string getShortName() const noexcept override { return "bfs"; }
 
     // ValueComputingAlgorithm interface
 public:

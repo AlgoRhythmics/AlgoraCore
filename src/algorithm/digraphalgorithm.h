@@ -42,6 +42,7 @@ public:
     virtual void run() = 0;
 
     virtual std::string getName() const noexcept = 0;
+    virtual std::string getShortName() const noexcept = 0;
 
 protected:
     DiGraph *diGraph;

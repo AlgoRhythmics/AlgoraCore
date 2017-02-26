@@ -54,6 +54,7 @@ public:
 public:
     virtual void run() override;
     virtual std::string getName() const noexcept override { return "TopSort"; }
+    virtual std::string getShortName() const noexcept override { return "topsort"; }
 
 private:
     virtual void onDiGraphSet() override { sequence.clear(); }
