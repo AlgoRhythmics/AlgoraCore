@@ -27,7 +27,9 @@
 #include "graph/vertex.h"
 #include "graph/arc.h"
 #include "property/propertymap.h"
-#include <deque>
+#include "algorithm.basic/breadthfirstsearch.h"
+#include "algorithm/digraphalgorithmexception.h"
+
 #include <algorithm>
 
 namespace Algora {
@@ -64,31 +66,28 @@ void FindDiPathAlgorithm::run()
         return;
     }
 
-    std::deque<Vertex*> queue;
-    PropertyMap<bool> discovered(false);
+
+    BreadthFirstSearch bfs(false);
+    bfs.setGraph(diGraph);
     PropertyMap<Arc*> pred(0);
 
-    queue.push_back(from);
-    discovered[from] = true;
+    bfs.setStartVertex(from);
+    bfs.setVertexStopCondition([&](const Vertex *) { return pathFound; });
+    bfs.onArcDiscover([&](Arc *a) {
+        Vertex *head = a->getHead();
+        if(!pred[head]) {
+            pred[head] = a;
+        }
+        if (head == to) {
+            pathFound = true;
+        }
+    });
 
-    while (!pathFound && !queue.empty()) {
-        Vertex *curr = queue.front();
-        queue.pop_front();
-
-        diGraph->mapOutgoingArcs(curr, [&](Arc *a) {
-            Vertex *head = a->getHead();
-            if (!discovered(head)) {
-                queue.push_back(a->getHead());
-                if (constructPath) {
-                    pred[head] = a;
-                }
-                discovered[head] = true;
-                if (head == to) {
-                    pathFound = true;
-                }
-            }
-        });
+    if (!bfs.prepare()){
+       throw DiGraphAlgorithmException(this, "Could not prepare BFS algorithm.");
     }
+    bfs.run();
+    bfs.deliver();
 
     if (pathFound && constructPath) {
         Vertex *p = to;
