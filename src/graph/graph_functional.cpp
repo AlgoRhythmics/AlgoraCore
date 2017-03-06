@@ -25,6 +25,9 @@
 
 namespace Algora {
 
+const VertexMapping vertexNothing = [](Vertex *){};
+const ArcMapping arcNothing = [](Arc *){};
+
 const VertexPredicate vertexTrue = [](const Vertex *) { return true; };
 const VertexPredicate vertexFalse = [](const Vertex *) { return false; };
 

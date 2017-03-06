@@ -40,6 +40,9 @@ typedef std::function<void(const Arc *a)> ConstArcMapping;
 typedef std::function<bool(const Vertex *v)> VertexPredicate;
 typedef std::function<bool(const Arc *v)> ArcPredicate;
 
+extern const VertexMapping vertexNothing;
+extern const ArcMapping arcNothing;
+
 extern const VertexPredicate vertexTrue;
 extern const VertexPredicate vertexFalse;
 
