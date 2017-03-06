@@ -25,6 +25,7 @@
 #define BREADTHFIRSTSEARCH_H
 
 #include "algorithm/propertycomputingalgorithm.h"
+#include "graph/graph_functional.h"
 
 namespace Algora {
 
@@ -33,12 +34,29 @@ class Vertex;
 class BreadthFirstSearch : public PropertyComputingAlgorithm<bool, int>
 {
 public:
-    BreadthFirstSearch();
+    BreadthFirstSearch(bool computeValues = true);
     virtual ~BreadthFirstSearch();
 
     void setStartVertex(Vertex *v) {
         startVertex = v;
     }
+
+    void onVertexDiscover(const VertexMapping &vFun) {
+        onVertexDiscovered = vFun;
+    }
+
+    void onArcDiscover(const ArcMapping &aFun) {
+        onArcDiscovered = aFun;
+    }
+
+    void setVertexStopCondition(const VertexPredicate &vStop) {
+        vertexStopCondition = vStop;
+    }
+
+    void setArcStopCondition(const ArcPredicate &aStop) {
+        arcStopCondition = aStop;
+    }
+
 
     int getMaxBfsNumber() const {
         return maxBfsNumber;
@@ -58,6 +76,11 @@ public:
 private:
     Vertex *startVertex;
     int maxBfsNumber;
+
+    VertexMapping onVertexDiscovered;
+    ArcMapping onArcDiscovered;
+    VertexPredicate vertexStopCondition;
+    ArcPredicate arcStopCondition;
 
     // DiGraphAlgorithm interface
 private:

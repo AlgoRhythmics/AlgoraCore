@@ -32,8 +32,11 @@
 
 namespace Algora {
 
-BreadthFirstSearch::BreadthFirstSearch()
-    : startVertex(0), maxBfsNumber(-1)
+BreadthFirstSearch::BreadthFirstSearch(bool computeValues)
+    : PropertyComputingAlgorithm<bool, int>(computeValues),
+      startVertex(0), maxBfsNumber(-1),
+      onVertexDiscovered(vertexNothing), onArcDiscovered(arcNothing),
+      vertexStopCondition(vertexFalse), arcStopCondition(arcFalse)
 {
 
 }
@@ -57,26 +60,42 @@ void BreadthFirstSearch::run()
 
     std::deque<Vertex*> queue;
     PropertyMap<bool> discovered(false);
-    PropertyMap<int> &bfsNumber = *propertyMap;
+    PropertyMap<int> *bfsNumber = propertyMap;
 
     maxBfsNumber = 0;
     queue.push_back(startVertex);
     discovered[startVertex] = true;
-    bfsNumber[startVertex] = maxBfsNumber;
+    if (computePropertyValues) {
+        (*bfsNumber)[startVertex] = maxBfsNumber;
+    }
 
-    while (!queue.empty()) {
+    bool stop = false;
+
+    while (!stop && !queue.empty()) {
         Vertex *curr = queue.front();
         queue.pop_front();
+        onVertexDiscovered(curr);
+        stop |= vertexStopCondition(curr);
+        if (stop) {
+            break;
+        }
 
-        diGraph->mapOutgoingArcs(curr, [&](Arc *a) {
+        diGraph->mapOutgoingArcsUntil(curr, [&](Arc *a) {
+            onArcDiscovered(a);
+            stop |= arcStopCondition(a);
+            if (stop) {
+                return;
+            }
             Vertex *head = a->getHead();
             if (!discovered(head)) {
                 queue.push_back(a->getHead());
                 discovered[head] = true;
                 maxBfsNumber++;
-                bfsNumber[head] = maxBfsNumber;
+                if (computePropertyValues) {
+                    (*bfsNumber)[head] = maxBfsNumber;
+                }
             }
-        });
+        }, [&](const Arc *) { return stop; });
     }
 }
 
