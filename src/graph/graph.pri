@@ -11,12 +11,12 @@ HEADERS += \
     $$PWD/superdigraph.h \
     $$PWD/graph_functional.h \
     $$PWD/multiarc.h \
-    $$PWD/weightedarc.h
+    $$PWD/weightedarc.h \
+    $$PWD/vertexpair.h
 
 SOURCES += \
     $$PWD/digraph.cpp \
     $$PWD/vertex.cpp \
-    $$PWD/arc.cpp \
     $$PWD/graphartifact.cpp \
     $$PWD/parallelarcsbundle.cpp \
     $$PWD/subdigraph.cpp \
@@ -24,4 +24,5 @@ SOURCES += \
     $$PWD/superdigraph.cpp \
     $$PWD/graph_functional.cpp \
     $$PWD/multiarc.cpp \
-    $$PWD/weightedarc.cpp
+    $$PWD/weightedarc.cpp \
+    $$PWD/vertexpair.cpp

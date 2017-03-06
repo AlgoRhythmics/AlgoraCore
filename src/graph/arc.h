@@ -24,21 +24,21 @@
 #ifndef ARC_H
 #define ARC_H
 
-#include "graphartifact.h"
+#include "vertexpair.h"
 
 namespace Algora {
 
 class Vertex;
 
-class Arc : public GraphArtifact
+class Arc : public VertexPair
 {
     friend class DiGraph;
 
 public:
-    virtual ~Arc();
+    virtual ~Arc() {}
 
-    virtual Vertex *getTail() const;
-    virtual Vertex *getHead() const;
+    virtual Vertex *getTail() const { return getFirst(); }
+    virtual Vertex *getHead() const { return getSecond(); }
     virtual int getSize() const {
         return 1;
     }
@@ -48,14 +48,10 @@ public:
     virtual std::string typeString() const override {
         return "Arc";
     }
-    virtual std::string toString() const override;
 
 protected:
-    explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
-
-private:
-    struct CheshireCat;
-    CheshireCat *grin;
+    explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0)
+        : VertexPair(tail, head, parent) {}
 };
 
 }
