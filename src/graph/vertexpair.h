@@ -11,7 +11,7 @@ class Vertex;
 class VertexPair : public GraphArtifact
 {
 public:
-    explicit VertexPair(Vertex *first, Vertex *second, GraphArtifact *parent)
+    explicit VertexPair(Vertex *first, Vertex *second, GraphArtifact *parent = 0)
         : GraphArtifact(parent), first(first), second(second) {}
 
     virtual ~VertexPair() { }
