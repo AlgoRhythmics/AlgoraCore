@@ -2,6 +2,7 @@
 #include "accessibilityalgorithm.h"
 
 #include "property/propertymap.h"
+#include "graph/digraph.h"
 #include "graph/vertex.h"
 #include "graph/arc.h"
 #include "breadthfirstsearch.h"
@@ -54,6 +55,12 @@ void AccessibilityAlgorithm::run()
 void AccessibilityAlgorithm::onDiGraphSet()
 {
     grin->isAccessible.resetAll();
+    diGraph->mapVertices([&](Vertex *v) {
+        grin->isAccessible[v][v] = true;
+    });
+    diGraph->mapArcs([&](Arc *a) {
+        grin->isAccessible[a->getTail()][a->getHead()] = true;
+    });
 }
 
 bool AccessibilityAlgorithm::CheshireCat::checkAccessibility(DiGraph *graph, Vertex *source, Vertex *target)
@@ -64,15 +71,15 @@ bool AccessibilityAlgorithm::CheshireCat::checkAccessibility(DiGraph *graph, Ver
     bfs.setStartVertex(source);
     bool pathFound = false;
     bfs.setVertexStopCondition([&](const Vertex *) { return pathFound; });
-    bfs.onArcDiscover([&](Arc *a) {
-        Vertex *head = a->getHead();
-        isAccessible[source][head] = true;
-        TriBool accessible(isAccessible[head][target]);
+    bfs.onVertexDiscover([&](const Vertex *v) {
+        isAccessible[source][v] = true;
+        TriBool accessible(isAccessible[v][target]);
         if (accessible) {
             pathFound = true;
         } else if (!accessible) {
-            // TODO prune
+            return false;
         }
+        return true;
     });
 
     if (!bfs.prepare()) {
