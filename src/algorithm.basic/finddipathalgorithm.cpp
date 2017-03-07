@@ -73,14 +73,16 @@ void FindDiPathAlgorithm::run()
 
     bfs.setStartVertex(from);
     bfs.setVertexStopCondition([&](const Vertex *) { return pathFound; });
-    bfs.onArcDiscover([&](Arc *a) {
+    bfs.onArcDiscover([&](const Arc *a) {
+        Arc *arc = const_cast<Arc*>(a);
         Vertex *head = a->getHead();
         if(!pred[head]) {
-            pred[head] = a;
+            pred[head] = arc;
         }
         if (head == to) {
             pathFound = true;
         }
+        return true;
     });
 
     if (!bfs.prepare()){
