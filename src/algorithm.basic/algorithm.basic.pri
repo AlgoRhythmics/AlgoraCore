@@ -7,7 +7,8 @@ HEADERS += \
     $$PWD/tarjansccalgorithm.h \
     $$PWD/topsortalgorithm.h \
     $$PWD/depthfirstsearch.h \
-    $$PWD/biconnectedcomponentsalgorithm.h
+    $$PWD/biconnectedcomponentsalgorithm.h \
+    $$PWD/accessibilityalgorithm.h
 
 SOURCES += \     
     $$PWD/finddipathalgorithm.cpp \
@@ -16,4 +17,5 @@ SOURCES += \
     $$PWD/topsortalgorithm.cpp \
     $$PWD/basic_algorithms.cpp \
     $$PWD/depthfirstsearch.cpp \
-    $$PWD/biconnectedcomponentsalgorithm.cpp
+    $$PWD/biconnectedcomponentsalgorithm.cpp \
+    $$PWD/accessibilityalgorithm.cpp
