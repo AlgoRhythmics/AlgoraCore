@@ -41,11 +41,11 @@ public:
         startVertex = v;
     }
 
-    void onVertexDiscover(const VertexMapping &vFun) {
+    void onVertexDiscover(const VertexPredicate &vFun) {
         onVertexDiscovered = vFun;
     }
 
-    void onArcDiscover(const ArcMapping &aFun) {
+    void onArcDiscover(const ArcPredicate &aFun) {
         onArcDiscovered = aFun;
     }
 
@@ -77,8 +77,8 @@ private:
     Vertex *startVertex;
     int maxBfsNumber;
 
-    VertexMapping onVertexDiscovered;
-    ArcMapping onArcDiscovered;
+    VertexPredicate onVertexDiscovered;
+    ArcPredicate onArcDiscovered;
     VertexPredicate vertexStopCondition;
     ArcPredicate arcStopCondition;
 

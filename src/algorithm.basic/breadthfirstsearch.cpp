@@ -35,7 +35,7 @@ namespace Algora {
 BreadthFirstSearch::BreadthFirstSearch(bool computeValues)
     : PropertyComputingAlgorithm<bool, int>(computeValues),
       startVertex(0), maxBfsNumber(-1),
-      onVertexDiscovered(vertexNothing), onArcDiscovered(arcNothing),
+      onVertexDiscovered(vertexTrue), onArcDiscovered(arcTrue),
       vertexStopCondition(vertexFalse), arcStopCondition(arcFalse)
 {
 
@@ -74,20 +74,23 @@ void BreadthFirstSearch::run()
     while (!stop && !queue.empty()) {
         Vertex *curr = queue.front();
         queue.pop_front();
-        onVertexDiscovered(curr);
         stop |= vertexStopCondition(curr);
         if (stop) {
             break;
         }
 
         diGraph->mapOutgoingArcsUntil(curr, [&](Arc *a) {
-            onArcDiscovered(a);
+            bool consider = onArcDiscovered(a);
             stop |= arcStopCondition(a);
-            if (stop) {
+            if (stop || !consider) {
                 return;
             }
             Vertex *head = a->getHead();
             if (!discovered(head)) {
+                if (!onVertexDiscovered(head)) {
+                    return;
+                }
+
                 queue.push_back(a->getHead());
                 discovered[head] = true;
                 maxBfsNumber++;
