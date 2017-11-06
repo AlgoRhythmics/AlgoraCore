@@ -27,6 +27,7 @@ PRO_FILE="AlgoraCore.pro"
 
 [ -z "${QMAKE}" ] && QMAKE=$(which qmake)
 QMAKE_ARGS="-r -spec linux-g++-64"
+#QMAKE_ARGS="-r -spec linux-g++-64 CONFIG+=general"
 QMAKE_ARGS_DEBUG="CONFIG+=debug"
 
 

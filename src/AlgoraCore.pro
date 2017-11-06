@@ -11,7 +11,13 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 QMAKE_CXXFLAGS_DEBUG += -std=c++11 -O0
-QMAKE_CXXFLAGS_RELEASE += -O3 -march=native -std=c++11
+QMAKE_CXXFLAGS_RELEASE += -std=c++11
+
+general {
+  QMAKE_CXXFLAGS_RELEASE += -O2 -march=x86-64
+} else {
+  QMAKE_CXXFLAGS_RELEASE += -O3 -march=native -mtune=native
+}
 
 unix {
     target.path = /usr/lib
