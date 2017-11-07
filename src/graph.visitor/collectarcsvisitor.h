@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013 - 2016 : Kathrin Hanauer
+ * Copyright (C) 2013 - 2017 : Kathrin Hanauer
  *
  * This file is part of Algora.
  *
@@ -19,7 +19,6 @@
  * Contact information:
  *   http://algora.xaikal.org
  */
-
 
 #ifndef COLLECTARCSVISITOR_H
 #define COLLECTARCSVISITOR_H
