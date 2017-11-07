@@ -35,7 +35,7 @@ public:
     AdjacencyListStringFormat format;
     std::string lastError;
 
-    CheshireCat(AdjacencyListStringFormat &f) : format(f) { }
+    explicit CheshireCat(AdjacencyListStringFormat &f) : format(f) { }
 };
 
 bool parseInt(std::string s, int *i, std::string &err);

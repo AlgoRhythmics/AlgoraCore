@@ -34,7 +34,7 @@
 namespace Algora {
 
 FindDiPathAlgorithm::FindDiPathAlgorithm(bool constructPath)
-    : constructPath(constructPath), from(0), to(0)
+    : constructPath(constructPath), from(0), to(0), pathFound(false)
 {
 
 }

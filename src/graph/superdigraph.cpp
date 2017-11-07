@@ -40,7 +40,7 @@ IncidenceListVertex *findOrCreateVertex(Vertex *v,
 
 class DummyVertex : public IncidenceListVertex {
 public:
-    DummyVertex(SuperDiGraph *g) : IncidenceListVertex(g) { enableConsistencyCheck(false); }
+    explicit DummyVertex(SuperDiGraph *g) : IncidenceListVertex(g) { enableConsistencyCheck(false); }
     virtual ~DummyVertex() { }
 };
 
@@ -50,7 +50,7 @@ public:
     IncidenceListGraphImplementation *extra;
     std::unordered_map<const Vertex*,IncidenceListVertex*> map;
 
-    CheshireCat(DiGraph *subGraph) : subGraph(subGraph) { }
+    explicit CheshireCat(DiGraph *subGraph) : subGraph(subGraph) { }
     ~CheshireCat() { delete extra; }
 };
 

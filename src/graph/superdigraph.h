@@ -30,7 +30,7 @@ namespace Algora {
 class SuperDiGraph : public DiGraph
 {
 public:
-    SuperDiGraph(DiGraph *graph);
+    explicit SuperDiGraph(DiGraph *graph);
     virtual ~SuperDiGraph();
 
     // Graph interface

@@ -36,7 +36,7 @@ class AdjacencyListStringWriter::CheshireCat {
 public:
     AdjacencyListStringFormat format;
 
-    CheshireCat(AdjacencyListStringFormat &f) : format(f) { }
+    explicit CheshireCat(AdjacencyListStringFormat &f) : format(f) { }
 };
 
 

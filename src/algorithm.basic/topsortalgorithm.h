@@ -36,7 +36,7 @@ class TopSortAlgorithm : public PropertyComputingAlgorithm<unsigned int,int>
 public:
     typedef std::vector<Vertex*>::const_iterator VertexIterator;
 
-    TopSortAlgorithm(bool computeValues = true);
+    explicit TopSortAlgorithm(bool computeValues = true);
     virtual ~TopSortAlgorithm();
 
     VertexIterator begin() const {

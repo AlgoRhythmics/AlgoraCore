@@ -32,7 +32,7 @@ class GraphArtifact;
 class GraphArtifactProperty
 {
 public:
-    GraphArtifactProperty(const std::string &name = "");
+    explicit GraphArtifactProperty(const std::string &name = "");
     GraphArtifactProperty(const GraphArtifactProperty &rhs);
     virtual ~GraphArtifactProperty();
 

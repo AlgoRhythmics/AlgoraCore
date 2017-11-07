@@ -27,7 +27,7 @@ namespace Algora {
 struct WeightedArc::CheshireCat {
     int weight;
 
-    CheshireCat(int w = 0) : weight(w) { }
+    explicit CheshireCat(int w = 0) : weight(w) { }
 };
 
 WeightedArc::WeightedArc(Vertex *tail, Vertex *head, int weight, GraphArtifact *parent)

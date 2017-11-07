@@ -38,7 +38,7 @@ public:
     typedef std::vector<Vertex*>::const_iterator VertexIterator;
     typedef std::vector<Arc*>::const_iterator ArcIterator;
 
-    FindDiPathAlgorithm(bool constructPath = true);
+    explicit FindDiPathAlgorithm(bool constructPath = true);
     virtual ~FindDiPathAlgorithm();
 
     void setConstructPath(bool constructPath) {

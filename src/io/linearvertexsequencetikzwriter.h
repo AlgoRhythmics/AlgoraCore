@@ -30,7 +30,7 @@ namespace Algora {
 class LinearVertexSequenceTikzWriter : public StreamDiGraphWriter
 {
 public:
-    LinearVertexSequenceTikzWriter(std::ostream *output = 0);
+    explicit LinearVertexSequenceTikzWriter(std::ostream *output = 0);
     virtual ~LinearVertexSequenceTikzWriter();
 
     // DiGraphProcessor interface

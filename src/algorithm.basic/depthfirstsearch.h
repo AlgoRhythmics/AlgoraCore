@@ -33,7 +33,7 @@ struct DFSResult {
     int dfsNumber = -1;
     int lowNumber = -1;
     Vertex *parent = 0;
-    DFSResult(int dfs=-1, int low=-1, Vertex *p=0) :
+    explicit DFSResult(int dfs=-1, int low=-1, Vertex *p=0) :
         dfsNumber(dfs), lowNumber(low), parent(p) {}
     DFSResult(Vertex *p) : parent(p) {}
 };

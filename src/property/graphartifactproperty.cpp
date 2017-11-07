@@ -27,7 +27,7 @@ namespace Algora {
 class GraphArtifactProperty::CheshireCat {
 public:
     std::string name;
-    CheshireCat(const std::string &name) : name(name) {}
+    explicit CheshireCat(const std::string &name) : name(name) {}
 
 };
 

@@ -32,7 +32,7 @@ class Vertex;
 class AccessibilityAlgorithm : public PropertyComputingAlgorithm<void, bool>
 {
 public:
-    AccessibilityAlgorithm(bool computeValues = true);
+    explicit AccessibilityAlgorithm(bool computeValues = true);
     virtual ~AccessibilityAlgorithm();
 
     bool canAccess(Vertex *source, Vertex *target);

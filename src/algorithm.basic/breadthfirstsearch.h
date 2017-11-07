@@ -33,7 +33,7 @@ class Vertex;
 class BreadthFirstSearch : public PropertyComputingAlgorithm<bool, int>
 {
 public:
-    BreadthFirstSearch(bool computeValues = true);
+    explicit BreadthFirstSearch(bool computeValues = true);
     virtual ~BreadthFirstSearch();
 
     void setStartVertex(Vertex *v) {
