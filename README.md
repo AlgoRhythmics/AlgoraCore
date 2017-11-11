@@ -15,8 +15,10 @@ The design principle was to have data structures and algorithms that are
 
 ## Building
 
-**Algora|Core** is written in C++11 and based on the STL.
-However, it uses `qmake` version 5 for the building process.
+**Algora|Core** is written in C++11.
+Implementations are based on the STL and additionally use `boost/dynamic_bitset` as well as
+`boost/logic/tribool`.
+The building process employs `qmake` version 5.
 
 On Debian/Ubuntu, `qmake` can be installed by running: `# apt-get install
 qt5-qmake`.
