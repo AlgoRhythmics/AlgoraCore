@@ -26,7 +26,7 @@
 
 #include <iostream>
 
-using namespace Algora;
+namespace Algora {
 
 struct PrintGraphVisitor::CheshireCat {
     bool firstItemVisited;
@@ -59,7 +59,7 @@ void PrintGraphVisitor::reset()
     cat->firstItemVisited = false;
 }
 
-void Algora::PrintGraphVisitor::visitArtifact(GraphArtifact *artifact)
+void PrintGraphVisitor::visitArtifact(GraphArtifact *artifact)
 {
     if (cat->firstItemVisited) {
         cat->out << cat->itemSeparator;
@@ -67,4 +67,6 @@ void Algora::PrintGraphVisitor::visitArtifact(GraphArtifact *artifact)
         cat->firstItemVisited = true;
     }
     cat->out << artifact->toString();
+}
+
 }

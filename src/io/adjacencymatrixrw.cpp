@@ -29,8 +29,15 @@
 #include <map>
 #include <tuple>
 #include <algorithm>
-
 #include <iostream>
+
+#ifdef DEBUG_AMATRIXRW
+#define PRINT_DEBUG(msg) std::cout << msg << std::endl;
+#define IF_DEBUG(cmd) cmd;
+#else
+#define PRINT_DEBUG(msg)
+#define IF_DEBUG(cmd)
+#endif
 
 namespace Algora {
 
@@ -125,24 +132,24 @@ bool readGraph(std::istream &is, DiGraph *graph) {
         std::cerr << "io: n <= 0." << std::endl;
         return false;
     }
-    //std::cout << "n " << n << std::endl;
+    PRINT_DEBUG( "n " << n )
     is >> std::ws;
 
     int p = is.peek();
-    //std::cout << "p \"" << (char) p << "\"" << std::endl;
+    PRINT_DEBUG( "p \"" << (char) p << "\"" )
     oneLine = !std::isdigit(p);
     if (oneLine) {
-        //std::cout << "one line" << std::endl;
+        PRINT_DEBUG( "one line" )
         char c;
         is >> c;
-        //std::cout << "next char " << c << std::endl;
+        PRINT_DEBUG( "next char " << c )
         if (c != ':') {
             std::cerr << "io: Missing first ':'." << std::endl;
             return false;
         }
         is >> std::ws;
         while ((is.peek() != ':') && (is >> c)) {
-            //std::cout << "next char " << c << std::endl;
+            PRINT_DEBUG( "next char " << c )
             switch (c) {
             case 'u' :
                 upperTriangle = true;
@@ -156,14 +163,14 @@ bool readGraph(std::istream &is, DiGraph *graph) {
             }
             is >> std::ws;
         }
-        //std::cout << "upper triangle " << upperTriangle << std::endl;
-        //std::cout << "diagonal " << diagonal << std::endl;
+        PRINT_DEBUG( "upper triangle " << upperTriangle )
+        PRINT_DEBUG( "diagonal " << diagonal )
         if ((!is.good()) || (diagonal && !upperTriangle)) {
             std::cerr << "io: Stream error or illegal option combination." << std::endl;
             return false;
         }
         is >> c;
-        //std::cout << "next char " << c << std::endl;
+        PRINT_DEBUG( "next char " << c )
         if (c != ':') {
             std::cerr << "io: Missing second ':'." << std::endl;
             return false;

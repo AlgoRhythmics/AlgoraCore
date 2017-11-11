@@ -22,7 +22,7 @@
 
 #include "collectverticesvisitor.h"
 
-using namespace Algora;
+namespace Algora {
 
 CollectVerticesVisitor::CollectVerticesVisitor(std::vector<Vertex *> *container)
     : m_container(container)
@@ -33,4 +33,6 @@ CollectVerticesVisitor::CollectVerticesVisitor(std::vector<Vertex *> *container)
 void CollectVerticesVisitor::visitVertex(Vertex *v)
 {
     m_container->push_back(v);
+}
+
 }

@@ -126,7 +126,6 @@ MultiArc *IncidenceListGraph::addMultiArc(Vertex *tail, Vertex *head, int size)
 void IncidenceListGraph::removeArc(Arc *a)
 {
     if (a->getParent() != this) {
-    //if (!containsArc(a)) {
         throw std::invalid_argument("Arc is not a part of this graph.");
     }
 

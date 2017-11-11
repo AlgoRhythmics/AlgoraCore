@@ -53,7 +53,6 @@ GraphArtifactProperty &GraphArtifactProperty::operator=(const GraphArtifactPrope
     if (this == &rhs) {
         return *this;
     }
-    //grin->name = rhs.grin->name;
     *grin = *(rhs.grin);
     return *this;
 }

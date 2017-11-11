@@ -125,4 +125,4 @@ protected:
 
 }
 
-#endif // GRAPH_H
+#endif // DIGRAPH_H

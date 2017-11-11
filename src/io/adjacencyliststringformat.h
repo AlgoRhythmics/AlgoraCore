@@ -23,6 +23,7 @@
 #ifndef ADJACENCYLISTSTRINGFORMAT_H
 #define ADJACENCYLISTSTRINGFORMAT_H
 
+namespace Algora {
 
 class AdjacencyListStringFormat
 {
@@ -43,5 +44,7 @@ private:
     char arcSeparator;
     bool outgoingArcs;
 };
+
+}
 
 #endif // ADJACENCYLISTSTRINGFORMAT_H

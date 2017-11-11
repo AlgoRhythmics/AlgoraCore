@@ -39,8 +39,6 @@ Vertex::~Vertex()
 std::string Vertex::toString() const
 {
     std::ostringstream strStream;
-    //strStream << "Vertex [";
-    //strStream << idString() << "]";
     strStream << this;
     return strStream.str();
 }

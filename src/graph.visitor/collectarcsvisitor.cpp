@@ -22,7 +22,7 @@
 
 #include "collectarcsvisitor.h"
 
-using namespace Algora;
+namespace Algora {
 
 CollectArcsVisitor::CollectArcsVisitor(std::vector<Arc *> *container)
     : m_container(container)
@@ -33,4 +33,6 @@ CollectArcsVisitor::CollectArcsVisitor(std::vector<Arc *> *container)
 void CollectArcsVisitor::visitArc(Arc *a)
 {
     m_container->push_back(a);
+}
+
 }

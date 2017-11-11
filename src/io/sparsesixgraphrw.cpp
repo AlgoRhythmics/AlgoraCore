@@ -35,6 +35,14 @@
 
 #include <iostream>
 
+#ifdef DEBUG_SPARSESIXRW
+#define PRINT_DEBUG(msg) std::cout << msg << std::endl;
+#define IF_DEBUG(cmd) cmd;
+#else
+#define PRINT_DEBUG(msg)
+#define IF_DEBUG(cmd)
+#endif
+
 namespace Algora {
 
 SparseSixGraphRW::SparseSixGraphRW()
@@ -58,7 +66,6 @@ void SparseSixGraphRW::processGraph(const DiGraph *graph, const DiGraphInfo *inf
 
     PropertyMap<int> vertexId(-1);
     int i = 0;
-    //ncGraph->mapVertices([&](Vertex *v) { vertexId[v] = i++; });
     info->mapVertices([&](Vertex *v) { vertexId[v] = i++; });
 
     int n = ncGraph->getSize();
@@ -91,7 +98,7 @@ void SparseSixGraphRW::processGraph(const DiGraph *graph, const DiGraphInfo *inf
 
     int k = 1;
     while ((1 << k) < n) k++; //ceil(log2(n));
-    //std::cout << "k: " << k << std::endl;
+    PRINT_DEBUG( "k: " << k )
     boost::dynamic_bitset<> edgeBits;
     boost::dynamic_bitset<> directionBits;
 
@@ -107,7 +114,7 @@ void SparseSixGraphRW::processGraph(const DiGraph *graph, const DiGraphInfo *inf
     bool direction;
     for (auto t : arcs) {
         std::tie(v, u, direction) = t;
-        //std::cout << "Processing (" << v << "," << u << "," << direction << ")" << std::endl;
+        PRINT_DEBUG( "Processing (" << v << "," << u << "," << direction << ")" )
         if (v == cur) {
             prependBitset(edgeBits, false);
             extendEdgeBits(u);
@@ -122,7 +129,7 @@ void SparseSixGraphRW::processGraph(const DiGraph *graph, const DiGraphInfo *inf
             prependBitset(edgeBits, false);
             extendEdgeBits(u);
         }
-        //std::cout << edgeBits << std::endl;
+        PRINT_DEBUG( edgeBits )
         directionBits.push_back(direction);
     }
     int pad = 6 - (edgeBits.size() % 6);
@@ -141,11 +148,11 @@ void SparseSixGraphRW::processGraph(const DiGraph *graph, const DiGraphInfo *inf
         }
     }
     // reverse direction bits
-    //std::cout << "direction: " << directionBits << std::endl;
+    PRINT_DEBUG( "direction: " << directionBits )
     reverseBitset(directionBits);
-    //std::cout << "direction: " << directionBits << std::endl;
+    PRINT_DEBUG( "direction: " << directionBits )
 
-    //std::cout << "edge bits: " << edgeBits << std::endl;
+    PRINT_DEBUG( "edge bits: " << edgeBits )
     sparseSixR(edgeBits, bytes);
     printAscii(outputStream, bytes);
     outputStream << ":";
@@ -177,10 +184,10 @@ bool SparseSixGraphRW::provideDiGraph(DiGraph *graph)
     }
     asciiToInts(inputStream, direction, '\n');
     int n = extractSparseSixN(bytes);
-    //std::cout << "n = " << n << std::endl;
+    PRINT_DEBUG( "n = " << n )
     unsigned int k = 1;
     while ((1 << k) < n) k++;
-    //std::cout << "k = " << k << std::endl;
+    PRINT_DEBUG( "k = " << k )
 
     std::vector<Vertex*> vertices;
     for (int i = 0; i < n; i++) {
@@ -199,7 +206,7 @@ bool SparseSixGraphRW::provideDiGraph(DiGraph *graph)
         b = extractLeftMostBit(edgeBits);
         extractLeftMostKBits(edgeBits, k, vBits);
         v = vBits.to_ulong();
-        //std::cout << b << " " << v << std::endl;
+        PRINT_DEBUG( b << " " << v )
         if (b) {
             cur++;
         }
@@ -211,10 +218,10 @@ bool SparseSixGraphRW::provideDiGraph(DiGraph *graph)
             bool d = extractLeftMostBit(directionBits);
             if (d) {
                 graph->addArc(vertices.at(cur), vertices.at(v));
-                //std::cout << "(" << cur << "," << v << ")" << std::endl;
+                PRINT_DEBUG( "(" << cur << "," << v << ")" )
             } else {
                 graph->addArc(vertices.at(v), vertices.at(cur));
-                //std::cout << "(" << v << "," << cur << ")" << std::endl;
+                PRINT_DEBUG( "(" << v << "," << cur << ")" )
             }
         }
     }

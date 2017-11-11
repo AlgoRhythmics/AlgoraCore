@@ -26,7 +26,14 @@
 
 #include "property/propertymap.h"
 
+#ifdef DEBUG_DFS
 #include <iostream>
+#define PRINT_DEBUG(msg) std::cout << msg << std::endl;
+#define IF_DEBUG(cmd) cmd;
+#else
+#define PRINT_DEBUG(msg)
+#define IF_DEBUG(cmd)
+#endif
 
 namespace Algora {
 
@@ -76,23 +83,23 @@ void dfs(DiGraph *g, Vertex *v, int &depth, PropertyMap<DFSResult> &pm,
     cur.dfsNumber = depth;
     cur.lowNumber = depth;
     depth++;
-    //std::cout << v << " : low = " << cur.lowNumber << std::endl;
+    PRINT_DEBUG(v << " : low = " << cur.lowNumber)
 
     auto vm = [&](Vertex *v, Vertex *u) {
-        //std::cout << "Considering child " << u << std::endl;
+        PRINT_DEBUG("Considering child " << u)
         if (!discovered(u)) {
             pm[u] = DFSResult(v);
-            //std::cout << "Set parent of " << u << " to " << pm(u).parent << std::endl;
+            PRINT_DEBUG("Set parent of " << u << " to " << pm(u).parent)
             dfs(g, u, depth, pm, discovered, ignoreDirection);
             if (pm(u).lowNumber < cur.lowNumber) {
-                //std::cout << "Updating low from " << cur.lowNumber << " to " << pm(u).lowNumber << std::endl;
+                PRINT_DEBUG("Updating low from " << cur.lowNumber << " to " << pm(u).lowNumber)
                 cur.lowNumber = pm(u).lowNumber;
-                //std::cout << "Low is now " << pm(v).lowNumber << std::endl;
+                PRINT_DEBUG("Low is now " << pm(v).lowNumber)
             }
         } else if (cur.parent != u && pm(u).dfsNumber < cur.lowNumber) {
-            //std::cout << "Updating low from " << cur.lowNumber << " to " << pm(u).dfsNumber << std::endl;
+            PRINT_DEBUG("Updating low from " << cur.lowNumber << " to " << pm(u).dfsNumber)
             cur.lowNumber = pm(u).dfsNumber;
-            //std::cout << "Low is now " << pm(v).lowNumber << std::endl;
+            PRINT_DEBUG("Low is now " << pm(v).lowNumber)
         }
     };
     g->mapOutgoingArcs(v, [&](Arc *a) { vm(v, a->getHead()); });

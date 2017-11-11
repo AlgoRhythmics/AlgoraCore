@@ -22,7 +22,14 @@
 
 #include "sparsesixformat.h"
 
-//#include <iostream>
+#ifdef DEBUG_SPARSESIXF
+#include <iostream>
+#define PRINT_DEBUG(msg) std::cout << msg )
+#define IF_DEBUG(cmd) cmd;
+#else
+#define PRINT_DEBUG(msg)
+#define IF_DEBUG(cmd)
+#endif
 
 namespace Algora {
 
@@ -31,7 +38,7 @@ void sparseSixR(boost::dynamic_bitset<> &bits, std::vector<int> &result) {
     if (bits.size() > blocks * 6) {
         blocks++;
     }
-    //std::cout << "blocks: " << blocks << std::endl;
+    PRINT_DEBUG( "blocks: " << blocks )
     boost::dynamic_bitset<> bpad(bits);
     bpad.resize(6 * blocks);
     bpad <<= (6 * blocks - bits.size());
@@ -96,13 +103,13 @@ void splitAndConvertBitset(boost::dynamic_bitset<> &bitset, int chunkSize, std::
     boost::dynamic_bitset<> mask(bitset.size(), (1 << (chunkSize + 1) ) - 1); // 63 = 111111
     mask <<= (blocks - 1) * chunkSize;
     for (unsigned int i = blocks; i > 0; i--) {
-        //std::cout << "mask: " << mask << std::endl;
+        PRINT_DEBUG( "mask: " << mask )
         boost::dynamic_bitset<> chunk(bitset.size());
         chunk = (bitset & mask) >> (i-1)*chunkSize;
         chunk.resize(chunkSize);
         int value = chunk.to_ulong();
         result.push_back(value);
-        //std::cout << "value: " << value << std::endl;
+        PRINT_DEBUG( "value: " << value )
         mask >>= chunkSize;
     }
 
@@ -122,31 +129,31 @@ unsigned long long extractSparseSixN(std::vector<int> &bytes)
     if (bytes.size() < 1) {
         return 0;
     }
-    //std::cout << "first byte: " << bytes[0] << std::endl;
+    PRINT_DEBUG( "first byte: " << bytes[0] )
     if (bytes[0] != 126) {
         int value = bytes[0] - 63;
-        //std::cout << "value: " << value << std::endl;
+        PRINT_DEBUG( "value: " << value )
         bytes.erase (bytes.begin());
         return value;
     } else if (bytes.size() < 4) {
         return 0;
     }
-    //std::cout << "second byte: " << bytes[1] << std::endl;
-    //std::cout << "third byte: " << bytes[2] << std::endl;
-    //std::cout << "forth byte: " << bytes[3] << std::endl;
+    PRINT_DEBUG( "second byte: " << bytes[1] )
+    PRINT_DEBUG( "third byte: " << bytes[2] )
+    PRINT_DEBUG( "forth byte: " << bytes[3] )
     if (bytes[1] != 126) {
         boost::dynamic_bitset<> b1(6, bytes[1] - 63);
         boost::dynamic_bitset<> b2(6, bytes[2] - 63);
         boost::dynamic_bitset<> b3(6, bytes[3] - 63);
-        //std::cout << "bits 1: " << b1 << std::endl;
-        //std::cout << "bits 2: " << b2 << std::endl;
-        //std::cout << "bits 3: " << b3 << std::endl;
+        PRINT_DEBUG( "bits 1: " << b1 )
+        PRINT_DEBUG( "bits 2: " << b2 )
+        PRINT_DEBUG( "bits 3: " << b3 )
         bytes.erase(bytes.begin(), bytes.begin()+4);
         prependBitset(b1, b2);
-        //std::cout << "bits 1+2: " << b1 << std::endl;
+        PRINT_DEBUG( "bits 1+2: " << b1 )
         prependBitset(b1, b3);
-        //std::cout << "bits: " << b1 << std::endl;
-        //std::cout << "ulong: " << b1.to_ulong() << std::endl;
+        PRINT_DEBUG( "bits: " << b1 )
+        PRINT_DEBUG( "ulong: " << b1.to_ulong() )
         return b1.to_ulong();
     } else if (bytes.size() < 8) {
         return 0;
