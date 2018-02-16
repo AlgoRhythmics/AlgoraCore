@@ -22,6 +22,7 @@ The building process employs `qmake` version 5.
 
 On Debian/Ubuntu, `qmake` can be installed by running: `# apt-get install
 qt5-qmake`.
+On Fedora, run `# dnf install qt5-qtbase-devel` to get `qmake-qt5`.
 
 To facilitate the building process even further, **Algora|Core** comes with an
 `easyCompile` script that creates the necessary build directories and
