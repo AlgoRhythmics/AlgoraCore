@@ -29,12 +29,15 @@
 
 #include <deque>
 
+//#define DEBUG_TSCC
 #ifdef DEBUG_TSCC
 #include <iostream>
-#define PRINT_DEBUG(msg) std::cout << msg )
+#define PRINT_DEBUG(msg) std::cout << msg << std::endl;
+#define PRINT_DEBUG_CL(msg) std::cout << msg << std::flush;
 #define IF_DEBUG(cmd) cmd;
 #else
 #define PRINT_DEBUG(msg)
+#define PRINT_DEBUG_CL(msg)
 #define IF_DEBUG(cmd)
 #endif
 
@@ -135,17 +138,16 @@ void strongconnect(DiGraph *graph, Vertex *v,
     lowLink[v] = vLowLink;
 
     if (lowLink(v) == vertexIndex(v)) {
-        IF_DEBUG(
-        std::cout << "Found SCC #" << nextScc << " with members: ";
+        PRINT_DEBUG_CL( "Found SCC #" << nextScc << " with members: " )
         Vertex *w;
         do {
             w  = stack.back();
-            std::cout << w << " ";
+            PRINT_DEBUG_CL( w << " " );
             stack.pop_back();
             onStack[w] = false;
             sccNumber[w] = nextScc;
         } while (w != v);
-        std::cout << std::endl; )
+        PRINT_DEBUG( "" )
         nextScc++;
     }
     PRINT_DEBUG( "done with " << v )
