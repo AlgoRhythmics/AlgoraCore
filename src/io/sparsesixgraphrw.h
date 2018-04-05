@@ -35,7 +35,7 @@ public:
 
     // DiGraphProcessor interface
 public:
-    virtual void processGraph(const DiGraph *graph, const DiGraphInfo *info) override;
+    virtual void processGraph(const DiGraph *graph, const DiGraphInfo *info = 0) override;
 
     // DiGraphProvider interface
 public:
