@@ -36,7 +36,7 @@ WeightedArc::WeightedArc(Vertex *tail, Vertex *head, int weight, GraphArtifact *
 
 }
 
-int WeightedArc::getSize() const
+unsigned int WeightedArc::getSize() const
 {
     return grin->weight;
 }

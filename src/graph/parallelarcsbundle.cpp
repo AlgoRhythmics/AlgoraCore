@@ -64,7 +64,7 @@ void ParallelArcsBundle::getArcs(std::vector<Arc *> *l) const
     std::copy(grin->arcsBundle.cbegin(), grin->arcsBundle.cend(), std::back_inserter(*l));
 }
 
-int ParallelArcsBundle::getSize() const
+unsigned int ParallelArcsBundle::getSize() const
 {
     //return grin->arcsBundle.size();
     return grin->size;

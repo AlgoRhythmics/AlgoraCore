@@ -38,8 +38,8 @@ public:
 
     virtual Vertex *getTail() const { return getFirst(); }
     virtual Vertex *getHead() const { return getSecond(); }
-    virtual int getSize() const {
-        return 1;
+    virtual unsigned int getSize() const {
+        return 1U;
     }
 
     // GraphArtifact interface

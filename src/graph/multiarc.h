@@ -36,7 +36,7 @@ class MultiArc : public Arc
 public:
     virtual ~MultiArc();
 
-    virtual int getSize() const override = 0;
+    virtual unsigned int getSize() const override = 0;
 
     // GraphArtifact interface
 public:
