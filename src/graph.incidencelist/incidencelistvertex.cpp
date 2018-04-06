@@ -168,6 +168,48 @@ bool IncidenceListVertex::hasIncomingArc(Arc *a) const
             || isBundledArc(grin->incomingArcs, a);
 }
 
+Arc *IncidenceListVertex::outgoingArcAt(unsigned int i, bool multiArcsAsSimple) const
+{
+    if (i < grin->outgoingArcs.size()) {
+        return grin->outgoingArcs.at(i);
+    }
+    i -= grin->outgoingArcs.size();
+    if (multiArcsAsSimple) {
+        if (i < grin->outgoingMultiArcs.size()) {
+            return grin->outgoingMultiArcs.at(i);
+        }
+    } else {
+        for(MultiArc *a : grin->outgoingMultiArcs) {
+            if (i < a->getSize()) {
+                return a;
+            }
+            i -= a->getSize();
+        }
+    }
+    throw std::invalid_argument("Index must be less than outdegree.");
+}
+
+Arc *IncidenceListVertex::incomingArcAt(unsigned int i, bool multiArcsAsSimple) const
+{
+    if (i < grin->incomingArcs.size()) {
+        return grin->incomingArcs.at(i);
+    }
+    i -= grin->incomingArcs.size();
+    if (multiArcsAsSimple) {
+        if (i < grin->incomingMultiArcs.size()) {
+            return grin->incomingMultiArcs.at(i);
+        }
+    } else {
+        for(MultiArc *a : grin->incomingMultiArcs) {
+            if (i < a->getSize()) {
+                return a;
+            }
+            i -= a->getSize();
+        }
+    }
+    throw std::invalid_argument("Index must be less than indegree.");
+}
+
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
 {
     mapOutgoingArcs(aVisitor->getVisitorFunction(), arcFalse);

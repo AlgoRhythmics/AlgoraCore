@@ -40,6 +40,8 @@ class IncidenceListVertex : public Vertex
 public:
     virtual bool hasOutgoingArc(Arc *a) const;
     virtual bool hasIncomingArc(Arc *a) const;
+    virtual Arc *outgoingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
+    virtual Arc *incomingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
 
     void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
     void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;

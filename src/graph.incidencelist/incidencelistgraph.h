@@ -42,6 +42,7 @@ public:
     virtual void removeVertex(Vertex *v) override;
     virtual bool containsVertex(Vertex *v) const override;
     virtual Vertex *getAnyVertex() const override;
+    virtual IncidenceListVertex *vertexAt(unsigned int i) const;
 
     virtual void mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition) override;
 

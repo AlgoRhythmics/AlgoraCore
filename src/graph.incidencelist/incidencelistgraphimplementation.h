@@ -42,6 +42,7 @@ public:
     void removeVertex(IncidenceListVertex *v);
     bool containsVertex(IncidenceListVertex *v) const;
     IncidenceListVertex *getFirstVertex() const;
+    IncidenceListVertex *vertexAt(unsigned int i) const;
 
     void addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);

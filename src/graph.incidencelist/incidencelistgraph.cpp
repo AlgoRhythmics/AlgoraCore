@@ -91,6 +91,14 @@ Vertex *IncidenceListGraph::getAnyVertex() const
     return impl->getFirstVertex();
 }
 
+IncidenceListVertex *IncidenceListGraph::vertexAt(unsigned int i) const
+{
+    if (i >= getSize()) {
+        throw std::invalid_argument("Index must be less than graph size.");
+    }
+    return impl->vertexAt(i);
+}
+
 void IncidenceListGraph::mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition)
 {
     impl->mapVertices(vvFun, breakCondition);

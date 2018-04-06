@@ -90,6 +90,11 @@ IncidenceListVertex *IncidenceListGraphImplementation::getFirstVertex() const
     return vertices.at(0);
 }
 
+IncidenceListVertex *IncidenceListGraphImplementation::vertexAt(unsigned int i) const
+{
+    return vertices.at(i);
+}
+
 void IncidenceListGraphImplementation::addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     tail->addOutgoingArc(a);
