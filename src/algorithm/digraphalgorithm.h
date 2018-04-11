@@ -42,6 +42,7 @@ public:
 
     virtual std::string getName() const noexcept = 0;
     virtual std::string getShortName() const noexcept = 0;
+    virtual std::string getProfilingInfo() const { return ""; }
 
 protected:
     DiGraph *diGraph;
