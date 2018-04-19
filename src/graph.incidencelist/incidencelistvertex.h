@@ -51,8 +51,10 @@ public:
     int getOutDegree(bool multiArcsAsSimple = false) const;
     int getInDegree(bool multiArcsAsSimple = false) const;
 
+    int getIndex() const;
+
 protected:
-    explicit IncidenceListVertex(GraphArtifact *parent = 0);
+    explicit IncidenceListVertex(GraphArtifact *parent = 0, int index = -1);
     virtual ~IncidenceListVertex();
 
     virtual void addOutgoingArc(Arc *a);
@@ -64,6 +66,8 @@ protected:
     virtual void clearIncomingArcs();
 
     virtual void enableConsistencyCheck(bool enable);
+
+    void setIndex(int i);
 
 private:
     class CheshireCat;

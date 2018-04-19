@@ -34,7 +34,7 @@ namespace Algora {
 
 const IncidenceListVertex *castVertex(const Vertex *v, const IncidenceListGraph *graph);
 IncidenceListVertex *castVertex(Vertex *v, const IncidenceListGraph *graph);
-void checkVertex(const Vertex *v, const IncidenceListGraph *graph);
+void checkVertex(const IncidenceListVertex *v, const IncidenceListGraph *graph);
 
 
 IncidenceListGraph::IncidenceListGraph(GraphArtifact *parent)
@@ -255,8 +255,8 @@ IncidenceListVertex *castVertex(Vertex *v, const IncidenceListGraph *graph) {
     return vertex;
 }
 
-void checkVertex(const Vertex *v, const IncidenceListGraph *graph) {
-    if (!v || v->getParent() != graph) {
+void checkVertex(const IncidenceListVertex *v, const IncidenceListGraph *graph) {
+    if (!v || v->getParent() != graph || graph->vertexAt(v->getIndex()) != v) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
 }

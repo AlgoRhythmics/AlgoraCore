@@ -47,15 +47,18 @@ bool isBundledArc(AL &list, Arc *arc);
 
 class IncidenceListVertex::CheshireCat {
 public:
+    int index;
     bool checkConsisteny;
     ArcList outgoingArcs;
     ArcList incomingArcs;
     MultiArcList outgoingMultiArcs;
     MultiArcList incomingMultiArcs;
+
+    CheshireCat(int i) : index(i) { }
 };
 
-IncidenceListVertex::IncidenceListVertex(GraphArtifact *parent)
-    : Vertex(parent), grin(new CheshireCat)
+IncidenceListVertex::IncidenceListVertex(GraphArtifact *parent, int index)
+    : Vertex(parent), grin(new CheshireCat(index))
 {
     grin->checkConsisteny = true;
 }
@@ -152,6 +155,16 @@ void IncidenceListVertex::clearIncomingArcs()
 void IncidenceListVertex::enableConsistencyCheck(bool enable)
 {
     grin->checkConsisteny = enable;
+}
+
+int IncidenceListVertex::getIndex() const
+{
+    return grin->index;
+}
+
+void IncidenceListVertex::setIndex(int i)
+{
+    grin->index = i;
 }
 
 bool IncidenceListVertex::hasOutgoingArc(Arc *a) const

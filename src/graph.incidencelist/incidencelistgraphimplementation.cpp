@@ -56,6 +56,7 @@ IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
 
 void IncidenceListGraphImplementation::addVertex(IncidenceListVertex *vertex)
 {
+    vertex->setIndex(vertices.size());
     vertices.push_back(vertex);
 }
 
@@ -73,13 +74,19 @@ void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
         delete a;
     });
     v->clearIncomingArcs();
-    vertices.erase(std::find(vertices.cbegin(), vertices.cend(), v));
+    //vertices.erase(std::find(vertices.cbegin(), vertices.cend(), v));
+    IncidenceListVertex *o = vertices.back();
+    int index = v->getIndex();
+    o->setIndex(index);
+    vertices[index] = o;
+    vertices.pop_back();
     delete v;
 }
 
 bool IncidenceListGraphImplementation::containsVertex(IncidenceListVertex *v) const
 {
-    return std::find(vertices.cbegin(), vertices.cend(), v) != vertices.cend();
+    //return std::find(vertices.cbegin(), vertices.cend(), v) != vertices.cend();
+    return (v->getParent() == graph && vertices.at(v->getIndex()) == v);
 }
 
 IncidenceListVertex *IncidenceListGraphImplementation::getFirstVertex() const
