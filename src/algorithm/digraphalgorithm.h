@@ -35,7 +35,7 @@ public:
     explicit DiGraphAlgorithm() : diGraph(0) { }
     virtual ~DiGraphAlgorithm() { }
 
-    void setGraph(DiGraph *diGraph) { this->diGraph = diGraph; onDiGraphSet(); }
+    void setGraph(DiGraph *diGraph) { onDiGraphUnset(); this->diGraph = diGraph; onDiGraphSet(); }
 
     virtual bool prepare() { return diGraph != 0; }
     virtual void run() = 0;
@@ -47,6 +47,7 @@ public:
 protected:
     DiGraph *diGraph;
     virtual void onDiGraphSet() { }
+    virtual void onDiGraphUnset() { }
 };
 
 }
