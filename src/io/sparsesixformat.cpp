@@ -22,9 +22,11 @@
 
 #include "sparsesixformat.h"
 
+//#define DEBUG_SPARSESIXF
+
 #ifdef DEBUG_SPARSESIXF
 #include <iostream>
-#define PRINT_DEBUG(msg) std::cout << msg )
+#define PRINT_DEBUG(msg) std::cout << msg << std::endl;
 #define IF_DEBUG(cmd) cmd;
 #else
 #define PRINT_DEBUG(msg)
@@ -118,7 +120,9 @@ void splitAndConvertBitset(boost::dynamic_bitset<> &bitset, int chunkSize, std::
 void asciiToInts(std::istream &in, std::vector<int> &bytes, char breakAt)
 {
     char c;
-    while ((in.peek() != breakAt) && (in >> c)) {
+    //std::char_traits<char>::to_int_type(
+    while ((in.peek() != std::char_traits<char>::to_int_type(breakAt)) && (in >> c)) {
+       PRINT_DEBUG( "read char: " << c)
        int i = c;
        bytes.push_back(i);
     }

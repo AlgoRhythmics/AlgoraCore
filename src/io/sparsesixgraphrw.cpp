@@ -35,6 +35,8 @@
 
 #include <iostream>
 
+//#define DEBUG_SPARSESIXRW
+
 #ifdef DEBUG_SPARSESIXRW
 #define PRINT_DEBUG(msg) std::cout << msg << std::endl;
 #define IF_DEBUG(cmd) cmd;
@@ -168,8 +170,10 @@ bool SparseSixGraphRW::provideDiGraph(DiGraph *graph)
         return false;
     }
     std::istream &inputStream = *(StreamDiGraphReader::inputStream);
-    char colon;
+    inputStream >> std::noskipws;
+    char colon = '\0';
     inputStream >> colon;
+    PRINT_DEBUG( "1st colon: " << colon )
     if (colon != ':') {
         std::cerr << "io: Missing first ':'." << std::endl;
         return false;
@@ -178,11 +182,21 @@ bool SparseSixGraphRW::provideDiGraph(DiGraph *graph)
     std::vector<int> direction;
     asciiToInts(inputStream, bytes, ':');
     inputStream >> colon;
+    PRINT_DEBUG( "2nd colon: " << colon )
     if (colon != ':') {
         std::cerr << "io: Missing second ':'." << std::endl;
         return false;
     }
     asciiToInts(inputStream, direction, '\n');
+    // try to read newline character
+    if (inputStream.peek() == std::char_traits<char>::to_int_type('\n')) {
+        char eol;
+        inputStream >> eol;
+        PRINT_DEBUG( "EOL: " << eol )
+        if (eol != '\n') {
+            std::cerr << "io: Huh? There should have been a newline character." << std::endl;
+        }
+    }
     int n = extractSparseSixN(bytes);
     PRINT_DEBUG( "n = " << n )
     unsigned int k = 1;
