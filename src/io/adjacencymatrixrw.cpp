@@ -211,6 +211,7 @@ bool readGraph(std::istream &is, DiGraph *graph) {
             }
         }
     }
+    is.ignore(2, '\n');
 
     return true;
 }
