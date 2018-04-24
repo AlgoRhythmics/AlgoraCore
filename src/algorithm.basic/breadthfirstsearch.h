@@ -61,6 +61,10 @@ public:
         return maxBfsNumber;
     }
 
+    void reverseArcDirection(bool reverse) {
+        useReversedArc = reverse;
+    }
+
     // DiGraphAlgorithm interface
 public:
     virtual bool prepare() override;
@@ -80,6 +84,7 @@ private:
     ArcPredicate onArcDiscovered;
     VertexPredicate vertexStopCondition;
     ArcPredicate arcStopCondition;
+    bool useReversedArc;
 
     // DiGraphAlgorithm interface
 private:

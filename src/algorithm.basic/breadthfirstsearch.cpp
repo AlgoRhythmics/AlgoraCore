@@ -35,7 +35,8 @@ BreadthFirstSearch::BreadthFirstSearch(bool computeValues)
     : PropertyComputingAlgorithm<bool, int>(computeValues),
       startVertex(0), maxBfsNumber(-1),
       onVertexDiscovered(vertexTrue), onArcDiscovered(arcTrue),
-      vertexStopCondition(vertexFalse), arcStopCondition(arcFalse)
+      vertexStopCondition(vertexFalse), arcStopCondition(arcFalse),
+      useReversedArc(false)
 {
 
 }
@@ -78,26 +79,49 @@ void BreadthFirstSearch::run()
             break;
         }
 
-        diGraph->mapOutgoingArcsUntil(curr, [&](Arc *a) {
-            bool consider = onArcDiscovered(a);
-            stop |= arcStopCondition(a);
-            if (stop || !consider) {
-                return;
-            }
-            Vertex *head = a->getHead();
-            if (!discovered(head)) {
-                if (!onVertexDiscovered(head)) {
+        if (useReversedArc) {
+            diGraph->mapIncomingArcsUntil(curr, [&](Arc *a) {
+                bool consider = onArcDiscovered(a);
+                stop |= arcStopCondition(a);
+                if (stop || !consider) {
                     return;
                 }
+                Vertex *tail= a->getTail();
+                if (!discovered(tail)) {
+                    if (!onVertexDiscovered(tail)) {
+                        return;
+                    }
 
-                queue.push_back(a->getHead());
-                discovered[head] = true;
-                maxBfsNumber++;
-                if (computePropertyValues) {
-                    (*bfsNumber)[head] = maxBfsNumber;
+                    queue.push_back(tail);
+                    discovered[tail] = true;
+                    maxBfsNumber++;
+                    if (computePropertyValues) {
+                        (*bfsNumber)[tail] = maxBfsNumber;
+                    }
                 }
-            }
-        }, [&](const Arc *) { return stop; });
+            }, [&](const Arc *) { return stop; });
+        } else {
+            diGraph->mapOutgoingArcsUntil(curr, [&](Arc *a) {
+                bool consider = onArcDiscovered(a);
+                stop |= arcStopCondition(a);
+                if (stop || !consider) {
+                    return;
+                }
+                Vertex *head = a->getHead();
+                if (!discovered(head)) {
+                    if (!onVertexDiscovered(head)) {
+                        return;
+                    }
+
+                    queue.push_back(head);
+                    discovered[head] = true;
+                    maxBfsNumber++;
+                    if (computePropertyValues) {
+                        (*bfsNumber)[head] = maxBfsNumber;
+                    }
+                }
+            }, [&](const Arc *) { return stop; });
+        }
     }
 }
 
