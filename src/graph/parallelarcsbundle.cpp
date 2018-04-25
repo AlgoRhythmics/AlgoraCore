@@ -91,7 +91,7 @@ bool ParallelArcsBundle::addArc(Arc *a)
     return true;
 }
 
-void ParallelArcsBundle::removeArc(Arc *a)
+void ParallelArcsBundle::removeArc(const Arc *a)
 {
     unsigned int ol = grin->arcsBundle.size();
     grin->arcsBundle.erase(std::remove(grin->arcsBundle.begin(), grin->arcsBundle.end(), a), grin->arcsBundle.end());
@@ -100,7 +100,7 @@ void ParallelArcsBundle::removeArc(Arc *a)
     }
 }
 
-bool ParallelArcsBundle::containsArc(Arc *a) const
+bool ParallelArcsBundle::containsArc(const Arc *a) const
 {
     auto i = std::find(grin->arcsBundle.cbegin(), grin->arcsBundle.cend(), a);
     return i != grin->arcsBundle.end();

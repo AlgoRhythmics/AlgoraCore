@@ -36,7 +36,7 @@ public:
     explicit BreadthFirstSearch(bool computeValues = true);
     virtual ~BreadthFirstSearch();
 
-    void setStartVertex(Vertex *v) {
+    void setStartVertex(const Vertex *v) {
         startVertex = v;
     }
 
@@ -77,7 +77,7 @@ public:
     virtual bool deliver() override;
 
 private:
-    Vertex *startVertex;
+    const Vertex *startVertex;
     int maxBfsNumber;
 
     VertexPredicate onVertexDiscovered;

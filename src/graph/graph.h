@@ -47,7 +47,7 @@ public:
     // Vertices
     virtual Vertex *addVertex() = 0;
     virtual void removeVertex(Vertex *v) = 0;
-    virtual bool containsVertex(Vertex *v) const = 0;
+    virtual bool containsVertex(const Vertex *v) const = 0;
     virtual Vertex *getAnyVertex() const = 0;
 
     virtual void onVertexAdd(void *id, VertexMapping vvFun) { vertexGreetings.push_back(std::make_pair(id, vvFun)); }

@@ -114,12 +114,12 @@ void SuperDiGraph::removeVertex(Vertex *v)
     }
 }
 
-bool SuperDiGraph::containsVertex(Vertex *v) const
+bool SuperDiGraph::containsVertex(const Vertex *v) const
 {
     if (v->getParent() != this) {
         return grin->subGraph->containsVertex(v);
     }
-    auto vertex = dynamic_cast<IncidenceListVertex*>(v);
+    auto vertex = dynamic_cast<const IncidenceListVertex*>(v);
     if (!vertex) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
@@ -207,7 +207,7 @@ void SuperDiGraph::removeArc(Arc *a)
     grin->extra->removeArc(a, t, h);
 }
 
-bool SuperDiGraph::containsArc(Arc *a) const
+bool SuperDiGraph::containsArc(const Arc *a) const
 {
     if (a->getParent() != this) {
         return grin->subGraph->containsArc(a);

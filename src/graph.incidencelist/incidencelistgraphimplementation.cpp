@@ -83,7 +83,7 @@ void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
     delete v;
 }
 
-bool IncidenceListGraphImplementation::containsVertex(IncidenceListVertex *v) const
+bool IncidenceListGraphImplementation::containsVertex(const IncidenceListVertex *v) const
 {
     //return std::find(vertices.cbegin(), vertices.cend(), v) != vertices.cend();
     return (v->getParent() == graph && vertices.at(v->getIndex()) == v);
@@ -115,7 +115,7 @@ void IncidenceListGraphImplementation::removeArc(Arc *a, IncidenceListVertex *ta
     delete a;
 }
 
-bool IncidenceListGraphImplementation::containsArc(Arc *a, IncidenceListVertex *tail) const
+bool IncidenceListGraphImplementation::containsArc(const Arc *a, const IncidenceListVertex *tail) const
 {
     return tail->hasOutgoingArc(a);
 }

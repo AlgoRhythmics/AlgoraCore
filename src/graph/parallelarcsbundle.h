@@ -50,8 +50,8 @@ public:
     virtual void mapArcsUntil(ArcMapping am, ArcPredicate ap) const;
 
     virtual bool addArc(Arc *a);
-    virtual void removeArc(Arc *a);
-    virtual bool containsArc(Arc *a) const;
+    virtual void removeArc(const Arc *a);
+    virtual bool containsArc(const Arc *a) const;
     virtual void clear();
 
     // MultiArc interface

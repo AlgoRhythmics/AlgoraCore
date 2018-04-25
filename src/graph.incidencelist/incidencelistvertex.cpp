@@ -37,13 +37,13 @@ typedef typename std::vector<Arc*> ArcList;
 typedef typename std::vector<MultiArc*> MultiArcList;
 
 template <typename AL>
-bool removeArcFromList(AL &list, Arc *arc);
+bool removeArcFromList(AL &list, const Arc *arc);
 template <typename AL>
-bool removeBundledArcFromList(AL &list, Arc *arc);
+bool removeBundledArcFromList(AL &list, const Arc *arc);
 template <typename AL>
-bool isArcInList(AL &list, Arc *arc);
+bool isArcInList(AL &list, const Arc *arc);
 template <typename AL>
-bool isBundledArc(AL &list, Arc *arc);
+bool isBundledArc(AL &list, const Arc *arc);
 
 class IncidenceListVertex::CheshireCat {
 public:
@@ -167,14 +167,14 @@ void IncidenceListVertex::setIndex(int i)
     grin->index = i;
 }
 
-bool IncidenceListVertex::hasOutgoingArc(Arc *a) const
+bool IncidenceListVertex::hasOutgoingArc(const Arc *a) const
 {
     return isArcInList(grin->outgoingArcs, a)
             || isArcInList(grin->outgoingMultiArcs, a)
             || isBundledArc(grin->outgoingMultiArcs, a);
 }
 
-bool IncidenceListVertex::hasIncomingArc(Arc *a) const
+bool IncidenceListVertex::hasIncomingArc(const Arc *a) const
 {
     return isArcInList(grin->incomingArcs, a)
             || isArcInList(grin->incomingMultiArcs, a)
@@ -278,7 +278,7 @@ bool removeArcFromList(AL &list, Arc *arc) {
 }
 
 template <typename AL>
-bool removeBundledArcFromList(AL &list, Arc *arc) {
+bool removeBundledArcFromList(AL &list, const Arc *arc) {
     for (Arc *a : list) {
         if (a->getHead() == arc->getHead() && a->getTail() == arc->getTail()) {
             ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(a);
@@ -292,12 +292,12 @@ bool removeBundledArcFromList(AL &list, Arc *arc) {
 }
 
 template <typename AL>
-bool isArcInList(AL &list, Arc *arc) {
+bool isArcInList(AL &list, const Arc *arc) {
     return std::find(list.cbegin(), list.cend(), arc) != list.cend();
 }
 
 template <typename AL>
-bool isBundledArc(AL &list, Arc *arc) {
+bool isBundledArc(AL &list, const Arc *arc) {
     for (Arc *a : list) {
         if (a->getHead() == arc->getHead() && a->getTail() == arc->getTail()) {
             ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(a);

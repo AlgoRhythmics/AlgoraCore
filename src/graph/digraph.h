@@ -48,7 +48,7 @@ public:
     virtual Arc *addArc(Vertex *tail, Vertex *head) = 0;
     virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, int size) = 0;
     virtual void removeArc(Arc *a) = 0;
-    virtual bool containsArc(Arc *a) const = 0;
+    virtual bool containsArc(const Arc *a) const = 0;
 
     virtual int getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
     virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;

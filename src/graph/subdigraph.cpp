@@ -82,7 +82,7 @@ void SubDiGraph::removeVertex(Vertex *v)
     superGraph->removeVertex(v);
 }
 
-bool SubDiGraph::containsVertex(Vertex *v) const
+bool SubDiGraph::containsVertex(const Vertex *v) const
 {
     return inSubGraph(v) && superGraph->containsVertex(v);
 }
@@ -171,7 +171,7 @@ void SubDiGraph::removeArc(Arc *a)
     superGraph->removeArc(a);
 }
 
-bool Algora::SubDiGraph::containsArc(Arc *a) const
+bool Algora::SubDiGraph::containsArc(const Algora::Arc *a) const
 {
     return inSubGraph(a)
             && inSubGraph(a->getTail())

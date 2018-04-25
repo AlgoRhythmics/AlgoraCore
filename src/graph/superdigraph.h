@@ -37,7 +37,7 @@ public:
 public:
     virtual Vertex *addVertex() override;
     virtual void removeVertex(Vertex *v) override;
-    virtual bool containsVertex(Vertex *v) const override;
+    virtual bool containsVertex(const Vertex *v) const override;
     virtual Vertex *getAnyVertex() const override;
     virtual void mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition) override;
     virtual bool isEmpty() const override;
@@ -50,7 +50,7 @@ public:
     virtual Arc *addArc(Vertex *tail, Vertex *head) override;
     virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, int size) override;
     virtual void removeArc(Arc *a) override;
-    virtual bool containsArc(Arc *a) const override;
+    virtual bool containsArc(const Arc *a) const override;
     virtual int getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
     virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
     virtual void mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition) override;

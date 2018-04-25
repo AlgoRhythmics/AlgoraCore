@@ -38,8 +38,8 @@ class IncidenceListVertex : public Vertex
     friend class IncidenceListGraphImplementation;
 
 public:
-    virtual bool hasOutgoingArc(Arc *a) const;
-    virtual bool hasIncomingArc(Arc *a) const;
+    virtual bool hasOutgoingArc(const Arc *a) const;
+    virtual bool hasIncomingArc(const Arc *a) const;
     virtual Arc *outgoingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
     virtual Arc *incomingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
 

@@ -71,13 +71,13 @@ void IncidenceListGraph::removeVertex(Vertex *v)
     impl->removeVertex(vertex);
 }
 
-bool IncidenceListGraph::containsVertex(Vertex *v) const
+bool IncidenceListGraph::containsVertex(const Vertex *v) const
 {
     if (v->getParent() != this) {
         return false;
     }
 
-    auto vertex = dynamic_cast<IncidenceListVertex*>(v);
+    auto vertex = dynamic_cast<const IncidenceListVertex*>(v);
 
     if (!vertex) {
         return false;
@@ -144,7 +144,7 @@ void IncidenceListGraph::removeArc(Arc *a)
     impl->removeArc(a, tail, head);
 }
 
-bool IncidenceListGraph::containsArc(Arc *a) const
+bool IncidenceListGraph::containsArc(const Arc *a) const
 {
     if (a->getParent() != this) {
         return false;

@@ -40,13 +40,13 @@ public:
 
     void addVertex(IncidenceListVertex *vertex);
     void removeVertex(IncidenceListVertex *v);
-    bool containsVertex(IncidenceListVertex *v) const;
+    bool containsVertex(const IncidenceListVertex *v) const;
     IncidenceListVertex *getFirstVertex() const;
     IncidenceListVertex *vertexAt(unsigned int i) const;
 
     void addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
-    bool containsArc(Arc *a, IncidenceListVertex *tail) const;
+    bool containsArc(const Arc *a, const IncidenceListVertex *tail) const;
 
     int getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
     int getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;

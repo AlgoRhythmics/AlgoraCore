@@ -58,7 +58,7 @@ void BreadthFirstSearch::run()
         startVertex = diGraph->getAnyVertex();
     }
 
-    std::deque<Vertex*> queue;
+    std::deque<const Vertex*> queue;
     PropertyMap<bool> discovered(false);
     PropertyMap<int> *bfsNumber = propertyMap;
 
@@ -72,7 +72,7 @@ void BreadthFirstSearch::run()
     bool stop = false;
 
     while (!stop && !queue.empty()) {
-        Vertex *curr = queue.front();
+        const Vertex *curr = queue.front();
         queue.pop_front();
         stop |= vertexStopCondition(curr);
         if (stop) {
