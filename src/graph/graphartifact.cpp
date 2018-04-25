@@ -31,6 +31,7 @@ class GraphArtifact::CheshireCat {
 public:
     int id;
     GraphArtifact *parent;
+    bool valid;
 
     CheshireCat(GraphArtifact *parent);
 };
@@ -57,6 +58,11 @@ GraphArtifact *GraphArtifact::getParent() const
     return grin->parent;
 }
 
+bool GraphArtifact::isValid() const
+{
+    return grin->valid;
+}
+
 std::string GraphArtifact::idString() const
 {
     std::ostringstream strStream;
@@ -66,8 +72,13 @@ std::string GraphArtifact::idString() const
     return strStream.str();
 }
 
+void GraphArtifact::invalidate()
+{
+    grin->valid = false;
+}
+
 GraphArtifact::CheshireCat::CheshireCat(GraphArtifact *parent)
-    : id(nextId), parent(parent) {
+    : id(nextId), parent(parent), valid(true) {
     nextId++;
 }
 

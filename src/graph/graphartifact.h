@@ -40,9 +40,11 @@ public:
         return "GraphArtifact";
     }
     virtual std::string toString() const = 0;
+    bool isValid() const;
 
 protected:
     std::string idString() const;
+    void invalidate();
 
 private:
     GraphArtifact(const GraphArtifact&);

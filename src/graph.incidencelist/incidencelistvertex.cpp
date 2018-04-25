@@ -93,7 +93,7 @@ void IncidenceListVertex::addOutgoingArc(Arc *a)
     }
 }
 
-void IncidenceListVertex::removeOutgoingArc(Arc *a)
+void IncidenceListVertex::removeOutgoingArc(const Arc *a)
 {
     if (grin->checkConsisteny && a->getTail() != this) {
         throw std::invalid_argument("Arc has other tail.");
@@ -135,7 +135,7 @@ void IncidenceListVertex::addIncomingArc(Arc *a)
     }
 }
 
-void IncidenceListVertex::removeIncomingArc(Arc *a)
+void IncidenceListVertex::removeIncomingArc(const Arc *a)
 {
     if (grin->checkConsisteny && a->getHead() != this) {
         throw std::invalid_argument("Arc has other head.");
@@ -239,13 +239,17 @@ bool IncidenceListVertex::mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCo
         if (breakCondition(a)) {
             return false;
         }
-        avFun(a);
+        if (a->isValid()) {
+            avFun(a);
+        }
     }
     for (Arc *a : grin->outgoingMultiArcs) {
         if (breakCondition(a)) {
             return false;
         }
-        avFun(a);
+        if (a->isValid()) {
+            avFun(a);
+        }
     }
     return true;
 }
@@ -256,19 +260,23 @@ bool IncidenceListVertex::mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCo
         if (breakCondition(a)) {
             return false;
         }
-        avFun(a);
+        if (a->isValid()) {
+            avFun(a);
+        }
     }
     for (Arc *a : grin->incomingMultiArcs) {
         if (breakCondition(a)) {
             return false;
         }
-        avFun(a);
+        if (a->isValid()) {
+            avFun(a);
+        }
     }
     return true;
 }
 
 template <typename AL>
-bool removeArcFromList(AL &list, Arc *arc) {
+bool removeArcFromList(AL &list, const Arc *arc) {
     auto it = std::find(list.cbegin(), list.cend(), arc);
     if (it != list.cend()) {
         list.erase(it);

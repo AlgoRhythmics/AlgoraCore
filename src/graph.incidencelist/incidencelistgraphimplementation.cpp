@@ -136,7 +136,9 @@ void IncidenceListGraphImplementation::mapVertices(VertexMapping vvFun, VertexPr
         if (breakCondition(v)) {
             break;
         }
-        vvFun(v);
+        if (v->isValid()) {
+            vvFun(v);
+        }
     }
 }
 

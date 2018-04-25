@@ -49,7 +49,7 @@ BreadthFirstSearch::~BreadthFirstSearch()
 bool BreadthFirstSearch::prepare()
 {
     return PropertyComputingAlgorithm<bool, int>::prepare()
-            && ( startVertex == 0 || diGraph->containsVertex(startVertex));
+            && ( startVertex == 0 || (diGraph->containsVertex(startVertex) && startVertex->isValid()));
 }
 
 void BreadthFirstSearch::run()

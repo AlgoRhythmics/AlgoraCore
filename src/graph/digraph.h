@@ -121,6 +121,10 @@ protected:
     virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, int size) {
         return new WeightedArc(tail, head, size, this);
     }
+
+    void invalidateArc(Arc *a) {
+        a->invalidate();
+    }
 };
 
 }

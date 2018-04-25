@@ -58,11 +58,11 @@ protected:
     virtual ~IncidenceListVertex();
 
     virtual void addOutgoingArc(Arc *a);
-    virtual void removeOutgoingArc(Arc *a);
+    virtual void removeOutgoingArc(const Arc *a);
     virtual void clearOutgoingArcs();
 
     virtual void addIncomingArc(Arc *a);
-    virtual void removeIncomingArc(Arc *a);
+    virtual void removeIncomingArc(const Arc *a);
     virtual void clearIncomingArcs();
 
     virtual void enableConsistencyCheck(bool enable);

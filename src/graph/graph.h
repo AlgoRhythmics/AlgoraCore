@@ -104,6 +104,10 @@ protected:
     Vertex *createVertex() {
         return new Vertex(this);
     }
+
+    void invalidateVertex(Vertex *v) {
+        v->invalidate();
+    }
 };
 
 }

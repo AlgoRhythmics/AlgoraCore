@@ -61,11 +61,15 @@ void IncidenceListGraph::removeVertex(Vertex *v)
     auto vertex = castVertex(v, this);
 
     impl->mapOutgoingArcs(vertex, [&](Arc *a) {
+        invalidateArc(a);
         dismissArc(a);
     }, arcFalse);
     impl->mapIncomingArcs(vertex, [&](Arc *a) {
+        invalidateArc(a);
         dismissArc(a);
     }, arcFalse);
+
+    invalidateVertex(vertex);
     dismissVertex(vertex);
 
     impl->removeVertex(vertex);
@@ -140,6 +144,7 @@ void IncidenceListGraph::removeArc(Arc *a)
     auto tail = castVertex(a->getTail(), this);
     auto head = castVertex(a->getHead(), this);
 
+    invalidateArc(a);
     dismissArc(a);
     impl->removeArc(a, tail, head);
 }
