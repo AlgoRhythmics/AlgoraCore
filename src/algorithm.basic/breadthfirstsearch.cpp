@@ -25,6 +25,7 @@
 #include "graph/digraph.h"
 #include "graph/vertex.h"
 #include "graph/arc.h"
+#include "graph/reversearc.h"
 #include "property/propertymap.h"
 
 #include <deque>
@@ -88,6 +89,7 @@ void BreadthFirstSearch::run()
                 }
                 Vertex *tail= a->getTail();
                 if (!discovered(tail)) {
+                    treeArc(a);
                     if (!onVertexDiscovered(tail)) {
                         return;
                     }
@@ -98,6 +100,8 @@ void BreadthFirstSearch::run()
                     if (computePropertyValues) {
                         (*bfsNumber)[tail] = maxBfsNumber;
                     }
+                } else {
+                    nonTreeArc(a);
                 }
             }, [&](const Arc *) { return stop; });
         } else {
@@ -109,6 +113,7 @@ void BreadthFirstSearch::run()
                 }
                 Vertex *head = a->getHead();
                 if (!discovered(head)) {
+                    treeArc(a);
                     if (!onVertexDiscovered(head)) {
                         return;
                     }
@@ -119,6 +124,8 @@ void BreadthFirstSearch::run()
                     if (computePropertyValues) {
                         (*bfsNumber)[head] = maxBfsNumber;
                     }
+                } else {
+                    nonTreeArc(a);
                 }
             }, [&](const Arc *) { return stop; });
         }

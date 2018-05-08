@@ -56,6 +56,13 @@ public:
         arcStopCondition = aStop;
     }
 
+    void onTreeArcDiscover(const ArcMapping &aFun) {
+        treeArc = aFun;
+    }
+
+    void onNonTreeArcDiscover(const ArcMapping &aFun) {
+        nonTreeArc = aFun;
+    }
 
     int getMaxBfsNumber() const {
         return maxBfsNumber;
@@ -84,6 +91,8 @@ private:
     ArcPredicate onArcDiscovered;
     VertexPredicate vertexStopCondition;
     ArcPredicate arcStopCondition;
+    ArcMapping treeArc;
+    ArcMapping nonTreeArc;
     bool useReversedArc;
 
     // DiGraphAlgorithm interface
