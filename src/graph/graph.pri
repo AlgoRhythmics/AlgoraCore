@@ -34,7 +34,8 @@ HEADERS += \
     $$PWD/graph_functional.h \
     $$PWD/multiarc.h \
     $$PWD/weightedarc.h \
-    $$PWD/vertexpair.h
+    $$PWD/vertexpair.h \
+    $$PWD/reversearc.h
 
 SOURCES += \
     $$PWD/digraph.cpp \
