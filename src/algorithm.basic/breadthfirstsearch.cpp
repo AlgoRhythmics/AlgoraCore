@@ -37,6 +37,7 @@ BreadthFirstSearch::BreadthFirstSearch(bool computeValues)
       startVertex(0), maxBfsNumber(-1),
       onVertexDiscovered(vertexTrue), onArcDiscovered(arcTrue),
       vertexStopCondition(vertexFalse), arcStopCondition(arcFalse),
+      treeArc(arcNothing), nonTreeArc(arcNothing),
       useReversedArc(false)
 {
 
