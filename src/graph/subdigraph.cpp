@@ -179,6 +179,20 @@ bool Algora::SubDiGraph::containsArc(const Algora::Arc *a) const
             && superGraph->containsArc(a);
 }
 
+Arc *SubDiGraph::findArc(const Vertex *from, const Vertex *to) const
+{
+    if (!inSubGraph(from) || !inSubGraph(to)) {
+        return nullptr;
+    }
+
+    Arc *arc = superGraph->findArc(from, to);
+    if (inSubGraph(arc)) {
+        return arc;
+    }
+    // FIXME: there might still be a parallel arc...
+    return nullptr;
+}
+
 int SubDiGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     if (!inSubGraph(v)) {

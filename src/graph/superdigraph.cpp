@@ -221,6 +221,24 @@ bool SuperDiGraph::containsArc(const Arc *a) const
     return grin->extra->containsArc(a, tail);
 }
 
+Arc *SuperDiGraph::findArc(const Vertex *from, const Vertex *to) const
+{
+    if (from->getParent() != this && to->getParent() != this) {
+        Arc *arc = grin->subGraph->findArc(from, to);
+        if (arc != nullptr) {
+            return arc;
+        }
+    }
+    auto t = findVertex(from, grin->map, this);
+    // the arc knows nothing about dummy vertices...
+    auto h = dynamic_cast<const IncidenceListVertex*>(to);
+
+    if (!t || !h) {
+        return nullptr;
+    }
+    return grin->extra->findArc(t, h);
+}
+
 int SuperDiGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     const IncidenceListVertex *vertex;

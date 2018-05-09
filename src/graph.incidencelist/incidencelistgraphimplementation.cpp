@@ -120,6 +120,17 @@ bool IncidenceListGraphImplementation::containsArc(const Arc *a, const Incidence
     return tail->hasOutgoingArc(a);
 }
 
+Arc *IncidenceListGraphImplementation::findArc(const IncidenceListVertex *tail, const IncidenceListVertex *head) const
+{
+    Arc *arc = nullptr;
+    tail->mapOutgoingArcs([&](Arc *a) {
+        if (a->getHead() == head) {
+            arc = a;
+        }
+    }, [&](const Arc*) { return arc != nullptr; });
+    return arc;
+}
+
 int IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
     return v->getOutDegree(multiArcsAsSimple);

@@ -47,6 +47,7 @@ public:
     void addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     bool containsArc(const Arc *a, const IncidenceListVertex *tail) const;
+    Arc *findArc(const IncidenceListVertex *tail, const IncidenceListVertex *head) const;
 
     int getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
     int getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;

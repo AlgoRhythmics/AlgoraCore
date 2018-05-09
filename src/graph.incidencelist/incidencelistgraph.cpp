@@ -163,6 +163,13 @@ bool IncidenceListGraph::containsArc(const Arc *a) const
     return impl->containsArc(a, tail);
 }
 
+Arc *IncidenceListGraph::findArc(const Vertex *from, const Vertex *to) const
+{
+    auto tail = castVertex(from, this);
+    auto head = castVertex(to, this);
+    return impl->findArc(tail, head);
+}
+
 int IncidenceListGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);
