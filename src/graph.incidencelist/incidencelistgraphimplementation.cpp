@@ -66,13 +66,13 @@ void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
         IncidenceListVertex *head = dynamic_cast<IncidenceListVertex*>(a->getHead());
         head->removeIncomingArc(a);
         delete a;
-    });
+    }, arcFalse, false);
     v->clearOutgoingArcs();
     v->mapIncomingArcs([](Arc *a) {
         IncidenceListVertex *tail = dynamic_cast<IncidenceListVertex*>(a->getTail());
         tail->removeOutgoingArc(a);
         delete a;
-    });
+    }, arcFalse, false);
     v->clearIncomingArcs();
     //vertices.erase(std::find(vertices.cbegin(), vertices.cend(), v));
     IncidenceListVertex *o = vertices.back();
@@ -130,13 +130,13 @@ int IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, 
     return v->getInDegree(multiArcsAsSimple);
 }
 
-void IncidenceListGraphImplementation::mapVertices(VertexMapping vvFun, VertexPredicate breakCondition)
+void IncidenceListGraphImplementation::mapVertices(VertexMapping vvFun, VertexPredicate breakCondition, bool checkValidity)
 {
     for (Vertex *v : vertices) {
         if (breakCondition(v)) {
             break;
         }
-        if (v->isValid()) {
+        if (!checkValidity || v->isValid()) {
             vvFun(v);
         }
     }
@@ -152,15 +152,15 @@ void IncidenceListGraphImplementation::mapArcs(ArcMapping avFun, ArcPredicate br
 }
 
 void IncidenceListGraphImplementation::mapOutgoingArcs(const IncidenceListVertex *v, ArcMapping avFun,
-                                                         ArcPredicate breakCondition)
+                                                         ArcPredicate breakCondition, bool checkValidity)
 {
-    v->mapOutgoingArcs(avFun, breakCondition);
+    v->mapOutgoingArcs(avFun, breakCondition, checkValidity);
 }
 
 void IncidenceListGraphImplementation::mapIncomingArcs(const IncidenceListVertex *v, ArcMapping avFun,
-                                                         ArcPredicate breakCondition)
+                                                         ArcPredicate breakCondition, bool checkValidity)
 {
-    v->mapIncomingArcs(avFun, breakCondition);
+    v->mapIncomingArcs(avFun, breakCondition, checkValidity);
 }
 
 bool IncidenceListGraphImplementation::isEmpty() const

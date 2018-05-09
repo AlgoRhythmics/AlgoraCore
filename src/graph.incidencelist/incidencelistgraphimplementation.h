@@ -51,11 +51,11 @@ public:
     int getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
     int getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
 
-    void mapVertices(VertexMapping vvFun, VertexPredicate breakCondition);
+    void mapVertices(VertexMapping vvFun, VertexPredicate breakCondition, bool checkValidity = true);
 
     void mapArcs(ArcMapping avFun, ArcPredicate breakCondition);
-    void mapOutgoingArcs(const IncidenceListVertex *v, ArcMapping avFun, ArcPredicate breakCondition);
-    void mapIncomingArcs(const IncidenceListVertex *v, ArcMapping avFun, ArcPredicate breakCondition);
+    void mapOutgoingArcs(const IncidenceListVertex *v, ArcMapping avFun, ArcPredicate breakCondition, bool checkValidity = true);
+    void mapIncomingArcs(const IncidenceListVertex *v, ArcMapping avFun, ArcPredicate breakCondition, bool checkValidity = true);
 
     bool isEmpty() const;
     Graph::size_type getSize() const;

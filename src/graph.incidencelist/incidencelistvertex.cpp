@@ -233,13 +233,13 @@ void IncidenceListVertex::acceptIncomingArcVisitor(ArcVisitor *aVisitor) const
     mapIncomingArcs(aVisitor->getVisitorFunction(), arcFalse);
 }
 
-bool IncidenceListVertex::mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCondition) const
+bool IncidenceListVertex::mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCondition, bool checkValidity) const
 {
     for (Arc *a : grin->outgoingArcs) {
         if (breakCondition(a)) {
             return false;
         }
-        if (a->isValid()) {
+        if (!checkValidity || a->isValid()) {
             avFun(a);
         }
     }
@@ -247,20 +247,20 @@ bool IncidenceListVertex::mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCo
         if (breakCondition(a)) {
             return false;
         }
-        if (a->isValid()) {
+        if (!checkValidity || a->isValid()) {
             avFun(a);
         }
     }
     return true;
 }
 
-bool IncidenceListVertex::mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCondition) const
+bool IncidenceListVertex::mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCondition, bool checkValidity) const
 {
     for (Arc *a : grin->incomingArcs) {
         if (breakCondition(a)) {
             return false;
         }
-        if (a->isValid()) {
+        if (!checkValidity || a->isValid()) {
             avFun(a);
         }
     }
@@ -268,7 +268,7 @@ bool IncidenceListVertex::mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCo
         if (breakCondition(a)) {
             return false;
         }
-        if (a->isValid()) {
+        if (!checkValidity || a->isValid()) {
             avFun(a);
         }
     }
