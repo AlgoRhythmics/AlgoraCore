@@ -14,7 +14,7 @@ public:
 
     explicit BucketQueue(const Priority& prio = Priority()) : m_size(0), m_top(0), m_bot(0), m_priority(prio) { }
 
-    bool empty() const { return m_size == 0; }
+    bool empty() const { return m_size == 0UL; }
 
     size_type size() const { return m_size; }
 
@@ -35,7 +35,7 @@ public:
         if (m_top < p) {
             m_top = p;
         }
-        if (m_bot > p || m_size == 0) {
+        if (m_bot > p || m_size == 0UL) {
             m_bot = p;
         }
         m_size++;
@@ -44,7 +44,7 @@ public:
     void pop() {
         m_buckets[m_top].pop_back();
         m_size--;
-        while (m_top > 0 && m_buckets[m_top].empty()) {
+        while (m_top > 0UL && m_buckets[m_top].empty()) {
             m_top--;
         }
     }
