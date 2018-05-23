@@ -32,10 +32,11 @@ class DiGraph;
 class DiGraphAlgorithm
 {
 public:
-    explicit DiGraphAlgorithm() : diGraph(0) { }
+    explicit DiGraphAlgorithm() : diGraph(nullptr) { }
     virtual ~DiGraphAlgorithm() { }
 
     void setGraph(DiGraph *diGraph) { onDiGraphUnset(); this->diGraph = diGraph; onDiGraphSet(); }
+    void unsetGraph() { onDiGraphUnset(); this->diGraph = nullptr; }
 
     virtual bool prepare() { return diGraph != 0; }
     virtual void run() = 0;
