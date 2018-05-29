@@ -32,9 +32,9 @@
 
 namespace Algora {
 
-BreadthFirstSearch::BreadthFirstSearch(bool computeValues)
+BreadthFirstSearch::BreadthFirstSearch(bool computeValues, bool computeOrder)
     : PropertyComputingAlgorithm<bool, int>(computeValues),
-      startVertex(0), maxBfsNumber(-1),
+      startVertex(0), computeOrder(computeOrder), maxBfsNumber(-1), maxLevel(-1),
       onVertexDiscovered(vertexTrue), onArcDiscovered(arcTrue),
       vertexStopCondition(vertexFalse), arcStopCondition(arcFalse),
       treeArc(arcNothing), nonTreeArc(arcNothing),
@@ -62,13 +62,15 @@ void BreadthFirstSearch::run()
 
     std::deque<const Vertex*> queue;
     PropertyMap<bool> discovered(false);
-    PropertyMap<int> *bfsNumber = propertyMap;
+    PropertyMap<int> *values = propertyMap;
 
     maxBfsNumber = 0;
+    maxLevel = 0;
+
     queue.push_back(startVertex);
     discovered[startVertex] = true;
     if (computePropertyValues) {
-        (*bfsNumber)[startVertex] = maxBfsNumber;
+        (*values)[startVertex] = 0;
     }
 
     bool stop = false;
@@ -99,7 +101,7 @@ void BreadthFirstSearch::run()
                     discovered[tail] = true;
                     maxBfsNumber++;
                     if (computePropertyValues) {
-                        (*bfsNumber)[tail] = maxBfsNumber;
+                        (*values)[tail] = computeOrder ? maxBfsNumber : (*values)[a->getHead()] + 1;
                     }
                 } else {
                     nonTreeArc(a);
@@ -123,7 +125,7 @@ void BreadthFirstSearch::run()
                     discovered[head] = true;
                     maxBfsNumber++;
                     if (computePropertyValues) {
-                        (*bfsNumber)[head] = maxBfsNumber;
+                        (*values)[head] = computeOrder ? maxBfsNumber : (*values)[a->getTail()] + 1;
                     }
                 } else {
                     nonTreeArc(a);
@@ -141,6 +143,7 @@ bool BreadthFirstSearch::deliver()
 void BreadthFirstSearch::onDiGraphSet()
 {
     maxBfsNumber = -1;
+    maxLevel = -1;
 }
 
 }

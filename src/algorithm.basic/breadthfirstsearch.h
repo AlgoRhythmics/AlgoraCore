@@ -33,7 +33,7 @@ class Vertex;
 class BreadthFirstSearch : public PropertyComputingAlgorithm<bool, int>
 {
 public:
-    explicit BreadthFirstSearch(bool computeValues = true);
+    explicit BreadthFirstSearch(bool computeValues = true, bool computeOrder = true);
     virtual ~BreadthFirstSearch();
 
     void setStartVertex(const Vertex *v) {
@@ -68,8 +68,16 @@ public:
         return maxBfsNumber;
     }
 
+    int getMaxLevel() const {
+        return maxLevel;
+    }
+
     void reverseArcDirection(bool reverse) {
         useReversedArc = reverse;
+    }
+
+    void orderAsValues(bool order) {
+        computeOrder = order;
     }
 
     // DiGraphAlgorithm interface
@@ -85,7 +93,9 @@ public:
 
 private:
     const Vertex *startVertex;
+    bool computeOrder;
     int maxBfsNumber;
+    int maxLevel;
 
     VertexPredicate onVertexDiscovered;
     ArcPredicate onArcDiscovered;
