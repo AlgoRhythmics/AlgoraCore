@@ -25,6 +25,11 @@
 #include "graph/digraph.h"
 #include "property/propertymap.h"
 
+#include "breadthfirstsearch.h"
+#include "depthfirstsearch.h"
+#include "tarjansccalgorithm.h"
+#include "topsortalgorithm.h"
+#include "biconnectedcomponentsalgorithm.h"
 namespace Algora {
 
 bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to) {

@@ -24,11 +24,6 @@
 #define BASIC_ALGORITHMS_H
 
 #include "finddipathalgorithm.h"
-#include "breadthfirstsearch.h"
-#include "depthfirstsearch.h"
-#include "tarjansccalgorithm.h"
-#include "topsortalgorithm.h"
-#include "biconnectedcomponentsalgorithm.h"
 
 namespace Algora {
 
