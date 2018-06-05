@@ -44,6 +44,12 @@ bool isBiconnected(DiGraph *diGraph);
 
 int countBiconnectedComponents(DiGraph *diGraph);
 
+int computeEccentricity(DiGraph *diGraph, const Vertex *v);
+
+int computeRadius(DiGraph *diGraph);
+
+int computeDiameter(DiGraph *diGraph);
+
 }
 
 #endif // BASIC_ALGORITHMS_H

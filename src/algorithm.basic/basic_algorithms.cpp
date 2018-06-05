@@ -30,6 +30,9 @@
 #include "tarjansccalgorithm.h"
 #include "topsortalgorithm.h"
 #include "biconnectedcomponentsalgorithm.h"
+#include "eccentricityalgorithm.h"
+#include "radiusdiameteralgorithm.h"
+
 namespace Algora {
 
 bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to) {
@@ -75,6 +78,27 @@ bool runDiPathAlgorithm(DiGraph *diGraph, Vertex *from, Vertex *to, FindDiPathAl
     a.setSourceVertex(from);
     a.setTargetVertex(to);
     return runAlgorithm(a, diGraph);
+}
+
+int computeEccentricity(DiGraph *diGraph, const Vertex *v)
+{
+    EccentricityAlgorithm ecc;
+    ecc.setVertex(v);
+    return runAlgorithm(ecc, diGraph);
+}
+
+int computeRadius(DiGraph *diGraph)
+{
+    RadiusDiameterAlgorithm rd;
+    rd.computeRadius(true);
+    return runAlgorithm(rd, diGraph);
+}
+
+int computeDiameter(DiGraph *diGraph)
+{
+    RadiusDiameterAlgorithm rd;
+    rd.computeRadius(false);
+    return runAlgorithm(rd, diGraph);
 }
 
 }

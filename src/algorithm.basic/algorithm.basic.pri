@@ -30,7 +30,9 @@ HEADERS += \
     $$PWD/topsortalgorithm.h \
     $$PWD/depthfirstsearch.h \
     $$PWD/biconnectedcomponentsalgorithm.h \
-    $$PWD/accessibilityalgorithm.h
+    $$PWD/accessibilityalgorithm.h \
+    $$PWD/eccentricityalgorithm.h \
+    $$PWD/radiusdiameteralgorithm.h
 
 SOURCES += \     
     $$PWD/finddipathalgorithm.cpp \
@@ -40,4 +42,6 @@ SOURCES += \
     $$PWD/basic_algorithms.cpp \
     $$PWD/depthfirstsearch.cpp \
     $$PWD/biconnectedcomponentsalgorithm.cpp \
-    $$PWD/accessibilityalgorithm.cpp
+    $$PWD/accessibilityalgorithm.cpp \
+    $$PWD/eccentricityalgorithm.cpp \
+    $$PWD/radiusdiameteralgorithm.cpp
