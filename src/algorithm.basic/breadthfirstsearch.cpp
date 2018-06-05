@@ -68,6 +68,7 @@ void BreadthFirstSearch::run()
     maxLevel = 0;
 
     queue.push_back(startVertex);
+    queue.push_back(nullptr);
     discovered[startVertex] = true;
     if (computePropertyValues) {
         (*values)[startVertex] = 0;
@@ -78,6 +79,13 @@ void BreadthFirstSearch::run()
     while (!stop && !queue.empty()) {
         const Vertex *curr = queue.front();
         queue.pop_front();
+        if (curr == nullptr) {
+            if (!queue.empty()) {
+                queue.push_back(nullptr);
+                maxLevel++;
+            }
+            continue;
+        }
         stop |= vertexStopCondition(curr);
         if (stop) {
             break;
