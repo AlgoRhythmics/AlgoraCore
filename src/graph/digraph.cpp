@@ -33,10 +33,10 @@ DiGraph::DiGraph(GraphArtifact *parent)
 
 }
 
-int DiGraph::getNumArcs(bool multiArcsAsSimple) const
+unsigned int DiGraph::getNumArcs(bool multiArcsAsSimple) const
 {
     DiGraph *me = const_cast<DiGraph*>(this);
-    int numArcs = 0;
+    unsigned int numArcs = 0;
     me->mapArcs([&](Arc *a) { numArcs += multiArcsAsSimple ? 1 : a->getSize(); });
     return numArcs;
 }

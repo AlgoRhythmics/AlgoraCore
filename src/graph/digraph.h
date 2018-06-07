@@ -53,7 +53,7 @@ public:
 
     virtual int getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
     virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
-    virtual int getNumArcs(bool multiArcsAsSimple = false) const;
+    virtual unsigned int getNumArcs(bool multiArcsAsSimple = false) const;
 
     virtual void onArcAdd(void *id, ArcMapping avFun) { arcGreetings.push_back(std::make_pair(id, avFun)); }
     virtual void onArcRemove(void *id, ArcMapping avFun) { arcFarewells.push_back(std::make_pair(id, avFun)); }
