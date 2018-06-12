@@ -101,6 +101,26 @@ int computeDiameter(DiGraph *diGraph)
     return runAlgorithm(rd, diGraph);
 }
 
+void computeCondensation(DiGraph *diGraph, DiGraph *condensedGraph)
+{
+    TarjanSCCAlgorithm tarjan;
+    PropertyMap<int> sccOf(-1);
+    tarjan.usePropertyMap(&sccOf);
+    int sccs = runAlgorithm(tarjan, diGraph);
+    condensedGraph->clear();
+    std::vector<Vertex*> sccVertices;
+    for (int i = 0; i < sccs; i++) {
+        sccVertices.push_back(condensedGraph->addVertex());
+    }
+    diGraph->mapArcs([&](Arc *a) {
+        int tailScc = sccOf(a->getTail());
+        int headScc = sccOf(a->getHead());
+        if (tailScc != headScc) {
+            condensedGraph->addArc(sccVertices.at(tailScc), sccVertices.at(headScc));
+        }
+    });
+}
+
 }
 
 

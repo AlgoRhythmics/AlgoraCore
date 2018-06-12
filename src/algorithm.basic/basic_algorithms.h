@@ -50,6 +50,8 @@ int computeRadius(DiGraph *diGraph);
 
 int computeDiameter(DiGraph *diGraph);
 
+void computeCondensation(DiGraph *diGraph, DiGraph *condensedGraph);
+
 }
 
 #endif // BASIC_ALGORITHMS_H
