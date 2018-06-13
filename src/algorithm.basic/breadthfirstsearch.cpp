@@ -100,6 +100,10 @@ void BreadthFirstSearch::run()
                 }
                 Vertex *tail= a->getTail();
                 if (!discovered(tail)) {
+                    maxBfsNumber++;
+                    if (computePropertyValues) {
+                        (*values)[tail] = computeOrder ? maxBfsNumber : (*values)[a->getHead()] + 1;
+                    }
                     treeArc(a);
                     if (!onVertexDiscovered(tail)) {
                         return;
@@ -107,10 +111,6 @@ void BreadthFirstSearch::run()
 
                     queue.push_back(tail);
                     discovered[tail] = true;
-                    maxBfsNumber++;
-                    if (computePropertyValues) {
-                        (*values)[tail] = computeOrder ? maxBfsNumber : (*values)[a->getHead()] + 1;
-                    }
                 } else {
                     nonTreeArc(a);
                 }
@@ -124,6 +124,10 @@ void BreadthFirstSearch::run()
                 }
                 Vertex *head = a->getHead();
                 if (!discovered(head)) {
+                    maxBfsNumber++;
+                    if (computePropertyValues) {
+                        (*values)[head] = computeOrder ? maxBfsNumber : (*values)[a->getTail()] + 1;
+                    }
                     treeArc(a);
                     if (!onVertexDiscovered(head)) {
                         return;
@@ -131,10 +135,6 @@ void BreadthFirstSearch::run()
 
                     queue.push_back(head);
                     discovered[head] = true;
-                    maxBfsNumber++;
-                    if (computePropertyValues) {
-                        (*values)[head] = computeOrder ? maxBfsNumber : (*values)[a->getTail()] + 1;
-                    }
                 } else {
                     nonTreeArc(a);
                 }
