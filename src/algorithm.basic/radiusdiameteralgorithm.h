@@ -10,11 +10,19 @@ class RadiusDiameterAlgorithm : public ValueComputingAlgorithm<int>
 public:
     static const int INFINITE;
 
-    explicit RadiusDiameterAlgorithm();
+    explicit RadiusDiameterAlgorithm(bool radiusOnly = false, bool diameterOnly = false);
     virtual ~RadiusDiameterAlgorithm() {}
 
     void computeRadius(bool rad) {
         radOrDiam = rad;
+    }
+
+    void computeRadiusOnly(bool radiusOnly) {
+        radOnly = radiusOnly;
+    }
+
+    void computeDiameterOnly(bool diameterOnly) {
+        diamOnly = diameterOnly;
     }
 
     bool computesRadius() const {
@@ -38,6 +46,8 @@ private:
     int radius;
     int diameter;
     bool radOrDiam;
+    bool radOnly;
+    bool diamOnly;
 };
 
 }

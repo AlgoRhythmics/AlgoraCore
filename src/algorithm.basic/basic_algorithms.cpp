@@ -91,6 +91,7 @@ int computeRadius(DiGraph *diGraph)
 {
     RadiusDiameterAlgorithm rd;
     rd.computeRadius(true);
+    rd.computeRadiusOnly(true);
     return runAlgorithm(rd, diGraph);
 }
 
@@ -98,6 +99,7 @@ int computeDiameter(DiGraph *diGraph)
 {
     RadiusDiameterAlgorithm rd;
     rd.computeRadius(false);
+    rd.computeDiameterOnly(true);
     return runAlgorithm(rd, diGraph);
 }
 
