@@ -182,6 +182,18 @@ int IncidenceListGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) con
     return impl->getInDegree(vertex, multiArcsAsSimple);
 }
 
+int IncidenceListGraph::isSource(const Vertex *v) const
+{
+    auto vertex = castVertex(v, this);
+    return impl->isSource(vertex);
+}
+
+int IncidenceListGraph::isSink(const Vertex *v) const
+{
+    auto vertex = castVertex(v, this);
+    return impl->isSink(vertex);
+}
+
 void IncidenceListGraph::mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition)
 {
     impl->mapArcs(avFun, breakCondition);

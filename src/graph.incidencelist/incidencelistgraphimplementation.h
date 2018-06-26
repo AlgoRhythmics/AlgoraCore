@@ -51,6 +51,8 @@ public:
 
     int getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
     int getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
+    bool isSource(const IncidenceListVertex *v) const;
+    bool isSink(const IncidenceListVertex *v) const;
 
     void mapVertices(VertexMapping vvFun, VertexPredicate breakCondition, bool checkValidity = true);
 

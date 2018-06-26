@@ -62,6 +62,8 @@ public:
 
     virtual int getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
     virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
+    virtual int isSource(const Vertex *v) const override;
+    virtual int isSink(const Vertex *v) const override;
 
     virtual void mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition) override;
     virtual void mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) override;

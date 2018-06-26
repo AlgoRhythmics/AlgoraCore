@@ -148,6 +148,16 @@ int IncidenceListVertex::getInDegree(bool multiArcsAsSimple) const
     return deg;
 }
 
+bool IncidenceListVertex::isSource() const
+{
+    return grin->incomingArcs.empty() && grin->incomingMultiArcs.empty();
+}
+
+bool IncidenceListVertex::isSink() const
+{
+    return grin->outgoingArcs.empty() && grin->outgoingMultiArcs.empty();
+}
+
 void IncidenceListVertex::addIncomingArc(Arc *a)
 {
     if (grin->checkConsisteny && a->getHead() != this) {

@@ -50,6 +50,9 @@ public:
 
     int getOutDegree(bool multiArcsAsSimple = false) const;
     int getInDegree(bool multiArcsAsSimple = false) const;
+    bool isSource() const;
+    bool isSink() const;
+    bool isIsolated() const { return isSource() && isSink(); }
 
     int getIndex() const;
 

@@ -141,6 +141,16 @@ int IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, 
     return v->getInDegree(multiArcsAsSimple);
 }
 
+bool IncidenceListGraphImplementation::isSource(const IncidenceListVertex *v) const
+{
+    return v->isSource();
+}
+
+bool IncidenceListGraphImplementation::isSink(const IncidenceListVertex *v) const
+{
+    return v->isSink();
+}
+
 void IncidenceListGraphImplementation::mapVertices(VertexMapping vvFun, VertexPredicate breakCondition, bool checkValidity)
 {
     for (Vertex *v : vertices) {
