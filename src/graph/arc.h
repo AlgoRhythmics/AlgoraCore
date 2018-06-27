@@ -44,7 +44,7 @@ public:
 
     // GraphArtifact interface
 public:
-    virtual std::string typeString() const override {
+    virtual std::string typeString() const noexcept override {
         return "Arc";
     }
 

@@ -30,29 +30,33 @@ namespace Algora {
 class GraphArtifact
 {
 public:
+    explicit GraphArtifact(unsigned int id, GraphArtifact *parent = 0);
     explicit GraphArtifact(GraphArtifact *parent = 0);
     virtual ~GraphArtifact();
 
-    int getId() const;
-    GraphArtifact *getParent() const;
+    unsigned int getId() const { return id; }
+    GraphArtifact *getParent() const { return parent; }
 
-    virtual std::string typeString() const {
+    virtual std::string typeString() const noexcept {
         return "GraphArtifact";
     }
     virtual std::string toString() const = 0;
-    bool isValid() const;
+    bool isValid() const { return valid; }
 
 protected:
     std::string idString() const;
-    void invalidate();
+    void invalidate() { valid = false; }
 
 private:
     GraphArtifact(const GraphArtifact&);
     GraphArtifact& operator=(const GraphArtifact&);
 
 private:
-    class CheshireCat;
-    CheshireCat *grin;
+    static unsigned int nextId;
+
+    unsigned int id;
+    GraphArtifact *parent;
+    bool valid;
 };
 
 }

@@ -72,8 +72,8 @@ public:
     }
 };
 
-IncidenceListVertex::IncidenceListVertex(GraphArtifact *parent, int index)
-    : Vertex(parent), grin(new CheshireCat(index))
+IncidenceListVertex::IncidenceListVertex(unsigned int id, GraphArtifact *parent, int index)
+    : Vertex(id, parent), grin(new CheshireCat(index))
 {
     grin->checkConsisteny = true;
 }

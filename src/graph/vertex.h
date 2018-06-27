@@ -39,6 +39,11 @@ public:
 
 protected:
     explicit Vertex(GraphArtifact *parent = 0);
+    explicit Vertex(unsigned int id, GraphArtifact *parent = 0);
+
+    // GraphArtifact interface
+public:
+    virtual std::string typeString() const noexcept override { return "Vertex"; }
 };
 
 std::ostream &operator<<(std::ostream &out, const Vertex *v);

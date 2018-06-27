@@ -57,7 +57,7 @@ public:
     int getIndex() const;
 
 protected:
-    explicit IncidenceListVertex(GraphArtifact *parent = 0, int index = -1);
+    explicit IncidenceListVertex(unsigned int id, GraphArtifact *parent = 0, int index = -1);
     virtual ~IncidenceListVertex();
 
     virtual void addOutgoingArc(Arc *a);

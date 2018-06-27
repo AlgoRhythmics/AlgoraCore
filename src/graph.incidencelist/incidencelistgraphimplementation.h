@@ -65,11 +65,12 @@ public:
     void bundleParallelArcs();
     void unbundleParallelArcs();
 
-    IncidenceListVertex *createIncidenceListVertex() const;
+    IncidenceListVertex *createIncidenceListVertex();
 
 private:
     DiGraph *graph;
     VertexList vertices;
+    unsigned int nextVertexId;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
     void unbundleOutgoingArcs(IncidenceListVertex *vertex);

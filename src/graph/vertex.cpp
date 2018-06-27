@@ -31,6 +31,12 @@ Vertex::Vertex(GraphArtifact *parent)
 
 }
 
+Vertex::Vertex(unsigned int id, GraphArtifact *parent)
+    : GraphArtifact(id, parent)
+{
+
+}
+
 Vertex::~Vertex()
 {
 
@@ -45,10 +51,11 @@ std::string Vertex::toString() const
 
 std::ostream &operator<<(std::ostream &out, const Vertex *v)
 {
-    if (v == 0) {
+    if (!v) {
         out << "<NULL>";
     } else {
-        out << "Vertex [" << v->idString() << "]";
+        //out << "Vertex [" << v->idString() << "]";
+        out << v->idString();
     }
     return out;
 }

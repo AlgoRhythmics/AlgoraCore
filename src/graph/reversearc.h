@@ -13,7 +13,7 @@ public:
 
     // GraphArtifact interface
 public:
-    virtual std::string typeString() const override { return arc->typeString() + " [reversed]"; }
+    virtual std::string typeString() const noexcept override { return arc->typeString() + " [reversed]"; }
     virtual std::string toString() const override { return arc->toString() + "^R"; }
 
     // Arc interface

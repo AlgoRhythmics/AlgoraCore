@@ -38,7 +38,7 @@
 namespace Algora {
 
 IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *handle)
-    : graph(handle)
+    : graph(handle), nextVertexId(0U)
 {
 
 }
@@ -214,9 +214,9 @@ void IncidenceListGraphImplementation::unbundleParallelArcs()
     }
 }
 
-IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex() const
+IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex()
 {
-    return new IncidenceListVertex(graph);
+    return new IncidenceListVertex(nextVertexId++, graph);
 }
 
 void IncidenceListGraphImplementation::bundleOutgoingArcs(IncidenceListVertex *vertex)

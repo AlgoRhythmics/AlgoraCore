@@ -26,60 +26,35 @@
 
 namespace Algora {
 
-class GraphArtifact::CheshireCat {
-    static int nextId;
-public:
-    int id;
-    GraphArtifact *parent;
-    bool valid;
+unsigned int GraphArtifact::nextId = 0U;
 
-    CheshireCat(GraphArtifact *parent);
-};
+GraphArtifact::GraphArtifact(unsigned int id, GraphArtifact *parent)
+    : id(id), parent(parent), valid(true)
+{
 
-int GraphArtifact::CheshireCat::nextId = 0;
+}
 
 GraphArtifact::GraphArtifact(GraphArtifact *parent)
-    : grin(new CheshireCat(parent))
+    : id(nextId), parent(parent), valid(true)
 {
+    nextId++;
 }
 
 GraphArtifact::~GraphArtifact()
 {
-    delete grin;
 }
 
-int GraphArtifact::getId() const
-{
-    return grin->id;
-}
-
-GraphArtifact *GraphArtifact::getParent() const
-{
-    return grin->parent;
-}
-
-bool GraphArtifact::isValid() const
-{
-    return grin->valid;
-}
 
 std::string GraphArtifact::idString() const
 {
     std::ostringstream strStream;
-    strStream << this->typeString()
-              << "#"
+    strStream << this->typeString();
+    if (parent) {
+        strStream << std::to_string(parent->getId());
+    }
+    strStream << "#"
               << std::to_string(getId());
     return strStream.str();
-}
-
-void GraphArtifact::invalidate()
-{
-    grin->valid = false;
-}
-
-GraphArtifact::CheshireCat::CheshireCat(GraphArtifact *parent)
-    : id(nextId), parent(parent), valid(true) {
-    nextId++;
 }
 
 }

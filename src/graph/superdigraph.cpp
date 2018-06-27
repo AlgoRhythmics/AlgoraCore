@@ -40,7 +40,7 @@ IncidenceListVertex *findOrCreateVertex(Vertex *v,
 
 class DummyVertex : public IncidenceListVertex {
 public:
-    explicit DummyVertex(SuperDiGraph *g) : IncidenceListVertex(g) { enableConsistencyCheck(false); }
+    explicit DummyVertex(SuperDiGraph *g) : IncidenceListVertex(0U, g) { enableConsistencyCheck(false); }
     virtual ~DummyVertex() { }
 };
 
