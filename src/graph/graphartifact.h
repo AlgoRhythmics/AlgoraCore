@@ -43,6 +43,13 @@ public:
     virtual std::string toString() const = 0;
     bool isValid() const { return valid; }
 
+    void setName(const std::string &n) {
+        name = n;
+    }
+    const std::string &getName() const {
+        return name;
+    }
+
 protected:
     std::string idString() const;
     void invalidate() { valid = false; }
@@ -57,6 +64,7 @@ private:
     unsigned int id;
     GraphArtifact *parent;
     bool valid;
+    std::string name;
 };
 
 }

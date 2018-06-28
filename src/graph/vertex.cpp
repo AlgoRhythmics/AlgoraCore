@@ -55,7 +55,12 @@ std::ostream &operator<<(std::ostream &out, const Vertex *v)
         out << "<NULL>";
     } else {
         //out << "Vertex [" << v->idString() << "]";
-        out << v->idString();
+        std::string name = v->getName();
+        if (!name.empty()) {
+            out << "'" << name << "'";
+        } else {
+            out << v->idString();
+        }
     }
     return out;
 }
