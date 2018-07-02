@@ -36,8 +36,8 @@ DiGraph::DiGraph(GraphArtifact *parent)
 unsigned int DiGraph::getNumArcs(bool multiArcsAsSimple) const
 {
     DiGraph *me = const_cast<DiGraph*>(this);
-    unsigned int numArcs = 0;
-    me->mapArcs([&](Arc *a) { numArcs += multiArcsAsSimple ? 1 : a->getSize(); });
+    unsigned int numArcs = 0U;
+    me->mapVertices([&](Vertex *v) { numArcs += me->getOutDegree(v, multiArcsAsSimple); });
     return numArcs;
 }
 
