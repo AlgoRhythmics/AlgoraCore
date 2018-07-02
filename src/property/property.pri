@@ -22,12 +22,13 @@
 
 message("pri file being processed: $$PWD")
 
-HEADERS += \ 
+HEADERS += \
     $$PWD/graphartifactproperty.h \
     $$PWD/property.h \
     $$PWD/functionproperty.h \
     $$PWD/propertymap.h \
-    $$PWD/propertycomparator.h
+    $$PWD/propertycomparator.h \
+    $$PWD/fastpropertymap.h
 
-SOURCES += \ 
+SOURCES += \
     $$PWD/graphartifactproperty.cpp
