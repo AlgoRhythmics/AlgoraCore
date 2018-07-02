@@ -38,7 +38,7 @@
 namespace Algora {
 
 IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *handle)
-    : graph(handle), nextVertexId(0U)
+    : graph(handle), numArcs(0U), nextVertexId(0U)
 {
 
 }
@@ -106,12 +106,14 @@ void IncidenceListGraphImplementation::addArc(Arc *a, IncidenceListVertex *tail,
 {
     tail->addOutgoingArc(a);
     head->addIncomingArc(a);
+    numArcs++;
 }
 
 void IncidenceListGraphImplementation::removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     tail->removeOutgoingArc(a);
     head->removeIncomingArc(a);
+    numArcs--;
     delete a;
 }
 
@@ -131,12 +133,24 @@ Arc *IncidenceListGraphImplementation::findArc(const IncidenceListVertex *tail, 
     return arc;
 }
 
-int IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
+unsigned int IncidenceListGraphImplementation::getNumArcs(bool multiArcsAsSimple) const
+{
+    if (multiArcsAsSimple) {
+        return numArcs;
+    }
+    unsigned int arcWeights = 0U;
+    for (auto v : vertices) {
+        arcWeights += v->getOutDegree(multiArcsAsSimple);
+    }
+    return arcWeights;
+}
+
+unsigned int IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
     return v->getOutDegree(multiArcsAsSimple);
 }
 
-int IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
+unsigned int IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
     return v->getInDegree(multiArcsAsSimple);
 }

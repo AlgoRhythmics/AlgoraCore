@@ -170,6 +170,11 @@ Arc *IncidenceListGraph::findArc(const Vertex *from, const Vertex *to) const
     return impl->findArc(tail, head);
 }
 
+unsigned int IncidenceListGraph::getNumArcs(bool multiArcsAsSimple) const
+{
+    return impl->getNumArcs(multiArcsAsSimple);
+}
+
 int IncidenceListGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);

@@ -48,9 +48,10 @@ public:
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     bool containsArc(const Arc *a, const IncidenceListVertex *tail) const;
     Arc *findArc(const IncidenceListVertex *tail, const IncidenceListVertex *head) const;
+    unsigned int getNumArcs(bool multiArcsAsSimple = false) const;
 
-    int getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
-    int getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
+    unsigned int getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
+    unsigned int getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
     bool isSource(const IncidenceListVertex *v) const;
     bool isSink(const IncidenceListVertex *v) const;
 
@@ -70,6 +71,7 @@ public:
 private:
     DiGraph *graph;
     VertexList vertices;
+    unsigned int numArcs;
     unsigned int nextVertexId;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);

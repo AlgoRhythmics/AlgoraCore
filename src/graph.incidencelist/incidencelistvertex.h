@@ -48,8 +48,8 @@ public:
     virtual bool mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCondition = arcFalse, bool checkValidity = true) const;
     virtual bool mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCondition = arcFalse, bool checkValidity = true) const;
 
-    int getOutDegree(bool multiArcsAsSimple = false) const;
-    int getInDegree(bool multiArcsAsSimple = false) const;
+    unsigned int getOutDegree(bool multiArcsAsSimple = false) const;
+    unsigned int getInDegree(bool multiArcsAsSimple = false) const;
     bool isSource() const;
     bool isSink() const;
     bool isIsolated() const { return isSource() && isSink(); }

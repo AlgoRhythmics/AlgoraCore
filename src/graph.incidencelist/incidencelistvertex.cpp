@@ -83,9 +83,9 @@ IncidenceListVertex::~IncidenceListVertex()
     delete grin;
 }
 
-int IncidenceListVertex::getOutDegree(bool multiArcsAsSimple) const
+unsigned int IncidenceListVertex::getOutDegree(bool multiArcsAsSimple) const
 {
-    int deg = grin->outgoingArcs.size();
+    unsigned int deg = grin->outgoingArcs.size();
     if (multiArcsAsSimple) {
         return deg + grin->outgoingMultiArcs.size();
     }
@@ -136,9 +136,9 @@ void IncidenceListVertex::clearOutgoingArcs()
     grin->multiOutIndex.resetAll();
 }
 
-int IncidenceListVertex::getInDegree(bool multiArcsAsSimple) const
+unsigned int IncidenceListVertex::getInDegree(bool multiArcsAsSimple) const
 {
-    int deg = grin->incomingArcs.size();
+    unsigned int deg = grin->incomingArcs.size();
     if (multiArcsAsSimple) {
         return deg + grin->incomingMultiArcs.size();
     }
