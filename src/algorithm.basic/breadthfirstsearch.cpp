@@ -32,126 +32,16 @@
 
 namespace Algora {
 
-BreadthFirstSearch::BreadthFirstSearch(bool computeValues, bool computeOrder)
-    : PropertyComputingAlgorithm<bool, int>(computeValues),
-      startVertex(0), computeOrder(computeOrder), maxBfsNumber(-1), maxLevel(-1),
-      onVertexDiscovered(vertexTrue), onArcDiscovered(arcTrue),
-      vertexStopCondition(vertexFalse), arcStopCondition(arcFalse),
-      treeArc(arcNothing), nonTreeArc(arcNothing),
-      useReversedArc(false)
-{
 
-}
 
-BreadthFirstSearch::~BreadthFirstSearch()
-{
 
-}
 
-bool BreadthFirstSearch::prepare()
-{
-    return PropertyComputingAlgorithm<bool, int>::prepare()
-            && ( startVertex == 0 || (diGraph->containsVertex(startVertex) && startVertex->isValid()));
-}
 
-void BreadthFirstSearch::run()
-{
-    if (startVertex == 0) {
-        startVertex = diGraph->getAnyVertex();
-    }
 
-    std::deque<const Vertex*> queue;
-    PropertyMap<bool> discovered(false);
-    PropertyMap<int> *values = propertyMap;
 
-    maxBfsNumber = 0;
-    maxLevel = 0;
 
-    queue.push_back(startVertex);
-    queue.push_back(nullptr);
-    discovered[startVertex] = true;
-    if (computePropertyValues) {
-        (*values)[startVertex] = 0;
-    }
 
-    bool stop = false;
 
-    while (!stop && !queue.empty()) {
-        const Vertex *curr = queue.front();
-        queue.pop_front();
-        if (curr == nullptr) {
-            if (!queue.empty()) {
-                queue.push_back(nullptr);
-                maxLevel++;
-            }
-            continue;
-        }
-        stop |= vertexStopCondition(curr);
-        if (stop) {
-            break;
-        }
 
-        if (useReversedArc) {
-            diGraph->mapIncomingArcsUntil(curr, [&](Arc *a) {
-                bool consider = onArcDiscovered(a);
-                stop |= arcStopCondition(a);
-                if (stop || !consider) {
-                    return;
-                }
-                Vertex *tail= a->getTail();
-                if (!discovered(tail)) {
-                    maxBfsNumber++;
-                    if (computePropertyValues) {
-                        (*values)[tail] = computeOrder ? maxBfsNumber : (*values)[a->getHead()] + 1;
-                    }
-                    treeArc(a);
-                    if (!onVertexDiscovered(tail)) {
-                        return;
-                    }
-
-                    queue.push_back(tail);
-                    discovered[tail] = true;
-                } else {
-                    nonTreeArc(a);
-                }
-            }, [&](const Arc *) { return stop; });
-        } else {
-            diGraph->mapOutgoingArcsUntil(curr, [&](Arc *a) {
-                bool consider = onArcDiscovered(a);
-                stop |= arcStopCondition(a);
-                if (stop || !consider) {
-                    return;
-                }
-                Vertex *head = a->getHead();
-                if (!discovered(head)) {
-                    maxBfsNumber++;
-                    if (computePropertyValues) {
-                        (*values)[head] = computeOrder ? maxBfsNumber : (*values)[a->getTail()] + 1;
-                    }
-                    treeArc(a);
-                    if (!onVertexDiscovered(head)) {
-                        return;
-                    }
-
-                    queue.push_back(head);
-                    discovered[head] = true;
-                } else {
-                    nonTreeArc(a);
-                }
-            }, [&](const Arc *) { return stop; });
-        }
-    }
-}
-
-bool BreadthFirstSearch::deliver()
-{
-    return maxBfsNumber + 1 == (int) diGraph->getSize();
-}
-
-void BreadthFirstSearch::onDiGraphSet()
-{
-    maxBfsNumber = -1;
-    maxLevel = -1;
-}
 
 }
