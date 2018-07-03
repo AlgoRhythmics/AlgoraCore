@@ -37,7 +37,7 @@
 
 namespace Algora {
 
-void dfs(DiGraph *g, Vertex *v, int &depth, PropertyMap<DFSResult> &pm,
+void dfs(DiGraph *g, Vertex *v, int &depth, ModifiableProperty<DFSResult> &pm,
          PropertyMap<bool> &discovered, bool ignoreDirection);
 
 DepthFirstSearch::DepthFirstSearch()
@@ -64,7 +64,7 @@ void DepthFirstSearch::run()
     }
 
     int nextDepth = 0;
-    PropertyMap<DFSResult> &pm = *propertyMap;
+    ModifiableProperty<DFSResult> &pm = *property;
     PropertyMap<bool> discovered(false);
     dfs(diGraph, startVertex, nextDepth, pm, discovered, ignoreArcDirections);
     maxDfsNumber = nextDepth - 1;
@@ -75,7 +75,7 @@ int DepthFirstSearch::deliver()
     return maxDfsNumber + 1;
 }
 
-void dfs(DiGraph *g, Vertex *v, int &depth, PropertyMap<DFSResult> &pm,
+void dfs(DiGraph *g, Vertex *v, int &depth, ModifiableProperty<DFSResult> &pm,
          PropertyMap<bool> &discovered, bool ignoreDirection) {
 
     discovered[v] = true;

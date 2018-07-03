@@ -28,30 +28,30 @@
 namespace Algora {
 
 template<typename T>
-class PropertyMap;
+class ModifiableProperty;
 
 template<typename ValueType, typename PropertyType>
 class PropertyComputingAlgorithm : public ValueComputingAlgorithm<ValueType>
 {
 public:
     PropertyComputingAlgorithm(bool computeValues = true)
-        : computePropertyValues(computeValues), propertyMap(0) { }
+        : computePropertyValues(computeValues), property(0) { }
     virtual ~PropertyComputingAlgorithm() { }
 
-    virtual void usePropertyMap(PropertyMap<PropertyType> *map) {
-        this->propertyMap = map;
+    virtual void useModifiableProperty(ModifiableProperty<PropertyType> *mp) {
+        this->property = mp;
     }
 
     // DiGraphAlgorithm interface
 public:
     virtual bool prepare() override {
         return ValueComputingAlgorithm<ValueType>::prepare()
-                && (!computePropertyValues || propertyMap != 0);
+                && (!computePropertyValues || property != 0);
     }
 
 protected:
     bool computePropertyValues;
-    PropertyMap<PropertyType> *propertyMap;
+    ModifiableProperty<PropertyType> *property;
 };
 
 }

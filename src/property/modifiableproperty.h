@@ -20,40 +20,29 @@
  *   http://algora.xaikal.org
  */
 
-#include "eccentricityalgorithm.h"
-#include "breadthfirstsearch.h"
+#ifndef MODIFIABLEPROPERTY_H
+#define MODIFIABLEPROPERTY_H
 
-#include "graph/digraph.h"
-#include "algorithm/digraphalgorithmexception.h"
+#include "property.h"
 
-#include <climits>
 
 namespace Algora {
 
-const int EccentricityAlgorithm::INFINITE = INT_MAX;
-
-EccentricityAlgorithm::EccentricityAlgorithm()
-    : ValueComputingAlgorithm<int>(), vertex(nullptr), eccentricity(INFINITE)
+template<typename T>
+class ModifiableProperty : public Property<T>
 {
+public:
+    ModifiableProperty(const std::string &name = "")
+        : Property<T>(name) { }
+    ModifiableProperty(const ModifiableProperty<T> &other)
+        : Property<T>(other) { }
+    virtual ~ModifiableProperty() { }
+
+    virtual void setValue(const GraphArtifact *ga, const T &value) = 0;
+
+    virtual T &operator[](const GraphArtifact *ga) = 0;
+};
 
 }
 
-bool EccentricityAlgorithm::prepare()
-{
-    return ValueComputingAlgorithm<int>::prepare() && diGraph->containsVertex(vertex);
-}
-
-void EccentricityAlgorithm::run()
-{
-    BreadthFirstSearch<> bfs(false);
-    bfs.setStartVertex(vertex);
-    bfs.orderAsValues(false);
-    eccentricity = runAlgorithm(bfs, diGraph) ? bfs.getMaxLevel() :  INFINITE;
-}
-
-void EccentricityAlgorithm::onDiGraphSet() {
-    ValueComputingAlgorithm<int>::onDiGraphSet();
-    eccentricity = -1;
-}
-
-}
+#endif // MODIFIABLEPROPERTY

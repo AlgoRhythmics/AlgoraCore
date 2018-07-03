@@ -86,7 +86,7 @@ void AccessibilityAlgorithm::onDiGraphSet()
 
 bool AccessibilityAlgorithm::CheshireCat::checkAccessibility(DiGraph *graph, Vertex *source, Vertex *target)
 {
-    BreadthFirstSearch bfs(false);
+    BreadthFirstSearch<> bfs(false);
     bfs.setGraph(graph);
 
     bfs.setStartVertex(source);

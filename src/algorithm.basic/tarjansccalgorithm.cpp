@@ -43,14 +43,14 @@
 
 namespace Algora {
 
-int tarjanRecursive(DiGraph *diGraph, PropertyMap<int> &sccNumber);
+int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber);
 void strongconnect(DiGraph *graph, Vertex *v,
                    int &nextIndex, int &nextScc,
                    std::deque<Vertex*> &stack,
-                   PropertyMap<int> &vertexIndex,
-                   PropertyMap<int> &lowLink,
-                   PropertyMap<bool> &onStack,
-                   PropertyMap<int> &sccNumber);
+                   ModifiableProperty<int> &vertexIndex,
+                   ModifiableProperty<int> &lowLink,
+                   ModifiableProperty<bool> &onStack,
+                   ModifiableProperty<int> &sccNumber);
 
 TarjanSCCAlgorithm::TarjanSCCAlgorithm()
     : numSccs(0)
@@ -65,11 +65,11 @@ TarjanSCCAlgorithm::~TarjanSCCAlgorithm()
 
 void TarjanSCCAlgorithm::run()
 {
-    numSccs = tarjanRecursive(diGraph, *this->propertyMap);
+    numSccs = tarjanRecursive(diGraph, *this->property);
 
     if (numSccs > 1) {
         diGraph->mapVertices([&](Vertex *v) {
-            propertyMap->setValue(v, numSccs - propertyMap->getValue(v) - 1);
+            property->setValue(v, numSccs - property->getValue(v) - 1);
         });
     }
 }
@@ -79,7 +79,7 @@ int TarjanSCCAlgorithm::deliver()
     return numSccs;
 }
 
-int tarjanRecursive(DiGraph *diGraph, PropertyMap<int> &sccNumber) {
+int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber) {
     int nextIndex = 0;
     int nextScc = 0;
     std::deque<Vertex*> stack;
@@ -98,20 +98,20 @@ int tarjanRecursive(DiGraph *diGraph, PropertyMap<int> &sccNumber) {
 void strongconnect(DiGraph *graph, Vertex *v,
                    int &nextIndex, int &nextScc,
                    std::deque<Vertex *> &stack,
-                   PropertyMap<int> &vertexIndex,
-                   PropertyMap<int> &lowLink,
-                   PropertyMap<bool> &onStack,
-                   PropertyMap<int> &sccNumber) {
+                   ModifiableProperty<int> &vertexIndex,
+                   ModifiableProperty<int> &lowLink,
+                   ModifiableProperty<bool> &onStack,
+                   ModifiableProperty<int> &sccNumber) {
 
     PRINT_DEBUG( "strongconnect on " << v )
     int vLowLink = nextIndex;
-    vertexIndex[v] = nextIndex;
-    lowLink[v] = nextIndex;
+    vertexIndex.setValue(v, nextIndex);
+    lowLink.setValue(v, nextIndex);
     PRINT_DEBUG( "index is " << nextIndex )
     PRINT_DEBUG( "lolink is " << nextIndex )
     nextIndex++;
     stack.push_back(v);
-    onStack[v] = true;
+    onStack.setValue(v, true);
 
     graph->mapOutgoingArcs(v, [&](Arc *a) {
         Vertex *head = a->getHead();
@@ -135,7 +135,7 @@ void strongconnect(DiGraph *graph, Vertex *v,
             }
         }
     });
-    lowLink[v] = vLowLink;
+    lowLink.setValue(v, vLowLink);
 
     if (lowLink(v) == vertexIndex(v)) {
         PRINT_DEBUG_CL( "Found SCC #" << nextScc << " with members: " )
@@ -144,8 +144,8 @@ void strongconnect(DiGraph *graph, Vertex *v,
             w  = stack.back();
             PRINT_DEBUG_CL( w << " " );
             stack.pop_back();
-            onStack[w] = false;
-            sccNumber[w] = nextScc;
+            onStack.setValue(w, false);
+            sccNumber.setValue(w, nextScc);
         } while (w != v);
         PRINT_DEBUG( "" )
         nextScc++;

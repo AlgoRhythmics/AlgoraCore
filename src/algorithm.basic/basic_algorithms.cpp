@@ -55,7 +55,7 @@ int countStrongComponents(DiGraph *diGraph)
 {
     TarjanSCCAlgorithm tarjan;
     PropertyMap<int> sccs(-1);
-    tarjan.usePropertyMap(&sccs);
+    tarjan.useModifiableProperty(&sccs);
     return runAlgorithm(tarjan, diGraph);
 }
 
@@ -69,7 +69,7 @@ int countBiconnectedComponents(DiGraph *diGraph)
     BiconnectedComponentsAlgorithm bic;
     std::vector<int> empty;
     PropertyMap<std::vector<int> > bics(empty);
-    bic.usePropertyMap(&bics);
+    bic.useModifiableProperty(&bics);
     return runAlgorithm(bic, diGraph);
 }
 
@@ -107,7 +107,7 @@ void computeCondensation(DiGraph *diGraph, DiGraph *condensedGraph)
 {
     TarjanSCCAlgorithm tarjan;
     PropertyMap<int> sccOf(-1);
-    tarjan.usePropertyMap(&sccOf);
+    tarjan.useModifiableProperty(&sccOf);
     int sccs = runAlgorithm(tarjan, diGraph);
     condensedGraph->clear();
     std::vector<Vertex*> sccVertices;

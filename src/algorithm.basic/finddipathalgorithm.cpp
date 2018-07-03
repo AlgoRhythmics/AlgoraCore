@@ -66,7 +66,7 @@ void FindDiPathAlgorithm::run()
     }
 
 
-    BreadthFirstSearch bfs(false);
+    BreadthFirstSearch<> bfs(false);
     bfs.setGraph(diGraph);
     PropertyMap<Arc*> pred(0);
 

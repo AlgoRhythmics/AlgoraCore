@@ -38,7 +38,7 @@
 namespace Algora {
 
 int findBiconnectedComponents(std::vector<Vertex *> &dfsOrderRev,
-                              PropertyMap<DFSResult> &dfs, PropertyMap<std::vector<int> > &bics);
+                              PropertyMap<DFSResult> &dfs, ModifiableProperty<std::vector<int> > &bics);
 
 BiconnectedComponentsAlgorithm::BiconnectedComponentsAlgorithm()
     : numBics(0)
@@ -55,7 +55,7 @@ void BiconnectedComponentsAlgorithm::run()
     DFSResult none(-1, -1, 0);
     PropertyMap<DFSResult> dfsResult(none);
     DepthFirstSearch dfs;
-    dfs.usePropertyMap(&dfsResult);
+    dfs.useModifiableProperty(&dfsResult);
     dfs.setIgnoreArcDirections(true);
 
     int n = diGraph->getSize();
@@ -71,7 +71,7 @@ void BiconnectedComponentsAlgorithm::run()
         dfsNum = dfsResult(v).dfsNumber;
         dfsOrderRev[verticesReached - 1 - dfsNum] = v;
     });
-    numBics = findBiconnectedComponents(dfsOrderRev, dfsResult, *propertyMap);
+    numBics = findBiconnectedComponents(dfsOrderRev, dfsResult, *property);
 }
 
 int BiconnectedComponentsAlgorithm::deliver()
@@ -80,7 +80,7 @@ int BiconnectedComponentsAlgorithm::deliver()
 }
 
 int findBiconnectedComponents(std::vector<Vertex*> &dfsOrderRev,
-                              PropertyMap<DFSResult> &dfs, PropertyMap<std::vector<int> > &bics) {
+                              PropertyMap<DFSResult> &dfs, ModifiableProperty<std::vector<int> > &bics) {
     // cut(v) <=> (v, u) in DfsTree : lowNumber(u) >= dfsNumber(v), if v not root
     //            v has > 1 child in DfsTree, if v is root
     int curBic = 0;

@@ -23,7 +23,7 @@
 #ifndef PROPERTYMAP_H
 #define PROPERTYMAP_H
 
-#include "property.h"
+#include "modifiableproperty.h"
 
 //#include <unordered_map>
 #include <map>
@@ -31,16 +31,16 @@
 namespace Algora {
 
 template<typename T>
-class PropertyMap : public Property<T>
+class PropertyMap : public ModifiableProperty<T>
 {
 public:
     typedef typename std::map<const GraphArtifact*,T>::iterator iterator;
     typedef typename std::map<const GraphArtifact*,T>::const_iterator const_iterator;
 
     PropertyMap(const T &defaultValue = T(), const std::string &name = "")
-        : Property<T>(name), defaultValue(defaultValue) { }
+        : ModifiableProperty<T>(name), defaultValue(defaultValue) { }
     PropertyMap(const PropertyMap<T> &other)
-        : Property<T>(other),
+        : ModifiableProperty<T>(other),
           defaultValue(other.defaultValue),
           map(other.map) { }
     virtual ~PropertyMap() { }
@@ -49,20 +49,20 @@ public:
         if (this == &rhs) {
             return *this;
         }
-        Property<T>::operator=(rhs);
+        ModifiableProperty<T>::operator=(rhs);
         defaultValue = rhs.defaultValue;
         map = rhs.map;
         return *this;
     }
 
-    T getDefaultValue() const { return defaultValue; }
+    const T &getDefaultValue() const { return defaultValue; }
     void setDefaultValue(const T &val) { defaultValue = val; }
 
     bool isSetExplicitly(const GraphArtifact *ga) const {
         return map.count(ga) > 0;
     }
 
-    void setValue(const GraphArtifact *ga, const T &value) {
+    virtual void setValue(const GraphArtifact *ga, const T &value) override {
         map[ga] = value;
     }
 
@@ -75,7 +75,7 @@ public:
         map.clear();
     }
 
-    T &operator[](const GraphArtifact *ga) {
+    virtual T &operator[](const GraphArtifact *ga) override {
         if (!isSetExplicitly(ga)) {
             map[ga] = defaultValue;
         }

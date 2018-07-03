@@ -97,7 +97,7 @@ void TopSortAlgorithm::run()
         queue.pop_front();
 
         if (computePropertyValues) {
-            (*propertyMap)[v] = ts;
+            property->setValue(v, ts);
             ts++;
         }
 
