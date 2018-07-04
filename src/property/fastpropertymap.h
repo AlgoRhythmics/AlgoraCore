@@ -57,6 +57,7 @@ public:
     }
 
     const T &getDefaultValue() const { return defaultValue; }
+
     void setDefaultValue(const T &val) { defaultValue = val; buckets.assign(buckets.size(), defaultValue); }
 
     virtual void setValue(const GraphArtifact *ga, const T &value) override {
@@ -69,11 +70,12 @@ public:
         setValue(ga, defaultValue);
     }
 
-    void resetAll(unsigned int capacity = 0U) {
-        if (capacity == 0) {
-            capacity = buckets.size();
-        }
+    void resetAll(unsigned int capacity) {
         buckets.assign(capacity, defaultValue);
+    }
+
+    void resetAll() {
+        resetAll(buckets.size());
     }
 
     virtual T &operator[](const GraphArtifact *ga) override {
