@@ -46,6 +46,12 @@ unix {
     INSTALLS += target
 }
 
+HEADERS += \
+    $$PWD/algoracore_info.h
+
+SOURCES += \
+    $$PWD/algoracore_info.cpp
+
 include(graph/graph.pri)
 include(graph.incidencelist/graph.incidencelist.pri)
 include(graph.visitor/graph.visitor.pri)
