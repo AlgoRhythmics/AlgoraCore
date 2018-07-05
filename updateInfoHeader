@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ########################################################################
 # Copyright (C) 2013 - 2018 : Kathrin Hanauer                          #
 #                                                                      #
@@ -20,51 +22,32 @@
 #   http://algora.xaikal.org                                           #
 ########################################################################
 
-#-------------------------------------------------
-#
-# Project created by QtCreator
-#
-#-------------------------------------------------
+if [ $# -lt 1 ]
+then
+	echo "Usage: $0 <PATH_TO_HEADER_FILE>"
+	exit 1
+fi
 
-QT       -= core gui
+VERSION_HEADER=$1
+[ -f "${VERSION_HEADER}" ] || eval 'echo "Version header file ${VERSION_HEADER} not found." 1>&2; exit 1'
 
-TARGET = AlgoraCore
-TEMPLATE = lib
-CONFIG += staticlib
+[ -z "${GIT_CMD}" ] && GIT_CMD=$(which git 2>/dev/null)
+[ -n "${GIT_CMD}" ] || eval 'echo Binary "git" not found. Please specify its location explicitly via the GIT_CMD variable." 1>&2; exit 1'
 
-ACINFOHDR = $$PWD/algoracore_info.h
-acinfotarget.target =  $$ACINFOHDR
-acinfotarget.commands = '$$PWD/../updateInfoHeader $$ACINFOHDR'
-acinfotarget.depends = FORCE
-PRE_TARGETDEPS += $$ACINFOHDR
-QMAKE_EXTRA_TARGETS += acinfotarget
+GIT_REVISION=$(${GIT_CMD} log --pretty=format:'%H' -n 1)
+GIT_DATE=$(${GIT_CMD} log --pretty=format:'%ai' -n 1)
 
-QMAKE_CXXFLAGS_DEBUG += -std=c++11 -O0
-QMAKE_CXXFLAGS_RELEASE += -std=c++11
+echo "Git revision: ${GIT_REVISION}"
+echo "Git date: ${GIT_DATE}"
 
-general {
-  QMAKE_CXXFLAGS_RELEASE += -O2 -march=x86-64
-} else {
-  QMAKE_CXXFLAGS_RELEASE += -O3 -march=native -mtune=native
-}
+if grep -q $GIT_REVISION $VERSION_HEADER && grep -q "$GIT_DATE" $VERSION_HEADER
+then
+	echo "Git revision unchanged. No update required."
+	exit 0
+fi
 
-unix {
-    target.path = /usr/lib
-    INSTALLS += target
-}
+GIT_REVISION_IN_HEADER="  static constexpr char GIT_REVISION[] = \"${GIT_REVISION}\";"
+GIT_DATE_IN_HEADER="  static constexpr char GIT_DATE[] = \"${GIT_DATE}\";"
 
-HEADERS += \
-    $$PWD/algoracore_info.h
+sed -i -e "s/^.*GIT_REVISION.*$/${GIT_REVISION_IN_HEADER}/" -e "s/^.*GIT_DATE.*$/${GIT_DATE_IN_HEADER}/" $VERSION_HEADER
 
-SOURCES += \
-    $$PWD/algoracore_info.cpp
-
-include(graph/graph.pri)
-include(graph.incidencelist/graph.incidencelist.pri)
-include(graph.visitor/graph.visitor.pri)
-include(property/property.pri)
-include(pipe/pipe.pri)
-include(io/io.pri)
-include(algorithm/algorithm.pri)
-include(algorithm.basic/algorithm.basic.pri)
-include(datastructure/datastructure.pri)
