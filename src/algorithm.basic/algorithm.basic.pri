@@ -36,7 +36,6 @@ HEADERS += \
 
 SOURCES += \     
     $$PWD/finddipathalgorithm.cpp \
-    $$PWD/breadthfirstsearch.cpp \
     $$PWD/tarjansccalgorithm.cpp \
     $$PWD/topsortalgorithm.cpp \
     $$PWD/basic_algorithms.cpp \
