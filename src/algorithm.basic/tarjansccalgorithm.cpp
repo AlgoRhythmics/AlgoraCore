@@ -27,7 +27,7 @@
 #include "graph/arc.h"
 #include "property/propertymap.h"
 
-#include <deque>
+#include <vector>
 
 //#define DEBUG_TSCC
 #ifdef DEBUG_TSCC
@@ -46,7 +46,7 @@ namespace Algora {
 int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber);
 void strongconnect(DiGraph *graph, Vertex *v,
                    int &nextIndex, int &nextScc,
-                   std::deque<Vertex*> &stack,
+                   std::vector<Vertex*> &stack,
                    ModifiableProperty<int> &vertexIndex,
                    ModifiableProperty<int> &lowLink,
                    ModifiableProperty<bool> &onStack,
@@ -82,7 +82,7 @@ int TarjanSCCAlgorithm::deliver()
 int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber) {
     int nextIndex = 0;
     int nextScc = 0;
-    std::deque<Vertex*> stack;
+    std::vector<Vertex*> stack;
     PropertyMap<int> vertexIndex(-1);
     PropertyMap<int> lowLink(-1);
     PropertyMap<bool> onStack(false);
@@ -97,7 +97,7 @@ int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber) {
 
 void strongconnect(DiGraph *graph, Vertex *v,
                    int &nextIndex, int &nextScc,
-                   std::deque<Vertex *> &stack,
+                   std::vector<Vertex *> &stack,
                    ModifiableProperty<int> &vertexIndex,
                    ModifiableProperty<int> &lowLink,
                    ModifiableProperty<bool> &onStack,

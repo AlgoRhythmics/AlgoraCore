@@ -27,7 +27,7 @@
 #include "graph/arc.h"
 #include "property/propertymap.h"
 
-#include <deque>
+#include <vector>
 
 //#define DEBUG_TOPSORT
 
@@ -79,22 +79,22 @@ void TopSortAlgorithm::run()
 
     PropertyMap<int> inDegree(-1);
 
-    std::deque<Vertex*> queue;
+    std::vector<Vertex*> sources;
 
     diGraph->mapVertices([&](Vertex *v) {
         int indegree = diGraph->getInDegree(v, true);
         if (indegree == 0) {
-            queue.push_back(v);
+            sources.push_back(v);
         } else {
             inDegree[v] = indegree;
         }
     });
-    PRINT_DEBUG( "Queue contains " << queue.size() << " sources." );
+    PRINT_DEBUG( "Queue contains " << sources.size() << " sources." );
 
     int ts = 0;
-    while (!queue.empty()) {
-        Vertex *v = queue.front();
-        queue.pop_front();
+    while (!sources.empty()) {
+        Vertex *v = sources.back();
+        sources.pop_back();
 
         if (computePropertyValues) {
             property->setValue(v, ts);
@@ -106,7 +106,7 @@ void TopSortAlgorithm::run()
         diGraph->mapOutgoingArcs(v, [&](Arc *a) {
             Vertex *head = a->getHead();
             if (inDegree(head) == 1) {
-                queue.push_back(head);
+                sources.push_back(head);
             } else {
                 inDegree[head]--;
             }

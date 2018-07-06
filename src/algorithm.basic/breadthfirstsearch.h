@@ -28,7 +28,7 @@
 #include "graph/graph_functional.h"
 #include "property/propertymap.h"
 
-#include <deque>
+#include <boost/circular_buffer.hpp>
 
 namespace Algora {
 
@@ -110,7 +110,7 @@ public:
             startVertex = diGraph->getAnyVertex();
         }
 
-        std::deque<const Vertex*> queue;
+        boost::circular_buffer<const Vertex*> queue(diGraph->getSize());
         ModifiablePropertyType<bool> discovered(false);
 
         maxBfsNumber = 0;
