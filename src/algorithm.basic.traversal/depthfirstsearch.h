@@ -166,11 +166,11 @@ private:
                 }
             }
         };
-        if (this->onUndirectedGraph || !this->onReverseGraph) {
-            diGraph->mapOutgoingArcs(v, [&](Arc *a) { vm(v, a->getHead(), a); });
+        if (!stop && (this->onUndirectedGraph || !this->onReverseGraph)) {
+            diGraph->mapOutgoingArcsUntil(v, [&](Arc *a) { vm(v, a->getHead(), a); }, [&stop](const Arc *) { return stop; });
         }
-        if (this->onUndirectedGraph || this->onReverseGraph) {
-            diGraph->mapIncomingArcs(v, [&](Arc *a) { vm(v, a->getTail(), a); });
+        if (!stop && (this->onUndirectedGraph || this->onReverseGraph)) {
+            diGraph->mapIncomingArcsUntil(v, [&](Arc *a) { vm(v, a->getTail(), a); }, [&stop](const Arc *) { return stop; });
         }
     }
 };
