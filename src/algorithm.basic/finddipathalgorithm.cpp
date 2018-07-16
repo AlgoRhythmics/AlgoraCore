@@ -26,7 +26,7 @@
 #include "graph/vertex.h"
 #include "graph/arc.h"
 #include "property/propertymap.h"
-#include "algorithm.basic/breadthfirstsearch.h"
+#include "algorithm.basic.traversal/breadthfirstsearch.h"
 #include "algorithm/digraphalgorithmexception.h"
 
 #include <algorithm>

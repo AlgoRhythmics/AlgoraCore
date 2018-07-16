@@ -42,6 +42,10 @@ public:
         this->property = mp;
     }
 
+    void computeValues(bool compute) {
+        computePropertyValues = compute;
+    }
+
     // DiGraphAlgorithm interface
 public:
     virtual bool prepare() override {

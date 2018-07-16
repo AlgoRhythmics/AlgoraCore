@@ -21,7 +21,7 @@
  */
 
 #include "eccentricityalgorithm.h"
-#include "breadthfirstsearch.h"
+#include "algorithm.basic.traversal/breadthfirstsearch.h"
 
 #include "graph/digraph.h"
 #include "algorithm/digraphalgorithmexception.h"
@@ -48,7 +48,7 @@ void EccentricityAlgorithm::run()
     BreadthFirstSearch<> bfs(false);
     bfs.setStartVertex(vertex);
     bfs.orderAsValues(false);
-    eccentricity = runAlgorithm(bfs, diGraph) ? bfs.getMaxLevel() :  INFINITE;
+    eccentricity = runAlgorithm(bfs, diGraph) == diGraph->getSize() ? bfs.getMaxLevel() :  INFINITE;
 }
 
 void EccentricityAlgorithm::onDiGraphSet() {

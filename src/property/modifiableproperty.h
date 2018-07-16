@@ -41,6 +41,8 @@ public:
     virtual void setValue(const GraphArtifact *ga, const T &value) = 0;
 
     virtual T &operator[](const GraphArtifact *ga) = 0;
+
+    virtual void setAll(const T &val) = 0;
 };
 
 }

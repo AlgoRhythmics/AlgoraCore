@@ -26,7 +26,7 @@
 #include "graph/digraph.h"
 #include "graph/vertex.h"
 #include "graph/arc.h"
-#include "breadthfirstsearch.h"
+#include "algorithm.basic.traversal/breadthfirstsearch.h"
 #include "algorithm/digraphalgorithmexception.h"
 
 #include <boost/logic/tribool.hpp>

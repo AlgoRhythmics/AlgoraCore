@@ -22,22 +22,9 @@
 
 message("pri file being processed: $$PWD")
 
-HEADERS += \
-    $$PWD/finddipathalgorithm.h \
-    $$PWD/basic_algorithms.h \
-    $$PWD/tarjansccalgorithm.h \
-    $$PWD/topsortalgorithm.h \
-    $$PWD/biconnectedcomponentsalgorithm.h \
-    $$PWD/accessibilityalgorithm.h \
-    $$PWD/eccentricityalgorithm.h \
-    $$PWD/radiusdiameteralgorithm.h
+HEADERS += \ 
+    $$PWD/graphtraversal.h \
+    $$PWD/breadthfirstsearch.h \
+    $$PWD/depthfirstsearch.h
 
-SOURCES += \
-    $$PWD/finddipathalgorithm.cpp \
-    $$PWD/tarjansccalgorithm.cpp \
-    $$PWD/topsortalgorithm.cpp \
-    $$PWD/basic_algorithms.cpp \
-    $$PWD/biconnectedcomponentsalgorithm.cpp \
-    $$PWD/accessibilityalgorithm.cpp \
-    $$PWD/eccentricityalgorithm.cpp \
-    $$PWD/radiusdiameteralgorithm.cpp
+SOURCES +=      

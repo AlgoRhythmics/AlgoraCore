@@ -25,8 +25,8 @@
 #include "graph/digraph.h"
 #include "property/propertymap.h"
 
-#include "breadthfirstsearch.h"
-#include "depthfirstsearch.h"
+#include "algorithm.basic.traversal/breadthfirstsearch.h"
+#include "algorithm.basic.traversal/depthfirstsearch.h"
 #include "tarjansccalgorithm.h"
 #include "topsortalgorithm.h"
 #include "biconnectedcomponentsalgorithm.h"

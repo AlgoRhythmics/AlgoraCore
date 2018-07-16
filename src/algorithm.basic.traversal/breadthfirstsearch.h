@@ -23,7 +23,7 @@
 #ifndef BREADTHFIRSTSEARCH_H
 #define BREADTHFIRSTSEARCH_H
 
-#include "algorithm/propertycomputingalgorithm.h"
+#include "graphtraversal.h"
 #include "graph/digraph.h"
 #include "graph/graph_functional.h"
 #include "property/propertymap.h"
@@ -35,43 +35,16 @@ namespace Algora {
 class Vertex;
 
 template <template<typename T> class ModifiablePropertyType = PropertyMap>
-class BreadthFirstSearch : public PropertyComputingAlgorithm<bool, int>
+class BreadthFirstSearch : public GraphTraversal<int>
 {
 public:
     explicit BreadthFirstSearch(bool computeValues = true, bool computeOrder = true)
-        : PropertyComputingAlgorithm<bool, int>(computeValues),
-          startVertex(0), computeOrder(computeOrder), maxBfsNumber(-1), maxLevel(-1),
-          onVertexDiscovered(vertexTrue), onArcDiscovered(arcTrue),
-          vertexStopCondition(vertexFalse), arcStopCondition(arcFalse),
-          treeArc(arcNothing), nonTreeArc(arcNothing),
-          useReversedArc(false)
-    {
+        : GraphTraversal<int>(computeValues),
+          computeOrder(computeOrder), maxBfsNumber(-1), maxLevel(-1),
+          treeArc(arcNothing), nonTreeArc(arcNothing)
+    { }
 
-    }
-    virtual ~BreadthFirstSearch()
-    {
-
-    }
-
-    void setStartVertex(const Vertex *v) {
-        startVertex = v;
-    }
-
-    void onVertexDiscover(const VertexPredicate &vFun) {
-        onVertexDiscovered = vFun;
-    }
-
-    void onArcDiscover(const ArcPredicate &aFun) {
-        onArcDiscovered = aFun;
-    }
-
-    void setVertexStopCondition(const VertexPredicate &vStop) {
-        vertexStopCondition = vStop;
-    }
-
-    void setArcStopCondition(const ArcPredicate &aStop) {
-        arcStopCondition = aStop;
-    }
+    virtual ~BreadthFirstSearch() { }
 
     void onTreeArcDiscover(const ArcMapping &aFun) {
         treeArc = aFun;
@@ -89,21 +62,17 @@ public:
         return maxLevel;
     }
 
-    void reverseArcDirection(bool reverse) {
-        useReversedArc = reverse;
-    }
-
     void orderAsValues(bool order) {
         computeOrder = order;
     }
 
+    // GraphTraversal interface
+    unsigned int numVerticesReached() const {
+        return getMaxBfsNumber() + 1;
+    }
+
     // DiGraphAlgorithm interface
 public:
-    virtual bool prepare() override
-    {
-        return PropertyComputingAlgorithm<bool, int>::prepare()
-                && ( startVertex == 0 || (diGraph->containsVertex(startVertex) && startVertex->isValid()));
-    }
     virtual void run() override
     {
         if (startVertex == 0) {
@@ -125,6 +94,29 @@ public:
 
         bool stop = false;
 
+        auto mapArcs = [&](const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) {
+            diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
+            diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
+        };
+        auto mapOutgoingArcs = [&](const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) {
+            diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
+        };
+        auto mapIncomingArcs = [&](const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) {
+            diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
+        };
+
+        auto mapArcsUntil = std::function<void(const Vertex *, ArcMapping, ArcPredicate)>(mapOutgoingArcs);
+        if (onUndirectedGraph) {
+            mapArcsUntil = mapArcs;
+        } else if (onReverseGraph) {
+            mapArcsUntil = mapIncomingArcs;
+        }
+
+        auto getTail = [](const Arc *a, const Vertex *) { return a->getTail(); };
+        auto getHead = [](const Arc *a, const Vertex *) { return a->getHead(); };
+        auto getOtherEndVertex = [](const Arc *a, const Vertex *v) { auto t = a->getTail(); return v == t ? a->getHead() : t; };
+        auto getPeer = onUndirectedGraph ? getOtherEndVertex : (onReverseGraph ? getTail : getHead);
+
         while (!stop && !queue.empty()) {
             const Vertex *curr = queue.front();
             queue.pop_front();
@@ -140,57 +132,30 @@ public:
                 break;
             }
 
-            if (useReversedArc) {
-                diGraph->mapIncomingArcsUntil(curr, [&](Arc *a) {
+            mapArcsUntil(curr, [&](Arc *a) {
                     bool consider = onArcDiscovered(a);
                     stop |= arcStopCondition(a);
                     if (stop || !consider) {
                         return;
                     }
-                    Vertex *tail= a->getTail();
-                    if (!discovered(tail)) {
+                    Vertex *peer = getPeer(a, curr);
+                    if (!discovered(peer)) {
                         maxBfsNumber++;
                         if (computePropertyValues) {
-                            int v =computeOrder ? maxBfsNumber : property->getValue(a->getHead()) + 1;
-                            property->setValue(tail, v);
+                            int v = computeOrder ? maxBfsNumber : property->getValue(curr) + 1;
+                            property->setValue(peer, v);
                         }
                         treeArc(a);
-                        if (!onVertexDiscovered(tail)) {
+                        if (!onVertexDiscovered(peer)) {
                             return;
                         }
 
-                        queue.push_back(tail);
-                        discovered.setValue(tail, true);
+                        queue.push_back(peer);
+                        discovered.setValue(peer, true);
                     } else {
                         nonTreeArc(a);
                     }
                 }, [&](const Arc *) { return stop; });
-            } else {
-                diGraph->mapOutgoingArcsUntil(curr, [&](Arc *a) {
-                    bool consider = onArcDiscovered(a);
-                    stop |= arcStopCondition(a);
-                    if (stop || !consider) {
-                        return;
-                    }
-                    Vertex *head = a->getHead();
-                    if (!discovered(head)) {
-                        maxBfsNumber++;
-                        if (computePropertyValues) {
-                            int v =computeOrder ? maxBfsNumber : property->getValue(a->getTail()) + 1;
-                            property->setValue(head, v);
-                        }
-                        treeArc(a);
-                        if (!onVertexDiscovered(head)) {
-                            return;
-                        }
-
-                        queue.push_back(head);
-                        discovered.setValue(head, true);
-                    } else {
-                        nonTreeArc(a);
-                    }
-                }, [&](const Arc *) { return stop; });
-            }
         }
     }
     virtual std::string getName() const noexcept override { return "BFS"; }
@@ -198,24 +163,18 @@ public:
 
     // ValueComputingAlgorithm interface
 public:
-    virtual bool deliver() override
+    virtual unsigned int deliver() override
     {
-        return maxBfsNumber + 1 == (int) diGraph->getSize();
+        return maxBfsNumber + 1;
     }
 
 private:
-    const Vertex *startVertex;
     bool computeOrder;
     int maxBfsNumber;
     int maxLevel;
 
-    VertexPredicate onVertexDiscovered;
-    ArcPredicate onArcDiscovered;
-    VertexPredicate vertexStopCondition;
-    ArcPredicate arcStopCondition;
     ArcMapping treeArc;
     ArcMapping nonTreeArc;
-    bool useReversedArc;
 
     // DiGraphAlgorithm interface
 private:

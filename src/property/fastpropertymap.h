@@ -118,6 +118,10 @@ public:
         return defaultValue;
     }
 
+    virtual void setAll(const T &val) override {
+      setDefaultValue(val);
+    }
+
 private:
     void enlarge(unsigned int size) {
         if (size < buckets.size()) {

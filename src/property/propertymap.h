@@ -112,6 +112,11 @@ public:
         return map.count(ga) > 0 ? map.at(ga) : defaultValue;
     }
 
+    virtual void setAll(const T &val) override {
+        resetAll();
+        setDefaultValue(val);
+    }
+
 private:
     T defaultValue;
     //typename std::unordered_map<const GraphArtifact*,T> map;

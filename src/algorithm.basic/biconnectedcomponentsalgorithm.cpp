@@ -21,10 +21,12 @@
  */
 
 #include "biconnectedcomponentsalgorithm.h"
-#include "depthfirstsearch.h"
+#include "algorithm.basic.traversal/depthfirstsearch.h"
 
 #include "graph/digraph.h"
 #include "property/propertymap.h"
+
+//#define DEBUG_BIC
 
 #ifdef DEBUG_BIC
 #include <iostream>
@@ -52,11 +54,11 @@ BiconnectedComponentsAlgorithm::~BiconnectedComponentsAlgorithm()
 
 void BiconnectedComponentsAlgorithm::run()
 {
-    DFSResult none(-1, -1, 0);
+    DFSResult none;
     PropertyMap<DFSResult> dfsResult(none);
-    DepthFirstSearch dfs;
+    DepthFirstSearch<> dfs;
     dfs.useModifiableProperty(&dfsResult);
-    dfs.setIgnoreArcDirections(true);
+    dfs.ignoreArcDirection(true);
 
     int n = diGraph->getSize();
     std::vector<Vertex*> dfsOrderRev(n, 0);
@@ -64,7 +66,7 @@ void BiconnectedComponentsAlgorithm::run()
     diGraph->mapVertices([&](Vertex *v) {
         int dfsNum = dfsResult(v).dfsNumber;
         if (dfsNum == -1) {
-            PRINT_DEBUG("Running DFS starting from " << v)
+            PRINT_DEBUG("Running DFS starting from " << v);
             dfs.setStartVertex(v);
             verticesReached += runAlgorithm(dfs, diGraph);
         }
@@ -86,7 +88,9 @@ int findBiconnectedComponents(std::vector<Vertex*> &dfsOrderRev,
     int curBic = 0;
 
     for (Vertex *u : dfsOrderRev) {
-        Vertex *v = dfs(u).parent;
+        PRINT_DEBUG("Considering vertex " << u << " with number "
+                    << dfs(u).dfsNumber  << ", low " << dfs(u).lowNumber  << ", parent " << dfs(u).parent);
+        const Vertex *v = dfs(u).parent;
         if (!v) {
             // u is root
             PRINT_DEBUG(u << " is root.")
