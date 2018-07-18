@@ -100,7 +100,7 @@ Vertex *SubDiGraph::getAnyVertex() const
     return vertex;
 }
 
-void SubDiGraph::mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition)
+void SubDiGraph::mapVerticesUntil(const VertexMapping &vvFun, const VertexPredicate &breakCondition)
 {
     superGraph->mapVerticesUntil([&](Vertex *v) {
         if (inSubGraph(v)) {
@@ -215,7 +215,7 @@ int SubDiGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
     return in;
 }
 
-void SubDiGraph::mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition)
+void SubDiGraph::mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     superGraph->mapArcsUntil([&](Arc *a) {
         if (inSubGraph(a) && inSubGraph(a->getTail()) && inSubGraph(a->getHead())) {
@@ -224,7 +224,7 @@ void SubDiGraph::mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition)
     }, breakCondition);
 }
 
-void SubDiGraph::mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
+void SubDiGraph::mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     if (!inSubGraph(v)) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
@@ -236,7 +236,7 @@ void SubDiGraph::mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPred
     }, breakCondition);
 }
 
-void SubDiGraph::mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
+void SubDiGraph::mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     if (!inSubGraph(v)) {
         throw std::invalid_argument("Vertex is not a part of this graph.");

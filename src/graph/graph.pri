@@ -43,7 +43,6 @@ SOURCES += \
     $$PWD/graphartifact.cpp \
     $$PWD/parallelarcsbundle.cpp \
     $$PWD/subdigraph.cpp \
-    $$PWD/graph.cpp \
     $$PWD/superdigraph.cpp \
     $$PWD/graph_functional.cpp \
     $$PWD/multiarc.cpp \

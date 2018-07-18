@@ -70,7 +70,7 @@ unsigned int ParallelArcsBundle::getSize() const
     return grin->size;
 }
 
-void ParallelArcsBundle::mapArcsUntil(ArcMapping am, ArcPredicate ap) const
+void ParallelArcsBundle::mapArcsUntil(const ArcMapping &am, const ArcPredicate &ap) const
 {
     for (Arc *a : grin->arcsBundle) {
         if (ap(a)) {

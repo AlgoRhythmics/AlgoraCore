@@ -103,7 +103,7 @@ IncidenceListVertex *IncidenceListGraph::vertexAt(unsigned int i) const
     return impl->vertexAt(i);
 }
 
-void IncidenceListGraph::mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition)
+void IncidenceListGraph::mapVerticesUntil(const VertexMapping &vvFun, const VertexPredicate &breakCondition)
 {
     impl->mapVertices(vvFun, breakCondition);
 }
@@ -199,18 +199,18 @@ int IncidenceListGraph::isSink(const Vertex *v) const
     return impl->isSink(vertex);
 }
 
-void IncidenceListGraph::mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition)
+void IncidenceListGraph::mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     impl->mapArcs(avFun, breakCondition);
 }
 
-void IncidenceListGraph::mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
+void IncidenceListGraph::mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     auto vertex = castVertex(v, this);
     impl->mapOutgoingArcs(vertex, avFun, breakCondition);
 }
 
-void IncidenceListGraph::mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
+void IncidenceListGraph::mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     auto vertex = castVertex(v, this);
     impl->mapIncomingArcs(vertex, avFun, breakCondition);

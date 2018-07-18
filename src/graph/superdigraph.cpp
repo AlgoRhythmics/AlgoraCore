@@ -135,7 +135,7 @@ Vertex *SuperDiGraph::getAnyVertex() const
     }
 }
 
-void SuperDiGraph::mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition)
+void SuperDiGraph::mapVerticesUntil(const VertexMapping &vvFun, const VertexPredicate &breakCondition)
 {
     grin->extra->mapVertices([&](Vertex *v) {
         if (!dynamic_cast<DummyVertex*>(v)) {
@@ -277,13 +277,13 @@ int SuperDiGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
     return grin->subGraph->getInDegree(v);
 }
 
-void SuperDiGraph::mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition)
+void SuperDiGraph::mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     grin->extra->mapArcs(avFun, breakCondition);
     grin->subGraph->mapArcsUntil(avFun, breakCondition);
 }
 
-void SuperDiGraph::mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
+void SuperDiGraph::mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     const IncidenceListVertex *vertex;
     if (v->getParent() == this) {
@@ -301,7 +301,7 @@ void SuperDiGraph::mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPr
     }
 }
 
-void SuperDiGraph::mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition)
+void SuperDiGraph::mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     const IncidenceListVertex *vertex;
     if (v->getParent() == this) {

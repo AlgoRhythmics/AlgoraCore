@@ -67,8 +67,8 @@ public:
     }
     virtual unsigned int getNumArcs(bool multiArcsAsSimple = false) const;
 
-    virtual void onArcAdd(void *id, ArcMapping avFun) { arcGreetings.push_back(std::make_pair(id, avFun)); }
-    virtual void onArcRemove(void *id, ArcMapping avFun) { arcFarewells.push_back(std::make_pair(id, avFun)); }
+    virtual void onArcAdd(void *id, const ArcMapping &avFun) { arcGreetings.push_back(std::make_pair(id, avFun)); }
+    virtual void onArcRemove(void *id, const ArcMapping &avFun) { arcFarewells.push_back(std::make_pair(id, avFun)); }
     virtual void removeOnArcAdd(void *id) {
         auto i = arcGreetings.begin();
         while (i != arcGreetings.end()) {
@@ -100,15 +100,15 @@ public:
     virtual void acceptIncomingArcVisitor(const Vertex *v, ArcVisitor *aVisitor) {
         mapIncomingArcs(v, aVisitor->getVisitorFunction());
     }
-    virtual void mapArcs(ArcMapping avFun) {
+    virtual void mapArcs(const ArcMapping &avFun) {
         mapArcsUntil(avFun, arcFalse);
     }
-    virtual void mapOutgoingArcs(const Vertex *v, ArcMapping avFun) { mapOutgoingArcsUntil(v, avFun, arcFalse); }
-    virtual void mapIncomingArcs(const Vertex *v, ArcMapping avFun) { mapIncomingArcsUntil(v, avFun, arcFalse); }
+    virtual void mapOutgoingArcs(const Vertex *v, const ArcMapping &avFun) { mapOutgoingArcsUntil(v, avFun, arcFalse); }
+    virtual void mapIncomingArcs(const Vertex *v, const ArcMapping &avFun) { mapIncomingArcsUntil(v, avFun, arcFalse); }
 
-    virtual void mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition) = 0;
-    virtual void mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) = 0;
-    virtual void mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) = 0;
+    virtual void mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition) = 0;
+    virtual void mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) = 0;
+    virtual void mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) = 0;
 
     virtual void clear() override { arcGreetings.clear(); arcFarewells.clear(); Graph::clear(); }
 
@@ -121,10 +121,10 @@ protected:
    std::vector<std::pair<void*,ArcMapping>> arcFarewells;
 
    virtual void greetArc(Arc *a) {
-       for (const std::pair<void*,ArcMapping> &p : arcGreetings) { p.second(a); }
+       for (const auto &p : arcGreetings) { p.second(a); }
    }
    virtual void dismissArc(Arc *a) {
-       for (const std::pair<void*,ArcMapping> &p : arcFarewells) { p.second(a); }
+       for (const auto &p : arcFarewells) { p.second(a); }
    }
 
     virtual Arc *createArc(Vertex *tail, Vertex *head) {

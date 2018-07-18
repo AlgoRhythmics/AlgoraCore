@@ -42,7 +42,7 @@ public:
     virtual void removeVertex(Vertex *v) override;
     virtual bool containsVertex(const Vertex *v) const override;
     virtual Vertex *getAnyVertex() const override;
-    virtual void mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition) override;
+    virtual void mapVerticesUntil(const VertexMapping &vvFun, const VertexPredicate &breakCondition) override;
     virtual bool isEmpty() const override;
     virtual size_type getSize() const override;
 
@@ -60,9 +60,9 @@ public:
     virtual Arc *findArc(const Vertex *from, const Vertex *to) const override;
     virtual int getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
     virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
-    virtual void mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition) override;
-    virtual void mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) override;
-    virtual void mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) override;
+    virtual void mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
+    virtual void mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
+    virtual void mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
 
 private:
     DiGraph *superGraph;

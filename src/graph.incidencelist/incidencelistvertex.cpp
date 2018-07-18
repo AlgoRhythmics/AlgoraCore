@@ -278,7 +278,7 @@ void IncidenceListVertex::acceptIncomingArcVisitor(ArcVisitor *aVisitor) const
     mapIncomingArcs(aVisitor->getVisitorFunction(), arcFalse);
 }
 
-bool IncidenceListVertex::mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCondition, bool checkValidity) const
+bool IncidenceListVertex::mapOutgoingArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition, bool checkValidity) const
 {
     for (Arc *a : grin->outgoingArcs) {
         if (breakCondition(a)) {
@@ -299,7 +299,7 @@ bool IncidenceListVertex::mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCo
     return true;
 }
 
-bool IncidenceListVertex::mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCondition, bool checkValidity) const
+bool IncidenceListVertex::mapIncomingArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition, bool checkValidity) const
 {
     for (Arc *a : grin->incomingArcs) {
         if (breakCondition(a)) {

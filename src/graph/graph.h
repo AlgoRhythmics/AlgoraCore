@@ -50,8 +50,8 @@ public:
     virtual bool containsVertex(const Vertex *v) const = 0;
     virtual Vertex *getAnyVertex() const = 0;
 
-    virtual void onVertexAdd(void *id, VertexMapping vvFun) { vertexGreetings.push_back(std::make_pair(id, vvFun)); }
-    virtual void onVertexRemove(void *id, VertexMapping vvFun) { vertexFarewells.push_back(std::make_pair(id, vvFun)); }
+    virtual void onVertexAdd(void *id, const VertexMapping &vvFun) { vertexGreetings.push_back(std::make_pair(id, vvFun)); }
+    virtual void onVertexRemove(void *id, const VertexMapping &vvFun) { vertexFarewells.push_back(std::make_pair(id, vvFun)); }
     virtual void removeOnVertexAdd(void *id) {
         auto i = vertexGreetings.begin();
         while (i != vertexGreetings.end()) {
@@ -77,10 +77,10 @@ public:
     virtual void acceptVertexVisitor(VertexVisitor *nVisitor) {
         mapVertices(nVisitor->getVisitorFunction());
     }
-    virtual void mapVertices(VertexMapping vvFun) {
+    virtual void mapVertices(const VertexMapping &vvFun) {
         mapVerticesUntil(vvFun, vertexFalse);
     }
-    virtual void mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition) = 0;
+    virtual void mapVerticesUntil(const VertexMapping &vvFun, const VertexPredicate &breakCondition) = 0;
 
     // Misc
     virtual bool isEmpty() const = 0;

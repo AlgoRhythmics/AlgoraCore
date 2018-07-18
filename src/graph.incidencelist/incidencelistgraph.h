@@ -44,7 +44,7 @@ public:
     virtual Vertex *getAnyVertex() const override;
     virtual IncidenceListVertex *vertexAt(unsigned int i) const;
 
-    virtual void mapVerticesUntil(VertexMapping vvFun, VertexPredicate breakCondition) override;
+    virtual void mapVerticesUntil(const VertexMapping &vvFun, const VertexPredicate &breakCondition) override;
 
     virtual bool isEmpty() const override;
     virtual size_type getSize() const override;
@@ -66,9 +66,9 @@ public:
     virtual int isSource(const Vertex *v) const override;
     virtual int isSink(const Vertex *v) const override;
 
-    virtual void mapArcsUntil(ArcMapping avFun, ArcPredicate breakCondition) override;
-    virtual void mapOutgoingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) override;
-    virtual void mapIncomingArcsUntil(const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) override;
+    virtual void mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
+    virtual void mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
+    virtual void mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
 
 public:
     void bundleParallelArcs();

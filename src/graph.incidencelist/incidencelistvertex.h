@@ -45,8 +45,8 @@ public:
 
     void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
     void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
-    virtual bool mapOutgoingArcs(ArcMapping avFun, ArcPredicate breakCondition = arcFalse, bool checkValidity = true) const;
-    virtual bool mapIncomingArcs(ArcMapping avFun, ArcPredicate breakCondition = arcFalse, bool checkValidity = true) const;
+    virtual bool mapOutgoingArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition = arcFalse, bool checkValidity = true) const;
+    virtual bool mapIncomingArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition = arcFalse, bool checkValidity = true) const;
 
     unsigned int getOutDegree(bool multiArcsAsSimple = false) const;
     unsigned int getInDegree(bool multiArcsAsSimple = false) const;

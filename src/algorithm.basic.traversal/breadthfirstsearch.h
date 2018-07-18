@@ -94,18 +94,18 @@ public:
 
         bool stop = false;
 
-        auto mapArcs = [&](const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) {
+        auto mapArcs = [&](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
             diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
             diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
         };
-        auto mapOutgoingArcs = [&](const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) {
+        auto mapOutgoingArcs = [&](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
             diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
         };
-        auto mapIncomingArcs = [&](const Vertex *v, ArcMapping avFun, ArcPredicate breakCondition) {
+        auto mapIncomingArcs = [&](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
             diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
         };
 
-        auto mapArcsUntil = std::function<void(const Vertex *, ArcMapping, ArcPredicate)>(mapOutgoingArcs);
+        auto mapArcsUntil = std::function<void(const Vertex *, const ArcMapping&, const ArcPredicate&)>(mapOutgoingArcs);
         if (onUndirectedGraph) {
             mapArcsUntil = mapArcs;
         } else if (onReverseGraph) {

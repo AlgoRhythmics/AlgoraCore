@@ -165,7 +165,7 @@ bool IncidenceListGraphImplementation::isSink(const IncidenceListVertex *v) cons
     return v->isSink();
 }
 
-void IncidenceListGraphImplementation::mapVertices(VertexMapping vvFun, VertexPredicate breakCondition, bool checkValidity)
+void IncidenceListGraphImplementation::mapVertices(const VertexMapping &vvFun, const VertexPredicate &breakCondition, bool checkValidity)
 {
     for (Vertex *v : vertices) {
         if (breakCondition(v)) {
@@ -177,7 +177,7 @@ void IncidenceListGraphImplementation::mapVertices(VertexMapping vvFun, VertexPr
     }
 }
 
-void IncidenceListGraphImplementation::mapArcs(ArcMapping avFun, ArcPredicate breakCondition)
+void IncidenceListGraphImplementation::mapArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition)
 {
     for (IncidenceListVertex *v : vertices) {
         if (!v->mapOutgoingArcs(avFun, breakCondition)) {
@@ -186,14 +186,14 @@ void IncidenceListGraphImplementation::mapArcs(ArcMapping avFun, ArcPredicate br
     }
 }
 
-void IncidenceListGraphImplementation::mapOutgoingArcs(const IncidenceListVertex *v, ArcMapping avFun,
-                                                         ArcPredicate breakCondition, bool checkValidity)
+void IncidenceListGraphImplementation::mapOutgoingArcs(const IncidenceListVertex *v, const ArcMapping &avFun,
+                                                         const ArcPredicate &breakCondition, bool checkValidity)
 {
     v->mapOutgoingArcs(avFun, breakCondition, checkValidity);
 }
 
-void IncidenceListGraphImplementation::mapIncomingArcs(const IncidenceListVertex *v, ArcMapping avFun,
-                                                         ArcPredicate breakCondition, bool checkValidity)
+void IncidenceListGraphImplementation::mapIncomingArcs(const IncidenceListVertex *v, const ArcMapping &avFun,
+                                                         const ArcPredicate &breakCondition, bool checkValidity)
 {
     v->mapIncomingArcs(avFun, breakCondition, checkValidity);
 }

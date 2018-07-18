@@ -44,10 +44,10 @@ public:
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) const {
         mapArcs(aVisitor->getVisitorFunction());
     }
-    virtual void mapArcs(ArcMapping am) const {
+    virtual void mapArcs(const ArcMapping &am) const {
         mapArcsUntil(am, arcFalse);
     }
-    virtual void mapArcsUntil(ArcMapping am, ArcPredicate ap) const;
+    virtual void mapArcsUntil(const ArcMapping &am, const ArcPredicate &ap) const;
 
     virtual bool addArc(Arc *a);
     virtual void removeArc(const Arc *a);
