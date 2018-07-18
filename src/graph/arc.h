@@ -41,6 +41,9 @@ public:
     virtual unsigned int getSize() const {
         return 1U;
     }
+    bool isLoop() const {
+        return getTail() == getHead();
+    }
 
     // GraphArtifact interface
 public:
