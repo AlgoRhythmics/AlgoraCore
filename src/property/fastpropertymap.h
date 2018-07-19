@@ -38,7 +38,7 @@ public:
     typedef typename std::vector<T>::const_iterator const_iterator;
     typedef typename std::vector<T>::reference reference;
 
-    FastPropertyMap(unsigned int capacity = 0, const T &defaultValue = T(), const std::string &name = "")
+    FastPropertyMap(const T &defaultValue = T(), const std::string &name = "", unsigned int capacity = 0)
         : ModifiableProperty<T>(name), defaultValue(defaultValue) { buckets.assign(capacity, defaultValue); }
     FastPropertyMap(const FastPropertyMap<T> &other)
         : ModifiableProperty<T>(other),
@@ -140,7 +140,7 @@ class FastPropertyMap<bool> : public ModifiableProperty<bool>
 public:
     typedef typename std::vector<char>::reference reference;
 
-    FastPropertyMap(unsigned int capacity = 0, const bool &defaultValue = bool(), const std::string &name = "")
+    FastPropertyMap(const bool &defaultValue = false, const std::string &name = "", unsigned int capacity = 0)
         : ModifiableProperty<bool>(name), defaultValue(defaultValue) { buckets.assign(capacity, defaultValue); }
     FastPropertyMap(const FastPropertyMap<bool> &other)
         : ModifiableProperty<bool>(other),
