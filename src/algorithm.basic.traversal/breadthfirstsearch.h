@@ -66,6 +66,10 @@ public:
         computeOrder = order;
     }
 
+    void levelAsValues(bool levels) {
+        computeOrder = !levels;
+    }
+
     // GraphTraversal interface
     unsigned int numVerticesReached() const {
         return getMaxBfsNumber() + 1;
