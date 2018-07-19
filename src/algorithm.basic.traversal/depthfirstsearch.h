@@ -46,8 +46,8 @@ class Vertex;
 struct DFSResult {
     int dfsNumber = -1;
     int lowNumber = -1;
-    const Vertex *parent = 0;
-    explicit DFSResult(int dfs=-1, int low=-1, Vertex *p=0) :
+    const Vertex *parent = nullptr;
+    explicit DFSResult(int dfs=-1, int low=-1, Vertex *p=nullptr) :
         dfsNumber(dfs), lowNumber(low), parent(p) {}
     DFSResult(const Vertex *p) : parent(p) {}
 };
@@ -139,7 +139,7 @@ private:
 
             if (!discovered[u]) {
                 if (computePropertyValues) {
-                    (*property)[u] = DFSResult(v);
+                    (*property)[u].parent = v;
                 }
                 PRINT_DEBUG("Set parent of " << u << " to " << (*property)[u].parent);
                 treeArc(arc);
