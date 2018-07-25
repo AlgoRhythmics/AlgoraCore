@@ -37,6 +37,7 @@ class IncidenceListGraphImplementation {
 public:
     explicit IncidenceListGraphImplementation(DiGraph *handle);
     ~IncidenceListGraphImplementation();
+    void clear();
 
     void addVertex(IncidenceListVertex *vertex);
     void removeVertex(IncidenceListVertex *v);

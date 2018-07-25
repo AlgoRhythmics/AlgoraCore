@@ -228,8 +228,7 @@ Graph::size_type IncidenceListGraph::getSize() const
 
 void IncidenceListGraph::clear()
 {
-   delete impl;
-   impl = new IncidenceListGraphImplementation(this);
+   impl->clear();
 
    DiGraph::clear();
 }

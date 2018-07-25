@@ -45,6 +45,11 @@ IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *hand
 
 IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
 {
+    clear();
+}
+
+void IncidenceListGraphImplementation::clear()
+{
     for (IncidenceListVertex *v : vertices) {
         v->mapOutgoingArcs([](Arc *a) { delete a; });
         v->clearOutgoingArcs();
@@ -52,7 +57,10 @@ IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
         delete v;
     }
     vertices.clear();
+    numArcs = 0U;
+    nextVertexId = 0U;
 }
+
 
 void IncidenceListGraphImplementation::addVertex(IncidenceListVertex *vertex)
 {
