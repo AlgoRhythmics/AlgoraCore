@@ -39,8 +39,8 @@ acinfotarget.depends = FORCE
 PRE_TARGETDEPS += $$ACINFOHDR
 QMAKE_EXTRA_TARGETS += acinfotarget
 
-QMAKE_CXXFLAGS_DEBUG += -std=c++11 -O0
-QMAKE_CXXFLAGS_RELEASE += -std=c++11
+QMAKE_CXXFLAGS_DEBUG += -std=c++17 -O0
+QMAKE_CXXFLAGS_RELEASE += -std=c++17
 
 general {
   QMAKE_CXXFLAGS_RELEASE += -O2 -march=x86-64
