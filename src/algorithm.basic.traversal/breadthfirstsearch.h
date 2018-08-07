@@ -96,7 +96,7 @@ public:
             property->setValue(startVertex, 0);
         }
 
-        bool stop = false;
+        bool stop = !onVertexDiscovered(startVertex);
 
         auto mapArcs = [&](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
             diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
