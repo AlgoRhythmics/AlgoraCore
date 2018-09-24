@@ -23,6 +23,7 @@
 message("pri file being processed: $$PWD")
 
 HEADERS += \
-    $$PWD/bucketqueue.h
+    $$PWD/bucketqueue.h \
+    $$PWD/fastvertexset.h
 
 SOURCES +=
