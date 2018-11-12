@@ -71,7 +71,7 @@ public:
     }
 
     // GraphTraversal interface
-    unsigned int numVerticesReached() const {
+    unsigned int numVerticesReached() const override {
         return getMaxBfsNumber() + 1;
     }
 
