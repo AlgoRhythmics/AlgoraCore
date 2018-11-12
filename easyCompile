@@ -31,7 +31,7 @@ PRO_FILE="AlgoraCore.pro"
 [ -z "${QMAKE}" ] && QMAKE=$(which qmake-qt5 2>/dev/null) && echo "Using ${QMAKE} for \"qmake\"."
 [ -n "${QMAKE}" ] || eval 'echo "Binary \"qmake\" or \"qmake-qt5\"  not found. Please specify its location explicitly via the QMAKE variable." 1>&2; exit 1'
 #QMAKE_ARGS="-r -spec linux-g++-64"
-QMAKE_ARGS="-r QMAKE_CXX=clang"
+QMAKE_ARGS="-r -spec linux-clang"
 #QMAKE_ARGS="-r -spec linux-g++-64 CONFIG+=general"  # do not optimize for this cpu only
 QMAKE_ARGS_DEBUG="CONFIG+=debug"
 
