@@ -43,6 +43,9 @@ public:
     virtual Arc *outgoingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
     virtual Arc *incomingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
 
+    int outIndexOf(const Arc *a) const;
+    int inIndexOf(const Arc *a) const;
+
     void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
     void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
     virtual bool mapOutgoingArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition = arcFalse, bool checkValidity = true) const;

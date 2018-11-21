@@ -268,6 +268,24 @@ Arc *IncidenceListVertex::incomingArcAt(unsigned int i, bool multiArcsAsSimple) 
     throw std::invalid_argument("Index must be less than indegree.");
 }
 
+int IncidenceListVertex::outIndexOf(const Arc *a) const
+{
+    auto i = grin->outIndex[a];
+    if (i >= 0) {
+        return i;
+    }
+    return grin->multiOutIndex[a];
+}
+
+int IncidenceListVertex::inIndexOf(const Arc *a) const
+{
+    auto i = grin->inIndex[a];
+    if (i >= 0) {
+        return i;
+    }
+    return grin->multiInIndex[a];
+}
+
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
 {
     mapOutgoingArcs(aVisitor->getVisitorFunction(), arcFalse);
