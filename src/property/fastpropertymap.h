@@ -60,10 +60,18 @@ public:
 
     void setDefaultValue(const T &val) { defaultValue = val; buckets.assign(buckets.size(), defaultValue); }
 
-    virtual void setValue(const GraphArtifact *ga, const T &value) override {
-        unsigned int id = ga->getId();
+    void setValueAtId(unsigned int id, const T &value) {
         enlarge(id);
         buckets[id] = value;
+    }
+
+    virtual void setValue(const GraphArtifact *ga, const T &value) override {
+        unsigned int id = ga->getId();
+        setValueAtId(id, value);
+    }
+
+    void resetAtId(unsigned int id) {
+        setValueAtId(id, defaultValue);
     }
 
     void resetToDefault(const GraphArtifact *ga) {
@@ -80,6 +88,11 @@ public:
 
     virtual T &operator[](const GraphArtifact *ga) override {
         unsigned int id = ga->getId();
+        enlarge(id);
+        return buckets[id];
+    }
+
+    T &operator[](unsigned int id) {
         enlarge(id);
         return buckets[id];
     }
@@ -108,14 +121,18 @@ public:
         return buckets.cend();
     }
 
-    // Property interface
-public:
-    virtual T getValue(const GraphArtifact *ga) const override {
-        unsigned int id = ga->getId();
+    T getValueAtId(unsigned int id) const {
         if (id < buckets.size()) {
             return buckets.at(id);
         }
         return defaultValue;
+    }
+
+    // Property interface
+public:
+    virtual T getValue(const GraphArtifact *ga) const override {
+        unsigned int id = ga->getId();
+        return getValueAtId(id);
     }
 
     virtual void setAll(const T &val) override {
@@ -161,14 +178,22 @@ public:
     const bool &getDefaultValue() const { return defaultValue; }
     void setDefaultValue(const bool &val) { defaultValue = val; buckets.assign(buckets.size(), defaultValue); }
 
-    virtual void setValue(const GraphArtifact *ga, const bool &value) override {
-        unsigned int id = ga->getId();
+    void setValueAtId(unsigned int id, const bool &value) {
         enlarge(id);
         buckets[id] = value;
     }
 
+    virtual void setValue(const GraphArtifact *ga, const bool &value) override {
+        unsigned int id = ga->getId();
+        setValueAtId(id, value);
+    }
+
     void resetToDefault(const GraphArtifact *ga) {
         setValue(ga, defaultValue);
+    }
+
+    void resetAtId(unsigned int id) {
+        setValueAtId(id, defaultValue);
     }
 
     void resetAll(unsigned int capacity = 0U) {
@@ -186,14 +211,23 @@ public:
         return (bool&) buckets[id];
     }
 
-    // Property interface
-public:
-    virtual bool getValue(const GraphArtifact *ga) const override {
-        unsigned int id = ga->getId();
+    bool &operator[](unsigned int id) {
+        enlarge(id);
+        return (bool&) buckets[id];
+    }
+
+    bool getValueAtId(unsigned int id) const {
         if (id < buckets.size()) {
             return buckets.at(id);
         }
         return defaultValue;
+    }
+
+    // Property interface
+public:
+    virtual bool getValue(const GraphArtifact *ga) const override {
+        unsigned int id = ga->getId();
+        return getValueAtId(id);
     }
 
     virtual void setAll(const bool &val) override {
