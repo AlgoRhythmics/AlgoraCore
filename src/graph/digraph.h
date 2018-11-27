@@ -131,8 +131,16 @@ protected:
         return new Arc(tail, head, this);
     }
 
+    virtual Arc *createArc(Vertex *tail, Vertex *head, unsigned int id) {
+        return new Arc(tail, head, id, this);
+    }
+
     virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, int size) {
         return new WeightedArc(tail, head, size, this);
+    }
+
+    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, int size, unsigned int id) {
+        return new WeightedArc(tail, head, size, id, this);
     }
 
     void invalidateArc(Arc *a) {

@@ -38,7 +38,7 @@
 namespace Algora {
 
 IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *handle)
-    : graph(handle), numArcs(0U), nextVertexId(0U)
+    : graph(handle), numArcs(0U), nextVertexId(0U), nextArcId(0U)
 {
 
 }
@@ -59,6 +59,9 @@ void IncidenceListGraphImplementation::clear()
     vertices.clear();
     numArcs = 0U;
     nextVertexId = 0U;
+    nextArcId = 0U;
+    recycledVertexIds.clear();
+    recycledArcIds.clear();
 }
 
 
@@ -88,6 +91,7 @@ void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
     o->setIndex(index);
     vertices[index] = o;
     vertices.pop_back();
+    recycledVertexIds.push_back(v->getId());
     delete v;
 }
 
@@ -122,6 +126,7 @@ void IncidenceListGraphImplementation::removeArc(Arc *a, IncidenceListVertex *ta
     tail->removeOutgoingArc(a);
     head->removeIncomingArc(a);
     numArcs--;
+    recycledArcIds.push_back(a->getId());
     delete a;
 }
 
@@ -238,7 +243,24 @@ void IncidenceListGraphImplementation::unbundleParallelArcs()
 
 IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex()
 {
-    return new IncidenceListVertex(nextVertexId++, graph);
+    unsigned int id;
+    if (recycledVertexIds.empty()) {
+        id = nextVertexId++;
+    } else  {
+        id = recycledVertexIds.back();
+        recycledVertexIds.pop_back();
+    }
+    return new IncidenceListVertex(id, graph);
+}
+
+unsigned int IncidenceListGraphImplementation::getNextArcId()
+{
+    if (recycledArcIds.empty()) {
+        return nextArcId++;
+    }
+    auto id = recycledArcIds.back();
+    recycledArcIds.pop_back();
+    return id;
 }
 
 void IncidenceListGraphImplementation::bundleOutgoingArcs(IncidenceListVertex *vertex)

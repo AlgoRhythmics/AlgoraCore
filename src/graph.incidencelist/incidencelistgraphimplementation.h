@@ -69,11 +69,16 @@ public:
 
     IncidenceListVertex *createIncidenceListVertex();
 
+    unsigned int getNextArcId();
+
 private:
     DiGraph *graph;
     VertexList vertices;
     unsigned int numArcs;
     unsigned int nextVertexId;
+    unsigned int nextArcId;
+    std::vector<unsigned int> recycledVertexIds;
+    std::vector<unsigned int> recycledArcIds;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
     void unbundleOutgoingArcs(IncidenceListVertex *vertex);

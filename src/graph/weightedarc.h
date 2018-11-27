@@ -41,10 +41,10 @@ public:
 
 protected:
     explicit WeightedArc(Vertex *tail, Vertex *head, int weight, GraphArtifact *parent = 0);
+    explicit WeightedArc(Vertex *tail, Vertex *head, int weight, unsigned int id, GraphArtifact *parent = 0);
 
 private:
-    struct CheshireCat;
-    CheshireCat *grin;
+    unsigned int weight;
 
     // GraphArtifact interface
 public:

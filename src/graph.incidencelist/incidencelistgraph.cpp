@@ -113,7 +113,7 @@ Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
     auto t = castVertex(tail, this);
     auto h = castVertex(head, this);
 
-    Arc *a = createArc(t, h);
+    Arc *a = createArc(t, h, impl->getNextArcId());
 
     impl->addArc(a, t, h);
     greetArc(a);
@@ -128,7 +128,7 @@ MultiArc *IncidenceListGraph::addMultiArc(Vertex *tail, Vertex *head, int size)
     auto t = castVertex(tail, this);
     auto h = castVertex(head, this);
 
-    MultiArc *a = createMultiArc(t, h, size);
+    MultiArc *a = createMultiArc(t, h, size, impl->getNextArcId());
 
     impl->addArc(a, t, h);
     greetArc(a);

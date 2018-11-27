@@ -47,6 +47,7 @@ public:
 
 protected:
     explicit MultiArc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
+    explicit MultiArc(Vertex *tail, Vertex *head, unsigned int id, GraphArtifact *parent = 0);
 };
 
 }

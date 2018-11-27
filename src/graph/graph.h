@@ -89,20 +89,22 @@ public:
     virtual void clear() { vertexGreetings.clear(); vertexFarewells.clear(); }
 
 protected:
-   std::vector<std::pair<void*,VertexMapping>> vertexGreetings;
-   std::vector<std::pair<void*,VertexMapping>> vertexFarewells;
+   std::vector<std::pair<void*, VertexMapping>> vertexGreetings;
+   std::vector<std::pair<void*, VertexMapping>> vertexFarewells;
 
    virtual void greetVertex(Vertex *v) {
-       //for (const VertexMapping &f : vertexGreetings) { f(v); }
-       for (const std::pair<void*,VertexMapping> &p : vertexGreetings) { p.second(v); }
+       for (const std::pair<void*, VertexMapping> &p : vertexGreetings) { p.second(v); }
    }
    virtual void dismissVertex(Vertex *v) {
-       //for (const VertexMapping &f : vertexFarewells) { f(v); }
-       for (const std::pair<void*,VertexMapping> &p : vertexFarewells) { p.second(v); }
+       for (const std::pair<void*, VertexMapping> &p : vertexFarewells) { p.second(v); }
    }
 
     Vertex *createVertex() {
         return new Vertex(this);
+    }
+
+    Vertex *createVertex(unsigned int id) {
+        return new Vertex(id, this);
     }
 
     void invalidateVertex(Vertex *v) {

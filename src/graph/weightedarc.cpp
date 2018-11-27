@@ -24,31 +24,29 @@
 
 namespace Algora {
 
-struct WeightedArc::CheshireCat {
-    int weight;
-
-    explicit CheshireCat(int w = 0) : weight(w) { }
-};
-
 WeightedArc::WeightedArc(Vertex *tail, Vertex *head, int weight, GraphArtifact *parent)
-    : MultiArc(tail, head, parent), grin(new CheshireCat(weight))
+    : MultiArc(tail, head, parent), weight(weight)
 {
 
+}
+
+WeightedArc::WeightedArc(Vertex *tail, Vertex *head, int weight, unsigned int id, GraphArtifact *parent)
+    : MultiArc(tail, head, id, parent), weight(weight)
+{
 }
 
 unsigned int WeightedArc::getSize() const
 {
-    return grin->weight;
+    return weight;
 }
 
 WeightedArc::~WeightedArc()
 {
-    delete grin;
 }
 
-void WeightedArc::setWeight(int weight)
+void WeightedArc::setWeight(int w)
 {
-    grin->weight = weight;
+    this->weight = w;
 }
 
 

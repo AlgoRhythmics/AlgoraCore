@@ -51,8 +51,10 @@ std::string MultiArc::toString() const
 
 MultiArc::MultiArc(Vertex *tail, Vertex *head, GraphArtifact *parent)
     : Arc(tail, head, parent)
-{
+{  }
 
-}
+MultiArc::MultiArc(Vertex *tail, Vertex *head, unsigned int id, GraphArtifact *parent)
+    : Arc(tail, head, id, parent)
+{  }
 
 }
