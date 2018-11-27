@@ -34,9 +34,15 @@ public:
     typedef T value_type;
     typedef typename std::vector<T>::size_type size_type;
 
-    explicit BucketQueue(const Priority& prio = Priority()) : m_size(0), m_top(0), m_bot(0), m_priority(prio) { }
+    explicit BucketQueue(const Priority& prio = Priority(),
+                         const size_type &limit = 0U)
+        : m_size(0), m_top(0), m_bot(0), m_priority(prio), m_limit(limit) { }
 
     bool empty() const { return m_size == 0UL; }
+
+    void setLimit(const size_type &limit) {
+        m_limit = limit;
+    }
 
     size_type size() const { return m_size; }
 
@@ -50,6 +56,9 @@ public:
 
     void push (const value_type& val) {
         size_type p = m_priority(val);
+        if (m_limit > 0U && p > m_limit) {
+            p = m_limit;
+        }
         if (m_buckets.size() <= p) {
             m_buckets.resize(p+1);
         }
@@ -85,6 +94,7 @@ private:
     size_type m_top;
     size_type m_bot;
     Priority m_priority;
+    size_type m_limit;
 };
 
 //template <typename T, typename Priority>
