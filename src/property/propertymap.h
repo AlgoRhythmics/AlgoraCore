@@ -25,8 +25,8 @@
 
 #include "modifiableproperty.h"
 
-//#include <unordered_map>
-#include <map>
+#include <unordered_map>
+//#include <map>
 
 namespace Algora {
 
@@ -34,8 +34,10 @@ template<typename T>
 class PropertyMap : public ModifiableProperty<T>
 {
 public:
-    typedef typename std::map<const GraphArtifact*,T>::iterator iterator;
-    typedef typename std::map<const GraphArtifact*,T>::const_iterator const_iterator;
+    typedef typename std::unordered_map<const GraphArtifact*,T> MapType;
+    //typedef typename std::map<const GraphArtifact*,T> MapType;
+    typedef typename MapType::iterator iterator;
+    typedef typename MapType::const_iterator const_iterator;
 
     PropertyMap(const T &defaultValue = T(), const std::string &name = "")
         : ModifiableProperty<T>(name), defaultValue(defaultValue) { }
@@ -119,8 +121,7 @@ public:
 
 private:
     T defaultValue;
-    //typename std::unordered_map<const GraphArtifact*,T> map;
-    typename std::map<const GraphArtifact*,T> map;
+    MapType map;
 };
 
 }
