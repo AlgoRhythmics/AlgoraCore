@@ -42,7 +42,9 @@ public:
         : GraphTraversal<int>(computeValues),
           computeOrder(computeOrder), maxBfsNumber(-1), maxLevel(-1),
           treeArc(arcNothing), nonTreeArc(arcNothing)
-    { }
+    {
+        discovered.setDefaultValue(false);
+    }
 
     virtual ~BreadthFirstSearch() { }
 
@@ -83,11 +85,12 @@ public:
             startVertex = diGraph->getAnyVertex();
         }
 
-        boost::circular_buffer<const Vertex*> queue(diGraph->getSize());
-        ModifiablePropertyType<bool> discovered(false);
 
         maxBfsNumber = 0;
         maxLevel = 0;
+
+        queue.clear();
+        discovered.resetAll();
 
         queue.push_back(startVertex);
         queue.push_back(nullptr);
@@ -186,7 +189,10 @@ private:
     {
         maxBfsNumber = -1;
         maxLevel = -1;
+        queue.set_capacity(diGraph->getSize());
     }
+    boost::circular_buffer<const Vertex*> queue;
+    ModifiablePropertyType<bool> discovered;
 };
 
 }
