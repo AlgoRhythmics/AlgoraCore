@@ -39,7 +39,7 @@ public:
 
 protected:
     explicit Vertex(GraphArtifact *parent = 0);
-    explicit Vertex(unsigned int id, GraphArtifact *parent = 0);
+    explicit Vertex(unsigned long long id, GraphArtifact *parent = 0);
 
     // GraphArtifact interface
 public:

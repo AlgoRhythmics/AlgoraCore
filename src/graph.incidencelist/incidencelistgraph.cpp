@@ -95,7 +95,7 @@ Vertex *IncidenceListGraph::getAnyVertex() const
     return impl->getFirstVertex();
 }
 
-IncidenceListVertex *IncidenceListGraph::vertexAt(unsigned int i) const
+IncidenceListVertex *IncidenceListGraph::vertexAt(unsigned long long i) const
 {
     if (i >= getSize()) {
         throw std::invalid_argument("Index must be less than graph size.");
@@ -120,7 +120,7 @@ Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
     return a;
 }
 
-MultiArc *IncidenceListGraph::addMultiArc(Vertex *tail, Vertex *head, int size)
+MultiArc *IncidenceListGraph::addMultiArc(Vertex *tail, Vertex *head, unsigned long long size)
 {
     if (size <= 0) {
         throw std::invalid_argument("Multiarcs must be of size at least 1.");
@@ -170,30 +170,30 @@ Arc *IncidenceListGraph::findArc(const Vertex *from, const Vertex *to) const
     return impl->findArc(tail, head);
 }
 
-unsigned int IncidenceListGraph::getNumArcs(bool multiArcsAsSimple) const
+unsigned long long IncidenceListGraph::getNumArcs(bool multiArcsAsSimple) const
 {
     return impl->getNumArcs(multiArcsAsSimple);
 }
 
-int IncidenceListGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
+unsigned long long IncidenceListGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);
     return impl->getOutDegree(vertex, multiArcsAsSimple);
 }
 
-int IncidenceListGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
+unsigned long long IncidenceListGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);
     return impl->getInDegree(vertex, multiArcsAsSimple);
 }
 
-int IncidenceListGraph::isSource(const Vertex *v) const
+bool IncidenceListGraph::isSource(const Vertex *v) const
 {
     auto vertex = castVertex(v, this);
     return impl->isSource(vertex);
 }
 
-int IncidenceListGraph::isSink(const Vertex *v) const
+bool IncidenceListGraph::isSink(const Vertex *v) const
 {
     auto vertex = castVertex(v, this);
     return impl->isSink(vertex);

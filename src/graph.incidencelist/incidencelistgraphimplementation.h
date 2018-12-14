@@ -51,8 +51,8 @@ public:
     Arc *findArc(const IncidenceListVertex *tail, const IncidenceListVertex *head) const;
     unsigned int getNumArcs(bool multiArcsAsSimple = false) const;
 
-    unsigned int getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
-    unsigned int getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
+    unsigned long long getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
+    unsigned long long getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
     bool isSource(const IncidenceListVertex *v) const;
     bool isSink(const IncidenceListVertex *v) const;
 
@@ -74,11 +74,11 @@ public:
 private:
     DiGraph *graph;
     VertexList vertices;
-    unsigned int numArcs;
-    unsigned int nextVertexId;
-    unsigned int nextArcId;
-    std::vector<unsigned int> recycledVertexIds;
-    std::vector<unsigned int> recycledArcIds;
+    unsigned long long numArcs;
+    unsigned long long nextVertexId;
+    unsigned long long nextArcId;
+    std::vector<unsigned long long int> recycledVertexIds;
+    std::vector<unsigned long long int> recycledArcIds;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
     void unbundleOutgoingArcs(IncidenceListVertex *vertex);

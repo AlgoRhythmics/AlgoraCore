@@ -36,7 +36,7 @@ class MultiArc : public Arc
 public:
     virtual ~MultiArc();
 
-    virtual unsigned int getSize() const override = 0;
+    virtual unsigned long long getSize() const override = 0;
 
     // GraphArtifact interface
 public:
@@ -47,7 +47,7 @@ public:
 
 protected:
     explicit MultiArc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
-    explicit MultiArc(Vertex *tail, Vertex *head, unsigned int id, GraphArtifact *parent = 0);
+    explicit MultiArc(Vertex *tail, Vertex *head, unsigned long long id, GraphArtifact *parent = 0);
 };
 
 }

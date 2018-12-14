@@ -38,7 +38,7 @@ public:
     typedef typename std::vector<T>::const_iterator const_iterator;
     typedef typename std::vector<T>::reference reference;
 
-    FastPropertyMap(const T &defaultValue = T(), const std::string &name = "", unsigned int capacity = 0)
+    FastPropertyMap(const T &defaultValue = T(), const std::string &name = "", unsigned long long capacity = 0)
         : ModifiableProperty<T>(name), defaultValue(defaultValue) { buckets.assign(capacity, defaultValue); }
     FastPropertyMap(const FastPropertyMap<T> &other)
         : ModifiableProperty<T>(other),
@@ -60,17 +60,17 @@ public:
 
     void setDefaultValue(const T &val) { defaultValue = val; buckets.assign(buckets.size(), defaultValue); }
 
-    void setValueAtId(unsigned int id, const T &value) {
+    void setValueAtId(unsigned long long id, const T &value) {
         enlarge(id);
         buckets[id] = value;
     }
 
     virtual void setValue(const GraphArtifact *ga, const T &value) override {
-        unsigned int id = ga->getId();
+        auto id = ga->getId();
         setValueAtId(id, value);
     }
 
-    void resetAtId(unsigned int id) {
+    void resetAtId(unsigned long long id) {
         setValueAtId(id, defaultValue);
     }
 
@@ -78,7 +78,7 @@ public:
         setValue(ga, defaultValue);
     }
 
-    void resetAll(unsigned int capacity) {
+    void resetAll(unsigned long long capacity) {
         buckets.assign(capacity, defaultValue);
     }
 
@@ -87,12 +87,12 @@ public:
     }
 
     virtual T &operator[](const GraphArtifact *ga) override {
-        unsigned int id = ga->getId();
+        auto id = ga->getId();
         enlarge(id);
         return buckets[id];
     }
 
-    T &operator[](unsigned int id) {
+    T &operator[](unsigned long long id) {
         enlarge(id);
         return buckets[id];
     }
@@ -121,7 +121,7 @@ public:
         return buckets.cend();
     }
 
-    T getValueAtId(unsigned int id) const {
+    T getValueAtId(unsigned long long id) const {
         if (id < buckets.size()) {
             return buckets.at(id);
         }
@@ -131,7 +131,7 @@ public:
     // Property interface
 public:
     virtual T getValue(const GraphArtifact *ga) const override {
-        unsigned int id = ga->getId();
+        auto id = ga->getId();
         return getValueAtId(id);
     }
 
@@ -140,7 +140,7 @@ public:
     }
 
 private:
-    void enlarge(unsigned int size) {
+    void enlarge(unsigned long long size) {
         if (size < buckets.size()) {
             return;
         }
@@ -157,7 +157,7 @@ class FastPropertyMap<bool> : public ModifiableProperty<bool>
 public:
     typedef typename std::vector<char>::reference reference;
 
-    FastPropertyMap(const bool &defaultValue = false, const std::string &name = "", unsigned int capacity = 0)
+    FastPropertyMap(const bool &defaultValue = false, const std::string &name = "", unsigned long long capacity = 0)
         : ModifiableProperty<bool>(name), defaultValue(defaultValue) { buckets.assign(capacity, defaultValue); }
     FastPropertyMap(const FastPropertyMap<bool> &other)
         : ModifiableProperty<bool>(other),
@@ -178,13 +178,13 @@ public:
     const bool &getDefaultValue() const { return defaultValue; }
     void setDefaultValue(const bool &val) { defaultValue = val; buckets.assign(buckets.size(), defaultValue); }
 
-    void setValueAtId(unsigned int id, const bool &value) {
+    void setValueAtId(unsigned long long id, const bool &value) {
         enlarge(id);
         buckets[id] = value;
     }
 
     virtual void setValue(const GraphArtifact *ga, const bool &value) override {
-        unsigned int id = ga->getId();
+        auto id = ga->getId();
         setValueAtId(id, value);
     }
 
@@ -192,11 +192,11 @@ public:
         setValue(ga, defaultValue);
     }
 
-    void resetAtId(unsigned int id) {
+    void resetAtId(unsigned long long id) {
         setValueAtId(id, defaultValue);
     }
 
-    void resetAll(unsigned int capacity = 0U) {
+    void resetAll(unsigned long long capacity = 0ULL) {
         if (capacity == 0) {
             capacity = buckets.size();
         }
@@ -204,19 +204,19 @@ public:
     }
 
     virtual bool &operator[](const GraphArtifact *ga) override {
-        unsigned int id = ga->getId();
+        auto id = ga->getId();
         enlarge(id);
         //bool &b = (bool&) buckets[id];
         //return b;
         return (bool&) buckets[id];
     }
 
-    bool &operator[](unsigned int id) {
+    bool &operator[](unsigned long long id) {
         enlarge(id);
         return (bool&) buckets[id];
     }
 
-    bool getValueAtId(unsigned int id) const {
+    bool getValueAtId(unsigned long long id) const {
         if (id < buckets.size()) {
             return buckets.at(id);
         }
@@ -226,7 +226,7 @@ public:
     // Property interface
 public:
     virtual bool getValue(const GraphArtifact *ga) const override {
-        unsigned int id = ga->getId();
+        auto id = ga->getId();
         return getValueAtId(id);
     }
 
@@ -235,7 +235,7 @@ public:
     }
 
 private:
-    void enlarge(unsigned int size) {
+    void enlarge(unsigned long long size) {
         if (size < buckets.size()) {
             return;
         }

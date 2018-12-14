@@ -38,7 +38,7 @@ class Vertex;
 class Graph : public GraphArtifact
 {
 public:
-    typedef unsigned int size_type;
+    typedef unsigned long long size_type;
 
     explicit Graph(GraphArtifact *parent = 0)
         : GraphArtifact(parent) { }
@@ -103,7 +103,7 @@ protected:
         return new Vertex(this);
     }
 
-    Vertex *createVertex(unsigned int id) {
+    Vertex *createVertex(unsigned long long id) {
         return new Vertex(id, this);
     }
 

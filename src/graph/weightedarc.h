@@ -34,17 +34,17 @@ class WeightedArc : public MultiArc
 public:
     virtual ~WeightedArc();
 
-    int getWeight() const {
+    unsigned long long getWeight() const {
         return getSize();
     }
-    void setWeight(int weight);
+    void setWeight(unsigned long long weight);
 
 protected:
-    explicit WeightedArc(Vertex *tail, Vertex *head, int weight, GraphArtifact *parent = 0);
-    explicit WeightedArc(Vertex *tail, Vertex *head, int weight, unsigned int id, GraphArtifact *parent = 0);
+    explicit WeightedArc(Vertex *tail, Vertex *head, unsigned long long weight, GraphArtifact *parent = 0);
+    explicit WeightedArc(Vertex *tail, Vertex *head, unsigned long long weight, unsigned long long id, GraphArtifact *parent = 0);
 
 private:
-    unsigned int weight;
+    unsigned long long weight;
 
     // GraphArtifact interface
 public:
@@ -54,7 +54,7 @@ public:
 
     // MultiArc interface
 public:
-    virtual unsigned int getSize() const override;
+    virtual unsigned long long getSize() const override;
 };
 
 }

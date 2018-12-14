@@ -32,11 +32,11 @@ namespace Algora {
 class Vertex;
 
 template<typename PropertyType>
-class GraphTraversal : public PropertyComputingAlgorithm<unsigned int, PropertyType>
+class GraphTraversal : public PropertyComputingAlgorithm<unsigned long long, PropertyType>
 {
 public:
     explicit GraphTraversal(bool computeValues = true)
-        : PropertyComputingAlgorithm<unsigned int, PropertyType>(computeValues),
+        : PropertyComputingAlgorithm<unsigned long long, PropertyType>(computeValues),
           startVertex(nullptr), onReverseGraph(false), onUndirectedGraph(false),
           onVertexDiscovered(vertexTrue), onArcDiscovered(arcTrue),
           vertexStopCondition(vertexFalse), arcStopCondition(arcFalse)
@@ -72,13 +72,13 @@ public:
 				onUndirectedGraph = ignore;
     }
 
-    virtual unsigned int numVerticesReached() const = 0;
+    virtual unsigned long long numVerticesReached() const = 0;
 
     // DiGraphAlgorithm interface
 public:
     virtual bool prepare() override
     {
-        return PropertyComputingAlgorithm<unsigned int, PropertyType>::prepare()
+        return PropertyComputingAlgorithm<unsigned long long, PropertyType>::prepare()
                 && ( startVertex == nullptr || (this->diGraph->containsVertex(startVertex) && startVertex->isValid()));
     }
 

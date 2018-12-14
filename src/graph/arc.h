@@ -38,8 +38,8 @@ public:
 
     virtual Vertex *getTail() const { return getFirst(); }
     virtual Vertex *getHead() const { return getSecond(); }
-    virtual unsigned int getSize() const {
-        return 1U;
+    virtual unsigned long long getSize() const {
+        return 1ULL;
     }
     bool isLoop() const {
         return getTail() == getHead();

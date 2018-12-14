@@ -43,16 +43,16 @@ public:
     virtual Arc *outgoingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
     virtual Arc *incomingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
 
-    int outIndexOf(const Arc *a) const;
-    int inIndexOf(const Arc *a) const;
+    unsigned long long outIndexOf(const Arc *a) const;
+    unsigned long long inIndexOf(const Arc *a) const;
 
     void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
     void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
     virtual bool mapOutgoingArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition = arcFalse, bool checkValidity = true) const;
     virtual bool mapIncomingArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition = arcFalse, bool checkValidity = true) const;
 
-    unsigned int getOutDegree(bool multiArcsAsSimple = false) const;
-    unsigned int getInDegree(bool multiArcsAsSimple = false) const;
+    unsigned long long getOutDegree(bool multiArcsAsSimple = false) const;
+    unsigned long long getInDegree(bool multiArcsAsSimple = false) const;
     bool isSource() const;
     bool isSink() const;
     bool isIsolated() const { return isSource() && isSink(); }
@@ -73,7 +73,7 @@ protected:
 
     virtual void enableConsistencyCheck(bool enable);
 
-    void setIndex(int i);
+    void setIndex(unsigned long long i);
 
 private:
     class CheshireCat;

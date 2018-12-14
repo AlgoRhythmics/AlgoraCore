@@ -54,12 +54,12 @@ public:
 
     virtual DiGraph *createReversedGraph(PropertyMap<GraphArtifact*> &map) const override;
     virtual Arc *addArc(Vertex *tail, Vertex *head) override;
-    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, int size) override;
+    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, unsigned long long size) override;
     virtual void removeArc(Arc *a) override;
     virtual bool containsArc(const Arc *a) const override;
     virtual Arc *findArc(const Vertex *from, const Vertex *to) const override;
-    virtual int getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
-    virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
+    virtual unsigned long long getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
+    virtual unsigned long long getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
     virtual void mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
     virtual void mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
     virtual void mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) override;

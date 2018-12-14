@@ -40,7 +40,7 @@ public:
 
     // Arc interface
 public:
-    virtual unsigned int getSize() const override { return arc->getSize(); }
+    virtual unsigned long long getSize() const override { return arc->getSize(); }
 
 private:
     Arc *arc;

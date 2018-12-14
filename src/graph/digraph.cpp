@@ -33,10 +33,10 @@ DiGraph::DiGraph(GraphArtifact *parent)
 
 }
 
-unsigned int DiGraph::getNumArcs(bool multiArcsAsSimple) const
+unsigned long long DiGraph::getNumArcs(bool multiArcsAsSimple) const
 {
     DiGraph *me = const_cast<DiGraph*>(this);
-    unsigned int numArcs = 0U;
+    unsigned long long numArcs = 0ULL;
     me->mapVertices([&](Vertex *v) { numArcs += me->getOutDegree(v, multiArcsAsSimple); });
     return numArcs;
 }

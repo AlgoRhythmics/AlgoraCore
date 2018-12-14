@@ -29,17 +29,20 @@
 #include "property/propertymap.h"
 
 #include <boost/circular_buffer.hpp>
+#include <climits>
 
 namespace Algora {
 
 class Vertex;
 
 template <template<typename T> class ModifiablePropertyType = PropertyMap>
-class BreadthFirstSearch : public GraphTraversal<int>
+class BreadthFirstSearch : public GraphTraversal<unsigned long long>
 {
 public:
+    constexpr static unsigned long long INFINITY = ULLONG_MAX;
+
     explicit BreadthFirstSearch(bool computeValues = true, bool computeOrder = true)
-        : GraphTraversal<int>(computeValues),
+        : GraphTraversal<unsigned long long>(computeValues),
           computeOrder(computeOrder), maxBfsNumber(-1), maxLevel(-1),
           treeArc(arcNothing), nonTreeArc(arcNothing)
     {
@@ -73,7 +76,7 @@ public:
     }
 
     // GraphTraversal interface
-    unsigned int numVerticesReached() const override {
+    unsigned long long numVerticesReached() const override {
         return getMaxBfsNumber() + 1;
     }
 
@@ -86,8 +89,8 @@ public:
         }
 
 
-        maxBfsNumber = 0;
-        maxLevel = 0;
+        maxBfsNumber = 0ULL;
+        maxLevel = 0ULL;
 
         queue.clear();
         discovered.resetAll();
@@ -170,15 +173,15 @@ public:
 
     // ValueComputingAlgorithm interface
 public:
-    virtual unsigned int deliver() override
+    virtual unsigned long long deliver() override
     {
-        return maxBfsNumber + 1;
+        return maxBfsNumber + 1ULL;
     }
 
 private:
     bool computeOrder;
-    int maxBfsNumber;
-    int maxLevel;
+    unsigned long long maxBfsNumber;
+    unsigned long long maxLevel;
 
     ArcMapping treeArc;
     ArcMapping nonTreeArc;
@@ -187,8 +190,8 @@ private:
 private:
     virtual void onDiGraphSet() override
     {
-        maxBfsNumber = -1;
-        maxLevel = -1;
+        maxBfsNumber = INFINITY;
+        maxLevel = INFINITY;
         queue.set_capacity(diGraph->getSize());
     }
     boost::circular_buffer<const Vertex*> queue;

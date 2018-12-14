@@ -42,7 +42,7 @@ public:
     virtual void removeVertex(Vertex *v) override;
     virtual bool containsVertex(const Vertex *v) const override;
     virtual Vertex *getAnyVertex() const override;
-    virtual IncidenceListVertex *vertexAt(unsigned int i) const;
+    virtual IncidenceListVertex *vertexAt(unsigned long long i) const;
 
     virtual void mapVerticesUntil(const VertexMapping &vvFun, const VertexPredicate &breakCondition) override;
 
@@ -55,16 +55,16 @@ public:
 public:
     DiGraph *createReversedGraph(PropertyMap<GraphArtifact *> &map) const override;
     virtual Arc *addArc(Vertex *tail, Vertex *head) override;
-    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, int size) override;
+    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, unsigned long long size) override;
     virtual void removeArc(Arc *a) override;
     virtual bool containsArc(const Arc *a) const override;
     virtual Arc *findArc(const Vertex *from, const Vertex *to) const override;
-    virtual unsigned int getNumArcs(bool multiArcsAsSimple = false) const override;
+    virtual unsigned long long getNumArcs(bool multiArcsAsSimple = false) const override;
 
-    virtual int getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
-    virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
-    virtual int isSource(const Vertex *v) const override;
-    virtual int isSink(const Vertex *v) const override;
+    virtual unsigned long long getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
+    virtual unsigned long long getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
+    virtual bool isSource(const Vertex *v) const override;
+    virtual bool isSink(const Vertex *v) const override;
 
     virtual void mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
     virtual void mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) override;

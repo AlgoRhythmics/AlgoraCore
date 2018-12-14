@@ -30,11 +30,11 @@ namespace Algora {
 class GraphArtifact
 {
 public:
-    explicit GraphArtifact(unsigned int id, GraphArtifact *parent = 0);
+    explicit GraphArtifact(unsigned long long id, GraphArtifact *parent = 0);
     explicit GraphArtifact(GraphArtifact *parent = 0);
     virtual ~GraphArtifact();
 
-    unsigned int getId() const { return id; }
+    unsigned long long getId() const { return id; }
     GraphArtifact *getParent() const { return parent; }
 
     virtual std::string typeString() const noexcept {
@@ -59,9 +59,9 @@ private:
     GraphArtifact& operator=(const GraphArtifact&);
 
 private:
-    static unsigned int nextId;
+    static unsigned long long nextId;
 
-    unsigned int id;
+    unsigned long long id;
     GraphArtifact *parent;
     bool valid;
     std::string name;

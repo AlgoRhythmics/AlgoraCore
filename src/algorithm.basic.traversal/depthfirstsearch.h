@@ -38,6 +38,7 @@
 #include "graph/digraph.h"
 #include "property/propertymap.h"
 #include "graph/graph_functional.h"
+#include <climits>
 
 namespace Algora {
 
@@ -56,11 +57,15 @@ template <template<typename T> class ModifiablePropertyType = PropertyMap>
 class DepthFirstSearch : public GraphTraversal<DFSResult>
 {
 public:
+    constexpr static unsigned long long INFINITY = ULLONG_MAX;
+
     DepthFirstSearch(bool computeValues = true)
         : GraphTraversal<DFSResult>(computeValues),
-          maxDfsNumber(-1),
+          maxDfsNumber(INFINITY),
           treeArc(arcNothing), nonTreeArc(arcNothing)
-    { }
+    {
+        discovered.setDefaultValue(false);
+    }
 
     virtual ~DepthFirstSearch() { }
 
@@ -74,7 +79,7 @@ public:
 
 
     // GraphTraversal interface
-    unsigned int numVerticesReached() const override {
+    unsigned long long numVerticesReached() const override {
         return maxDfsNumber + 1;
     }
 
@@ -84,10 +89,10 @@ public:
     {
         const Vertex *source = startVertex != nullptr ? startVertex : diGraph->getAnyVertex();
 
-        int nextDepth = 0;
-        ModifiablePropertyType<bool> discovered(false);
+        unsigned long long nextDepth = 0;
         bool stop = false;
-        dfs(source, nextDepth, discovered, stop);
+        discovered.resetAll();
+        dfs(source, nextDepth, stop);
         maxDfsNumber = nextDepth - 1;
     }
 
@@ -96,17 +101,18 @@ public:
 
     // ValueComputingAlgorithm interface
 public:
-    virtual unsigned int deliver() override
+    virtual unsigned long long deliver() override
     {
         return maxDfsNumber + 1;
     }
 
 private:
-    int maxDfsNumber;
+    unsigned long long maxDfsNumber;
     ArcMapping treeArc;
     ArcMapping nonTreeArc;
+    ModifiablePropertyType<bool> discovered;
 
-    void dfs(const Vertex *v, int &depth, ModifiableProperty<bool> &discovered, bool &stop) {
+    void dfs(const Vertex *v, unsigned long long &depth, bool &stop) {
         discovered[v] = true;
         DFSResult *cur = nullptr;
         if (computePropertyValues) {
@@ -144,7 +150,7 @@ private:
                 PRINT_DEBUG("Set parent of " << u << " to " << (*property)[u].parent);
                 treeArc(arc);
 
-                dfs(u, depth, discovered, stop);
+                dfs(u, depth, stop);
 
                 if (stop) {
                     return;

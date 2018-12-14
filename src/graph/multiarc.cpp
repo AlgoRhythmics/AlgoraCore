@@ -53,7 +53,7 @@ MultiArc::MultiArc(Vertex *tail, Vertex *head, GraphArtifact *parent)
     : Arc(tail, head, parent)
 {  }
 
-MultiArc::MultiArc(Vertex *tail, Vertex *head, unsigned int id, GraphArtifact *parent)
+MultiArc::MultiArc(Vertex *tail, Vertex *head, unsigned long long id, GraphArtifact *parent)
     : Arc(tail, head, id, parent)
 {  }
 

@@ -158,12 +158,12 @@ unsigned int IncidenceListGraphImplementation::getNumArcs(bool multiArcsAsSimple
     return arcWeights;
 }
 
-unsigned int IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
+unsigned long long IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
     return v->getOutDegree(multiArcsAsSimple);
 }
 
-unsigned int IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
+unsigned long long IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
     return v->getInDegree(multiArcsAsSimple);
 }

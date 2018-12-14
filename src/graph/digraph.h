@@ -46,26 +46,26 @@ public:
 
     // Arcs
     virtual Arc *addArc(Vertex *tail, Vertex *head) = 0;
-    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, int size) = 0;
+    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, unsigned long long size) = 0;
     virtual void removeArc(Arc *a) = 0;
     virtual bool containsArc(const Arc *a) const = 0;
     virtual Arc *findArc(const Vertex *from, const Vertex *to) const = 0;
 
-    virtual int getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
-    virtual int getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
-    virtual int getDegree(const Vertex *v, bool multiArcsAsSimple = false) const {
+    virtual unsigned long long getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
+    virtual unsigned long long getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
+    virtual unsigned long long getDegree(const Vertex *v, bool multiArcsAsSimple = false) const {
         return getOutDegree(v, multiArcsAsSimple) + getInDegree(v, multiArcsAsSimple);
     }
-    virtual int isSource(const Vertex *v) const {
+    virtual bool isSource(const Vertex *v) const {
         return getInDegree(v) == 0;
     }
-    virtual int isSink(const Vertex *v) const {
+    virtual bool isSink(const Vertex *v) const {
         return getOutDegree(v) == 0;
     }
-    virtual int isIsolated(const Vertex *v) const {
+    virtual bool isIsolated(const Vertex *v) const {
         return isSource(v) && isSink(v);
     }
-    virtual unsigned int getNumArcs(bool multiArcsAsSimple = false) const;
+    virtual unsigned long long getNumArcs(bool multiArcsAsSimple = false) const;
 
     virtual void onArcAdd(void *id, const ArcMapping &avFun) { arcGreetings.push_back(std::make_pair(id, avFun)); }
     virtual void onArcRemove(void *id, const ArcMapping &avFun) { arcFarewells.push_back(std::make_pair(id, avFun)); }
@@ -131,15 +131,15 @@ protected:
         return new Arc(tail, head, this);
     }
 
-    virtual Arc *createArc(Vertex *tail, Vertex *head, unsigned int id) {
+    virtual Arc *createArc(Vertex *tail, Vertex *head, unsigned long long id) {
         return new Arc(tail, head, id, this);
     }
 
-    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, int size) {
+    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, unsigned long long size) {
         return new WeightedArc(tail, head, size, this);
     }
 
-    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, int size, unsigned int id) {
+    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, unsigned long long size, unsigned long long id) {
         return new WeightedArc(tail, head, size, id, this);
     }
 
