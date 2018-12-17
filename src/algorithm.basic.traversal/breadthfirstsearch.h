@@ -39,7 +39,7 @@ template <template<typename T> class ModifiablePropertyType = PropertyMap>
 class BreadthFirstSearch : public GraphTraversal<unsigned long long>
 {
 public:
-    constexpr static unsigned long long INFINITY = ULLONG_MAX;
+    static constexpr unsigned long long INF = ULLONG_MAX;
 
     explicit BreadthFirstSearch(bool computeValues = true, bool computeOrder = true)
         : GraphTraversal<unsigned long long>(computeValues),
@@ -190,8 +190,8 @@ private:
 private:
     virtual void onDiGraphSet() override
     {
-        maxBfsNumber = INFINITY;
-        maxLevel = INFINITY;
+        maxBfsNumber = INF;
+        maxLevel = INF;
         queue.set_capacity(diGraph->getSize());
     }
     boost::circular_buffer<const Vertex*> queue;

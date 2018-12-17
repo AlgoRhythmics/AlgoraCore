@@ -57,11 +57,11 @@ template <template<typename T> class ModifiablePropertyType = PropertyMap>
 class DepthFirstSearch : public GraphTraversal<DFSResult>
 {
 public:
-    constexpr static unsigned long long INFINITY = ULLONG_MAX;
+    constexpr static unsigned long long INF = ULLONG_MAX;
 
     DepthFirstSearch(bool computeValues = true)
         : GraphTraversal<DFSResult>(computeValues),
-          maxDfsNumber(INFINITY),
+          maxDfsNumber(INF),
           treeArc(arcNothing), nonTreeArc(arcNothing)
     {
         discovered.setDefaultValue(false);
