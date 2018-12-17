@@ -26,15 +26,24 @@
 #include "modifiableproperty.h"
 
 #include <unordered_map>
+#include <cmath>
 //#include <map>
 
 namespace Algora {
+
+template<typename Tval>
+struct PointerHash {
+    size_t operator()(const Tval* val) const {
+        static const size_t shift = (size_t)log2(1 + sizeof(Tval));
+        return (size_t)(val) >> shift;
+    }
+};
 
 template<typename T>
 class PropertyMap : public ModifiableProperty<T>
 {
 public:
-    typedef typename std::unordered_map<const GraphArtifact*,T> MapType;
+    typedef typename std::unordered_map<const GraphArtifact*,T, PointerHash<const GraphArtifact> > MapType;
     //typedef typename std::map<const GraphArtifact*,T> MapType;
     typedef typename MapType::iterator iterator;
     typedef typename MapType::const_iterator const_iterator;
