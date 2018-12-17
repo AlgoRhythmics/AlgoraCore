@@ -75,7 +75,8 @@ public:
     void unbundleParallelArcs();
 
 protected:
-    IncidenceListVertex *createIncidenceListVertex();
+    IncidenceListVertex *recycleOrCreateIncidenceListVertex();
+    Arc *recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head);
 
 private:
     IncidenceListGraphImplementation *impl;

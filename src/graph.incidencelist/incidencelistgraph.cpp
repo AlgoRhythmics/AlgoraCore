@@ -50,7 +50,7 @@ IncidenceListGraph::~IncidenceListGraph()
 
 Vertex *IncidenceListGraph::addVertex()
 {
-    auto v = createIncidenceListVertex();
+    auto v = recycleOrCreateIncidenceListVertex();
     impl->addVertex(v);
     greetVertex(v);
     return v;
@@ -113,7 +113,8 @@ Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
     auto t = castVertex(tail, this);
     auto h = castVertex(head, this);
 
-    Arc *a = createArc(t, h, impl->getNextArcId());
+    //Arc *a = createArc(t, h, impl->getNextArcId());
+    Arc *a = recycleOrCreateArc(t, h);
 
     impl->addArc(a, t, h);
     greetArc(a);
@@ -266,9 +267,14 @@ void IncidenceListGraph::unbundleParallelArcs()
     impl->unbundleParallelArcs();
 }
 
-IncidenceListVertex *IncidenceListGraph::createIncidenceListVertex()
+IncidenceListVertex *IncidenceListGraph::recycleOrCreateIncidenceListVertex()
 {
     return impl->createIncidenceListVertex();
+}
+
+Arc *IncidenceListGraph::recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head)
+{
+    return impl->createArc(tail, head);
 }
 
 const IncidenceListVertex *castVertex(const Vertex *v, const IncidenceListGraph *graph) {

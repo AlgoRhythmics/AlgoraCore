@@ -75,6 +75,9 @@ protected:
 
     void setIndex(unsigned long long i);
 
+    void hibernate();
+    void recycle();
+
 private:
     class CheshireCat;
     CheshireCat *grin;

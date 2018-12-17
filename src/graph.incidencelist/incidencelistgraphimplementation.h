@@ -68,6 +68,7 @@ public:
     void unbundleParallelArcs();
 
     IncidenceListVertex *createIncidenceListVertex();
+    Arc *createArc(IncidenceListVertex *tail, IncidenceListVertex *head);
 
     unsigned int getNextArcId();
 
@@ -79,6 +80,9 @@ private:
     unsigned long long nextArcId;
     std::vector<unsigned long long int> recycledVertexIds;
     std::vector<unsigned long long int> recycledArcIds;
+
+    std::vector<IncidenceListVertex*> vertexPool;
+    std::vector<Arc*> arcPool;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
     void unbundleOutgoingArcs(IncidenceListVertex *vertex);

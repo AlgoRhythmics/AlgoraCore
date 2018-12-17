@@ -32,6 +32,7 @@ class Vertex;
 class Arc : public VertexPair
 {
     friend class DiGraph;
+    friend class IncidenceListGraphImplementation;
 
 public:
     virtual ~Arc() {}
@@ -56,6 +57,13 @@ protected:
         : VertexPair(tail, head, parent) {}
     explicit Arc(Vertex *tail, Vertex *head, unsigned int id, GraphArtifact *parent = 0)
         : VertexPair(tail, head, id, parent) {}
+
+    void hibernate() { invalidate(); }
+    void recycle(Vertex *tail, Vertex *head) {
+        first = tail;
+        second = head;
+        revalidate();
+    }
 };
 
 }

@@ -53,6 +53,7 @@ public:
 protected:
     std::string idString() const;
     void invalidate() { valid = false; }
+    void revalidate() { valid = true; }
 
 private:
     GraphArtifact(const GraphArtifact&);

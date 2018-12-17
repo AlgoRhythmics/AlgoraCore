@@ -46,15 +46,27 @@ IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *hand
 IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
 {
     clear();
+    for (auto v : vertexPool) {
+        delete v;
+    }
+    for (auto a : arcPool) {
+        delete a;
+    }
 }
 
 void IncidenceListGraphImplementation::clear()
 {
     for (IncidenceListVertex *v : vertices) {
-        v->mapOutgoingArcs([](Arc *a) { delete a; });
+        v->mapOutgoingArcs([this](Arc *a) {
+            //delete a;
+            a->hibernate();
+            arcPool.push_back(a);
+        });
         v->clearOutgoingArcs();
         v->clearIncomingArcs();
-        delete v;
+        //delete v;
+        v->hibernate();
+        vertexPool.push_back(v);
     }
     vertices.clear();
     numArcs = 0U;
@@ -73,16 +85,20 @@ void IncidenceListGraphImplementation::addVertex(IncidenceListVertex *vertex)
 
 void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
 {
-    v->mapOutgoingArcs([](Arc *a) {
+    v->mapOutgoingArcs([this](Arc *a) {
         IncidenceListVertex *head = dynamic_cast<IncidenceListVertex*>(a->getHead());
         head->removeIncomingArc(a);
-        delete a;
+        //delete a;
+        a->hibernate();
+        arcPool.push_back(a);
     }, arcFalse, false);
     v->clearOutgoingArcs();
-    v->mapIncomingArcs([](Arc *a) {
+    v->mapIncomingArcs([this](Arc *a) {
         IncidenceListVertex *tail = dynamic_cast<IncidenceListVertex*>(a->getTail());
         tail->removeOutgoingArc(a);
-        delete a;
+        //delete a;
+        a->hibernate();
+        arcPool.push_back(a);
     }, arcFalse, false);
     v->clearIncomingArcs();
     //vertices.erase(std::find(vertices.cbegin(), vertices.cend(), v));
@@ -91,8 +107,10 @@ void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
     o->setIndex(index);
     vertices[index] = o;
     vertices.pop_back();
-    recycledVertexIds.push_back(v->getId());
-    delete v;
+    //recycledVertexIds.push_back(v->getId());
+    //delete v;
+    v->hibernate();
+    vertexPool.push_back(v);
 }
 
 bool IncidenceListGraphImplementation::containsVertex(const IncidenceListVertex *v) const
@@ -126,8 +144,10 @@ void IncidenceListGraphImplementation::removeArc(Arc *a, IncidenceListVertex *ta
     tail->removeOutgoingArc(a);
     head->removeIncomingArc(a);
     numArcs--;
-    recycledArcIds.push_back(a->getId());
-    delete a;
+    //recycledArcIds.push_back(a->getId());
+    //delete a;
+    a->hibernate();
+    arcPool.push_back(a);
 }
 
 bool IncidenceListGraphImplementation::containsArc(const Arc *a, const IncidenceListVertex *tail) const
@@ -243,6 +263,13 @@ void IncidenceListGraphImplementation::unbundleParallelArcs()
 
 IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex()
 {
+    if (!vertexPool.empty()) {
+        auto v = vertexPool.back();
+        vertexPool.pop_back();
+        v->recycle();
+        return v;
+    }
+
     unsigned int id;
     if (recycledVertexIds.empty()) {
         id = nextVertexId++;
@@ -251,6 +278,25 @@ IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex
         recycledVertexIds.pop_back();
     }
     return new IncidenceListVertex(id, graph);
+}
+
+Arc *IncidenceListGraphImplementation::createArc(IncidenceListVertex *tail, IncidenceListVertex *head)
+{
+    if (!arcPool.empty()) {
+        auto a = arcPool.back();
+        arcPool.pop_back();
+        a->recycle(tail, head);
+        return a;
+    }
+
+    unsigned int id;
+    if (recycledArcIds.empty()) {
+        id = nextArcId++;
+    } else  {
+        id = recycledArcIds.back();
+        recycledArcIds.pop_back();
+    }
+    return new Arc(tail, head, id, graph);
 }
 
 unsigned int IncidenceListGraphImplementation::getNextArcId()

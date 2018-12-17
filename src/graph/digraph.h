@@ -123,6 +123,7 @@ protected:
    virtual void greetArc(Arc *a) {
        for (const auto &p : arcGreetings) { p.second(a); }
    }
+
    virtual void dismissArc(Arc *a) {
        for (const auto &p : arcFarewells) { p.second(a); }
    }

@@ -73,6 +73,19 @@ public:
         multiOutIndex.setDefaultValue(NO_INDEX);
         multiInIndex.setDefaultValue(NO_INDEX);
     }
+
+    void clear() {
+        outgoingArcs.clear();
+        incomingArcs.clear();
+        outgoingMultiArcs.clear();
+        incomingMultiArcs.clear();
+
+        bundle.resetAll();
+        outIndex.resetAll();
+        inIndex.resetAll();
+        multiOutIndex.resetAll();
+        multiInIndex.resetAll();
+    }
 };
 
 IncidenceListVertex::IncidenceListVertex(unsigned int id, GraphArtifact *parent, int index)
@@ -105,16 +118,16 @@ void IncidenceListVertex::addOutgoingArc(Arc *a)
     }
     MultiArc *ma = dynamic_cast<MultiArc*>(a);
     if (ma) {
-        grin->multiOutIndex[ma] = grin->outgoingMultiArcs.size();
+        grin->multiOutIndex.setValue(ma, grin->outgoingMultiArcs.size());
         grin->outgoingMultiArcs.push_back(ma);
         ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(ma);
         if (pab) {
             pab->mapArcs([&](Arc *a) {
-                grin->bundle[a] = pab;
+                grin->bundle.setValue(a, pab);
             });
         }
     } else {
-        grin->outIndex[a] = grin->outgoingArcs.size();
+        grin->outIndex.setValue(a, grin->outgoingArcs.size());
         grin->outgoingArcs.push_back(a);
     }
 }
@@ -168,16 +181,16 @@ void IncidenceListVertex::addIncomingArc(Arc *a)
     }
     MultiArc *ma = dynamic_cast<MultiArc*>(a);
     if (ma) {
-        grin->multiInIndex[ma] = grin->incomingMultiArcs.size();
+        grin->multiInIndex.setValue(ma, grin->incomingMultiArcs.size());
         grin->incomingMultiArcs.push_back(ma);
         ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(ma);
         if (pab) {
             pab->mapArcs([&](Arc *a) {
-                grin->bundle[a] = pab;
+                grin->bundle.setValue(a, pab);
             });
         }
     } else {
-        grin->inIndex[a] = grin->incomingArcs.size();
+        grin->inIndex.setValue(a, grin->incomingArcs.size());
         grin->incomingArcs.push_back(a);
     }
 }
@@ -213,6 +226,17 @@ int IncidenceListVertex::getIndex() const
 void IncidenceListVertex::setIndex(unsigned long long i)
 {
     grin->index = i;
+}
+
+void IncidenceListVertex::hibernate()
+{
+    invalidate();
+    grin->clear();
+}
+
+void IncidenceListVertex::recycle()
+{
+    revalidate();
 }
 
 bool IncidenceListVertex::hasOutgoingArc(const Arc *a) const
@@ -273,20 +297,20 @@ Arc *IncidenceListVertex::incomingArcAt(unsigned int i, bool multiArcsAsSimple) 
 
 unsigned long long IncidenceListVertex::outIndexOf(const Arc *a) const
 {
-    auto i = grin->outIndex[a];
+    auto i = grin->outIndex(a);
     if (i != NO_INDEX) {
         return i;
     }
-    return grin->multiOutIndex[a];
+    return grin->multiOutIndex(a);
 }
 
 unsigned long long IncidenceListVertex::inIndexOf(const Arc *a) const
 {
-    auto i = grin->inIndex[a];
+    auto i = grin->inIndex(a);
     if (i != NO_INDEX) {
         return i;
     }
-    return grin->multiInIndex[a];
+    return grin->multiInIndex(a);
 }
 
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
@@ -350,7 +374,7 @@ bool removeArcFromList(AL &list, PropertyMap<unsigned long long> &indexMap, cons
     assert(list[i] == arc);
     auto swap = list.back();
     list[i] = swap;
-    indexMap[swap] = i;
+    indexMap.setValue(swap, i);
     indexMap.resetToDefault(arc);
     list.pop_back();
     return true;
