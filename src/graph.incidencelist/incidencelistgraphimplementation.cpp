@@ -127,7 +127,7 @@ IncidenceListVertex *IncidenceListGraphImplementation::getFirstVertex() const
     return vertices.at(0);
 }
 
-IncidenceListVertex *IncidenceListGraphImplementation::vertexAt(unsigned int i) const
+IncidenceListVertex *IncidenceListGraphImplementation::vertexAt(unsigned long long i) const
 {
     return vertices.at(i);
 }
