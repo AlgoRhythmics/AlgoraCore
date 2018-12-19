@@ -45,28 +45,28 @@ IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *hand
 
 IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
 {
-    clear();
-    for (auto v : vertexPool) {
-        delete v;
-    }
-    for (auto a : arcPool) {
-        delete a;
-    }
+    clear(true);
 }
 
-void IncidenceListGraphImplementation::clear()
+void IncidenceListGraphImplementation::clear(bool emptyReserves)
 {
     for (IncidenceListVertex *v : vertices) {
-        v->mapOutgoingArcs([this](Arc *a) {
-            //delete a;
-            a->hibernate();
-            arcPool.push_back(a);
+        v->mapOutgoingArcs([this,emptyReserves](Arc *a) {
+            if (emptyReserves) {
+                delete a;
+            } else {
+                a->hibernate();
+                arcPool.push_back(a);
+            }
         });
         v->clearOutgoingArcs();
         v->clearIncomingArcs();
-        //delete v;
-        v->hibernate();
-        vertexPool.push_back(v);
+        if (emptyReserves) {
+           delete v;
+        } else {
+            v->hibernate();
+            vertexPool.push_back(v);
+        }
     }
     vertices.clear();
     numArcs = 0U;
@@ -261,7 +261,31 @@ void IncidenceListGraphImplementation::unbundleParallelArcs()
     }
 }
 
-IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex()
+void IncidenceListGraphImplementation::reserveVertexCapacity(unsigned long long n)
+{
+    auto vertexPoolSize = n > vertexPool.size() ? n : vertexPool.size();
+    vertexPool.reserve(vertexPoolSize);
+    vertexPool.reserve(n - getSize());
+    for (auto i = getSize(); i <= n; i++) {
+        auto v = createIncidenceListVertex();
+        v->hibernate();
+        vertexPool.push_back(v);
+    }
+    vertices.reserve(getSize() + vertexPoolSize);
+}
+
+void IncidenceListGraphImplementation::reserveArcCapacity(unsigned long long n)
+{
+    auto arcPoolSize = n > arcPool.size() ? n : arcPool.size();
+    arcPool.reserve(arcPoolSize);
+    for (auto i = arcPool.size(); i <= n; i++) {
+        auto a = createArc(nullptr, nullptr);
+        a->hibernate();
+        arcPool.push_back(a);
+    }
+}
+
+IncidenceListVertex *IncidenceListGraphImplementation::recycleOrCreateIncidenceListVertex()
 {
     if (!vertexPool.empty()) {
         auto v = vertexPool.back();
@@ -270,6 +294,11 @@ IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex
         return v;
     }
 
+    return createIncidenceListVertex();
+}
+
+IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex()
+{
     unsigned int id;
     if (recycledVertexIds.empty()) {
         id = nextVertexId++;
@@ -280,7 +309,7 @@ IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex
     return new IncidenceListVertex(id, graph);
 }
 
-Arc *IncidenceListGraphImplementation::createArc(IncidenceListVertex *tail, IncidenceListVertex *head)
+Arc *IncidenceListGraphImplementation::recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     if (!arcPool.empty()) {
         auto a = arcPool.back();
@@ -289,6 +318,11 @@ Arc *IncidenceListGraphImplementation::createArc(IncidenceListVertex *tail, Inci
         return a;
     }
 
+    return createArc(tail, head);
+}
+
+Arc *IncidenceListGraphImplementation::createArc(IncidenceListVertex *tail, IncidenceListVertex *head)
+{
     unsigned int id;
     if (recycledArcIds.empty()) {
         id = nextArcId++;

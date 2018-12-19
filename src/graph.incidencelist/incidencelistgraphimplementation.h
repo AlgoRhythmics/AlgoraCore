@@ -37,7 +37,7 @@ class IncidenceListGraphImplementation {
 public:
     explicit IncidenceListGraphImplementation(DiGraph *handle);
     ~IncidenceListGraphImplementation();
-    void clear();
+    void clear(bool emptyReserves = false);
 
     void addVertex(IncidenceListVertex *vertex);
     void removeVertex(IncidenceListVertex *v);
@@ -67,7 +67,12 @@ public:
     void bundleParallelArcs();
     void unbundleParallelArcs();
 
+    void reserveVertexCapacity(unsigned long long n);
+    void reserveArcCapacity(unsigned long long n);
+
+    IncidenceListVertex *recycleOrCreateIncidenceListVertex();
     IncidenceListVertex *createIncidenceListVertex();
+    Arc *recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head);
     Arc *createArc(IncidenceListVertex *tail, IncidenceListVertex *head);
 
     unsigned int getNextArcId();

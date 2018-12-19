@@ -50,6 +50,7 @@ public:
     virtual size_type getSize() const override;
 
     virtual void clear() override;
+    virtual void clearAndRelease();
 
     // DiGraph interface
 public:
@@ -74,9 +75,14 @@ public:
     void bundleParallelArcs();
     void unbundleParallelArcs();
 
+    void reserveVertexCapacity(unsigned long long n);
+    void reserveArcCapacity(unsigned long long n);
+
 protected:
     IncidenceListVertex *recycleOrCreateIncidenceListVertex();
+    IncidenceListVertex *createIncidenceListVertex();
     Arc *recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head);
+    Arc *ceateArc(IncidenceListVertex *tail, IncidenceListVertex *head);
 
 private:
     IncidenceListGraphImplementation *impl;

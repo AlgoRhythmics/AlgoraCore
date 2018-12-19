@@ -94,7 +94,7 @@ SuperDiGraph::~SuperDiGraph()
 
 Vertex *SuperDiGraph::addVertex()
 {
-    auto v = grin->extra->createIncidenceListVertex();
+    auto v = grin->extra->recycleOrCreateIncidenceListVertex();
     grin->extra->addVertex(v);
     greetVertex(v);
     return v;

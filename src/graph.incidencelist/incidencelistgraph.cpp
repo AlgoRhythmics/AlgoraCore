@@ -230,7 +230,12 @@ Graph::size_type IncidenceListGraph::getSize() const
 void IncidenceListGraph::clear()
 {
    impl->clear();
+   DiGraph::clear();
+}
 
+void IncidenceListGraph::clearAndRelease()
+{
+   impl->clear(true);
    DiGraph::clear();
 }
 
@@ -267,12 +272,32 @@ void IncidenceListGraph::unbundleParallelArcs()
     impl->unbundleParallelArcs();
 }
 
+void IncidenceListGraph::reserveVertexCapacity(unsigned long long n)
+{
+    impl->reserveVertexCapacity(n);
+}
+
+void IncidenceListGraph::reserveArcCapacity(unsigned long long n)
+{
+   impl->reserveArcCapacity(n);
+}
+
 IncidenceListVertex *IncidenceListGraph::recycleOrCreateIncidenceListVertex()
+{
+    return impl->recycleOrCreateIncidenceListVertex();
+}
+
+IncidenceListVertex *IncidenceListGraph::createIncidenceListVertex()
 {
     return impl->createIncidenceListVertex();
 }
 
 Arc *IncidenceListGraph::recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head)
+{
+    return impl->recycleOrCreateArc(tail, head);
+}
+
+Arc *IncidenceListGraph::ceateArc(IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     return impl->createArc(tail, head);
 }
