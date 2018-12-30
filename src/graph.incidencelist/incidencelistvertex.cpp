@@ -66,7 +66,7 @@ public:
     PropertyMap<unsigned long long> multiOutIndex;
     PropertyMap<unsigned long long> multiInIndex;
 
-    CheshireCat(int i) : index(i) {
+    CheshireCat(unsigned long long i) : index(i) {
         bundle.setDefaultValue(nullptr);
         outIndex.setDefaultValue(NO_INDEX);
         inIndex.setDefaultValue(NO_INDEX);
@@ -88,7 +88,7 @@ public:
     }
 };
 
-IncidenceListVertex::IncidenceListVertex(unsigned int id, GraphArtifact *parent, int index)
+IncidenceListVertex::IncidenceListVertex(unsigned long long id, GraphArtifact *parent, unsigned long long index)
     : Vertex(id, parent), grin(new CheshireCat(index))
 {
     grin->checkConsisteny = true;
@@ -101,7 +101,7 @@ IncidenceListVertex::~IncidenceListVertex()
 
 unsigned long long IncidenceListVertex::getOutDegree(bool multiArcsAsSimple) const
 {
-    unsigned int deg = grin->outgoingArcs.size();
+    auto deg = grin->outgoingArcs.size();
     if (multiArcsAsSimple) {
         return deg + grin->outgoingMultiArcs.size();
     }
@@ -154,7 +154,7 @@ void IncidenceListVertex::clearOutgoingArcs()
 
 unsigned long long IncidenceListVertex::getInDegree(bool multiArcsAsSimple) const
 {
-    unsigned int deg = grin->incomingArcs.size();
+    auto deg = grin->incomingArcs.size();
     if (multiArcsAsSimple) {
         return deg + grin->incomingMultiArcs.size();
     }
@@ -218,7 +218,7 @@ void IncidenceListVertex::enableConsistencyCheck(bool enable)
     grin->checkConsisteny = enable;
 }
 
-int IncidenceListVertex::getIndex() const
+unsigned long long IncidenceListVertex::getIndex() const
 {
     return grin->index;
 }

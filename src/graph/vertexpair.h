@@ -32,10 +32,10 @@ class Vertex;
 class VertexPair : public GraphArtifact
 {
 public:
-    explicit VertexPair(Vertex *first, Vertex *second, GraphArtifact *parent = 0)
+    explicit VertexPair(Vertex *first, Vertex *second, GraphArtifact *parent = nullptr)
         : GraphArtifact(parent), first(first), second(second) {}
 
-    explicit VertexPair(Vertex *first, Vertex *second, unsigned int id, GraphArtifact *parent = 0)
+    explicit VertexPair(Vertex *first, Vertex *second, unsigned long long id, GraphArtifact *parent = nullptr)
         : GraphArtifact(id, parent), first(first), second(second) {}
 
     virtual ~VertexPair() { }

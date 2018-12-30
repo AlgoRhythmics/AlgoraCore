@@ -30,8 +30,8 @@ namespace Algora {
 class GraphArtifact
 {
 public:
-    explicit GraphArtifact(unsigned long long id, GraphArtifact *parent = 0);
-    explicit GraphArtifact(GraphArtifact *parent = 0);
+    explicit GraphArtifact(unsigned long long id, GraphArtifact *parent = nullptr);
+    explicit GraphArtifact(GraphArtifact *parent = nullptr);
     virtual ~GraphArtifact();
 
     unsigned long long getId() const { return id; }

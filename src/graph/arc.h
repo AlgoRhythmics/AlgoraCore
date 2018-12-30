@@ -53,9 +53,9 @@ public:
     }
 
 protected:
-    explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0)
+    explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = nullptr)
         : VertexPair(tail, head, parent) {}
-    explicit Arc(Vertex *tail, Vertex *head, unsigned int id, GraphArtifact *parent = 0)
+    explicit Arc(Vertex *tail, Vertex *head, unsigned long long id, GraphArtifact *parent = nullptr)
         : VertexPair(tail, head, id, parent) {}
 
     void hibernate() { invalidate(); }

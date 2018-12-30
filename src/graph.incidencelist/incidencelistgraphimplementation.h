@@ -75,7 +75,7 @@ public:
     Arc *recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head);
     Arc *createArc(IncidenceListVertex *tail, IncidenceListVertex *head);
 
-    unsigned int getNextArcId();
+    unsigned long long getNextArcId();
 
 private:
     DiGraph *graph;

@@ -57,10 +57,10 @@ public:
     bool isSink() const;
     bool isIsolated() const { return isSource() && isSink(); }
 
-    int getIndex() const;
+    unsigned long long getIndex() const;
 
 protected:
-    explicit IncidenceListVertex(unsigned int id, GraphArtifact *parent = 0, int index = -1);
+    explicit IncidenceListVertex(unsigned long long id, GraphArtifact *parent = nullptr, unsigned long long index = 0);
     virtual ~IncidenceListVertex();
 
     virtual void addOutgoingArc(Arc *a);

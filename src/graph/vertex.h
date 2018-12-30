@@ -38,8 +38,8 @@ public:
     virtual std::string toString() const override;
 
 protected:
-    explicit Vertex(GraphArtifact *parent = 0);
-    explicit Vertex(unsigned long long id, GraphArtifact *parent = 0);
+    explicit Vertex(GraphArtifact *parent = nullptr);
+    explicit Vertex(unsigned long long id, GraphArtifact *parent = nullptr);
 
     // GraphArtifact interface
 public:
