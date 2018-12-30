@@ -74,6 +74,17 @@ void IncidenceListGraphImplementation::clear(bool emptyReserves)
     nextArcId = 0U;
     recycledVertexIds.clear();
     recycledArcIds.clear();
+
+    if (emptyReserves) {
+        for (auto a : arcPool) {
+            delete a;
+        }
+        arcPool.clear();
+        for (auto v: vertexPool) {
+            delete v;
+        }
+        vertexPool.clear();
+    }
 }
 
 
@@ -299,7 +310,7 @@ IncidenceListVertex *IncidenceListGraphImplementation::recycleOrCreateIncidenceL
 
 IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex()
 {
-    unsigned int id;
+    unsigned long long id;
     if (recycledVertexIds.empty()) {
         id = nextVertexId++;
     } else  {
@@ -323,7 +334,7 @@ Arc *IncidenceListGraphImplementation::recycleOrCreateArc(IncidenceListVertex *t
 
 Arc *IncidenceListGraphImplementation::createArc(IncidenceListVertex *tail, IncidenceListVertex *head)
 {
-    unsigned int id;
+    unsigned long long id;
     if (recycledArcIds.empty()) {
         id = nextArcId++;
     } else  {
@@ -333,7 +344,7 @@ Arc *IncidenceListGraphImplementation::createArc(IncidenceListVertex *tail, Inci
     return new Arc(tail, head, id, graph);
 }
 
-unsigned int IncidenceListGraphImplementation::getNextArcId()
+unsigned long long IncidenceListGraphImplementation::getNextArcId()
 {
     if (recycledArcIds.empty()) {
         return nextArcId++;
