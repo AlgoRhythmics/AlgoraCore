@@ -45,10 +45,10 @@ namespace Algora {
 class Vertex;
 
 struct DFSResult {
-    int dfsNumber = -1;
-    int lowNumber = -1;
+    long long dfsNumber = -1;
+    long long lowNumber = -1;
     const Vertex *parent = nullptr;
-    explicit DFSResult(int dfs=-1, int low=-1, Vertex *p=nullptr) :
+    explicit DFSResult(long long dfs=-1, long long low=-1, Vertex *p=nullptr) :
         dfsNumber(dfs), lowNumber(low), parent(p) {}
     DFSResult(const Vertex *p) : parent(p) {}
 };
@@ -61,7 +61,7 @@ public:
 
     DepthFirstSearch(bool computeValues = true)
         : GraphTraversal<DFSResult>(computeValues),
-          maxDfsNumber(INF),
+          verticesReached(INF),
           treeArc(arcNothing), nonTreeArc(arcNothing)
     {
         discovered.setDefaultValue(false);
@@ -80,7 +80,7 @@ public:
 
     // GraphTraversal interface
     unsigned long long numVerticesReached() const override {
-        return maxDfsNumber + 1;
+        return verticesReached;
     }
 
     // DiGraphAlgorithm interface
@@ -93,21 +93,25 @@ public:
         bool stop = false;
         discovered.resetAll();
         dfs(source, nextDepth, stop);
-        maxDfsNumber = nextDepth - 1;
+        verticesReached = nextDepth;
     }
 
     virtual std::string getName() const noexcept override { return "DFS"; }
     virtual std::string getShortName() const noexcept override { return "dfs"; }
 
+    bool vertexDiscovered(const Vertex *v) {
+        return discovered(v);
+    }
+
     // ValueComputingAlgorithm interface
 public:
     virtual unsigned long long deliver() override
     {
-        return maxDfsNumber + 1;
+        return verticesReached;
     }
 
 private:
-    unsigned long long maxDfsNumber;
+    unsigned long long verticesReached;
     ArcMapping treeArc;
     ArcMapping nonTreeArc;
     ModifiablePropertyType<bool> discovered;
@@ -180,8 +184,6 @@ private:
         }
     }
 };
-
-
 
 }
 

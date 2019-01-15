@@ -75,6 +75,10 @@ public:
         computeOrder = !levels;
     }
 
+    bool vertexDiscovered(const Vertex *v) {
+        return discovered(v);
+    }
+
     // GraphTraversal interface
     unsigned long long numVerticesReached() const override {
         return getMaxBfsNumber() + 1;
