@@ -121,11 +121,11 @@ protected:
    std::vector<std::pair<void*,ArcMapping>> arcFarewells;
 
    virtual void greetArc(Arc *a) {
-       for (const auto &p : arcGreetings) { p.second(a); }
+       for (const auto &[_, fun] : arcGreetings) { fun(a); }
    }
 
    virtual void dismissArc(Arc *a) {
-       for (const auto &p : arcFarewells) { p.second(a); }
+       for (const auto &[_, fun] : arcFarewells) { fun(a); }
    }
 
     virtual Arc *createArc(Vertex *tail, Vertex *head) {
