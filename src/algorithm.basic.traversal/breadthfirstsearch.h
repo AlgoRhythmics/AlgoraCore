@@ -105,7 +105,7 @@ public:
         queue.push_back(startVertex);
         queue.push_back(nullptr);
         discovered.setValue(startVertex, true);
-        if (valueComputation) {
+        if (valueComputation && computePropertyValues) {
             property->setValue(startVertex, 0);
         }
 
@@ -158,7 +158,7 @@ public:
                     Vertex *peer = getPeer(a, curr);
                     if (!discovered(peer)) {
                         maxBfsNumber++;
-                        if (valueComputation) {
+                        if (valueComputation && computePropertyValues) {
                             int v = computeOrder ? maxBfsNumber : property->getValue(curr) + 1;
                             property->setValue(peer, v);
                         }
