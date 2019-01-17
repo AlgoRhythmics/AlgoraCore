@@ -35,14 +35,15 @@ namespace Algora {
 
 class Vertex;
 
-template <template<typename T> class ModifiablePropertyType = PropertyMap>
+template <template<typename T> class ModifiablePropertyType = PropertyMap,
+          bool valueComputation = true>
 class BreadthFirstSearch : public GraphTraversal<unsigned long long>
 {
 public:
     static constexpr unsigned long long INF = ULLONG_MAX;
 
     explicit BreadthFirstSearch(bool computeValues = true, bool computeOrder = true)
-        : GraphTraversal<unsigned long long>(computeValues),
+        : GraphTraversal<unsigned long long>(valueComputation && computeValues),
           computeOrder(computeOrder), maxBfsNumber(-1), maxLevel(-1),
           treeArc(arcNothing), nonTreeArc(arcNothing)
     {
@@ -96,26 +97,28 @@ public:
         maxBfsNumber = 0ULL;
         maxLevel = 0ULL;
 
-        queue.clear();
+        //queue.clear();
+        boost::circular_buffer<const Vertex*> queue;
+        queue.set_capacity(diGraph->getSize());
         discovered.resetAll();
 
         queue.push_back(startVertex);
         queue.push_back(nullptr);
         discovered.setValue(startVertex, true);
-        if (computePropertyValues) {
+        if (valueComputation) {
             property->setValue(startVertex, 0);
         }
 
         bool stop = !onVertexDiscovered(startVertex);
 
-        auto mapArcs = [&](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
+        auto mapArcs = [this](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
             diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
             diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
         };
-        auto mapOutgoingArcs = [&](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
+        auto mapOutgoingArcs = [this](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
             diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
         };
-        auto mapIncomingArcs = [&](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
+        auto mapIncomingArcs = [this](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
             diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
         };
 
@@ -129,7 +132,7 @@ public:
         auto getTail = [](const Arc *a, const Vertex *) { return a->getTail(); };
         auto getHead = [](const Arc *a, const Vertex *) { return a->getHead(); };
         auto getOtherEndVertex = [](const Arc *a, const Vertex *v) { auto t = a->getTail(); return v == t ? a->getHead() : t; };
-        auto getPeer = onUndirectedGraph ? getOtherEndVertex : (onReverseGraph ? getTail : getHead);
+        const auto &getPeer = onUndirectedGraph ? getOtherEndVertex : (onReverseGraph ? getTail : getHead);
 
         while (!stop && !queue.empty()) {
             const Vertex *curr = queue.front();
@@ -146,7 +149,7 @@ public:
                 break;
             }
 
-            mapArcsUntil(curr, [&](Arc *a) {
+            mapArcsUntil(curr, [this,curr,&stop,&queue,&getPeer](Arc *a) {
                     bool consider = onArcDiscovered(a);
                     stop |= arcStopCondition(a);
                     if (stop || !consider) {
@@ -155,7 +158,7 @@ public:
                     Vertex *peer = getPeer(a, curr);
                     if (!discovered(peer)) {
                         maxBfsNumber++;
-                        if (computePropertyValues) {
+                        if (valueComputation) {
                             int v = computeOrder ? maxBfsNumber : property->getValue(curr) + 1;
                             property->setValue(peer, v);
                         }
@@ -169,7 +172,7 @@ public:
                     } else {
                         nonTreeArc(a);
                     }
-                }, [&](const Arc *) { return stop; });
+                }, [&stop](const Arc *) { return stop; });
         }
     }
     virtual std::string getName() const noexcept override { return "BFS"; }
@@ -196,9 +199,7 @@ private:
     {
         maxBfsNumber = INF;
         maxLevel = INF;
-        queue.set_capacity(diGraph->getSize());
     }
-    boost::circular_buffer<const Vertex*> queue;
     ModifiablePropertyType<bool> discovered;
 };
 
