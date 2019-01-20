@@ -49,7 +49,7 @@ public:
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     bool containsArc(const Arc *a, const IncidenceListVertex *tail) const;
     Arc *findArc(const IncidenceListVertex *tail, const IncidenceListVertex *head) const;
-    unsigned int getNumArcs(bool multiArcsAsSimple = false) const;
+    unsigned long long getNumArcs(bool multiArcsAsSimple = false) const;
 
     unsigned long long getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
     unsigned long long getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;

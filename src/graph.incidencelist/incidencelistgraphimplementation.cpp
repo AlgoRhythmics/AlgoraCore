@@ -35,6 +35,7 @@
 #include <unordered_map>
 #include <algorithm>
 
+
 namespace Algora {
 
 IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *handle)
@@ -114,7 +115,7 @@ void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
     v->clearIncomingArcs();
     //vertices.erase(std::find(vertices.cbegin(), vertices.cend(), v));
     IncidenceListVertex *o = vertices.back();
-    int index = v->getIndex();
+    auto index = v->getIndex();
     o->setIndex(index);
     vertices[index] = o;
     vertices.pop_back();
@@ -133,7 +134,7 @@ bool IncidenceListGraphImplementation::containsVertex(const IncidenceListVertex 
 IncidenceListVertex *IncidenceListGraphImplementation::getFirstVertex() const
 {
     if (vertices.empty()) {
-        return 0;
+        return nullptr;
     }
     return vertices.at(0);
 }
@@ -177,7 +178,7 @@ Arc *IncidenceListGraphImplementation::findArc(const IncidenceListVertex *tail, 
     return arc;
 }
 
-unsigned int IncidenceListGraphImplementation::getNumArcs(bool multiArcsAsSimple) const
+unsigned long long IncidenceListGraphImplementation::getNumArcs(bool multiArcsAsSimple) const
 {
     if (multiArcsAsSimple) {
         return numArcs;
@@ -274,26 +275,33 @@ void IncidenceListGraphImplementation::unbundleParallelArcs()
 
 void IncidenceListGraphImplementation::reserveVertexCapacity(unsigned long long n)
 {
-    auto vertexPoolSize = n > vertexPool.size() ? n : vertexPool.size();
-    vertexPool.reserve(vertexPoolSize);
-    vertexPool.reserve(n - getSize());
-    for (auto i = getSize(); i <= n; i++) {
+    auto capacity = n > vertexPool.size() ? n : vertexPool.size();
+    auto reserve = capacity - getSize();
+    vertexPool.reserve(reserve);
+    std::vector<IncidenceListVertex*> tmp;
+    tmp.reserve(reserve);
+    for (auto i = 0ULL; i < reserve; i++) {
         auto v = createIncidenceListVertex();
         v->hibernate();
-        vertexPool.push_back(v);
+        tmp.push_back(v);
     }
-    vertices.reserve(getSize() + vertexPoolSize);
+    vertexPool.insert(vertexPool.end(), tmp.rbegin(), tmp.rend());
+    vertices.reserve(getSize() + reserve);
 }
 
 void IncidenceListGraphImplementation::reserveArcCapacity(unsigned long long n)
 {
-    auto arcPoolSize = n > arcPool.size() ? n : arcPool.size();
-    arcPool.reserve(arcPoolSize);
-    for (auto i = arcPool.size(); i <= n; i++) {
+    auto capacity = n > arcPool.size() ? n : arcPool.size();
+    auto reserve = capacity - getNumArcs(true);
+    arcPool.reserve(reserve);
+    std::vector<Arc*> tmp;
+    tmp.reserve(reserve);
+    for (auto i = 0ULL; i < reserve; i++) {
         auto a = createArc(nullptr, nullptr);
         a->hibernate();
-        arcPool.push_back(a);
+        tmp.push_back(a);
     }
+    arcPool.insert(arcPool.end(), tmp.rbegin(), tmp.rend());
 }
 
 IncidenceListVertex *IncidenceListGraphImplementation::recycleOrCreateIncidenceListVertex()
