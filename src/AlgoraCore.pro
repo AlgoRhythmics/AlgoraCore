@@ -39,8 +39,9 @@ acinfotarget.depends = FORCE
 PRE_TARGETDEPS += $$ACINFOHDR
 QMAKE_EXTRA_TARGETS += acinfotarget
 
+QMAKE_CXXFLAGS_STATIC_LIB = # remove -fPIC
 QMAKE_CXXFLAGS_DEBUG += -std=c++17 -O0
-QMAKE_CXXFLAGS_RELEASE += -std=c++17 -fno-omit-frame-pointer -g
+QMAKE_CXXFLAGS_RELEASE += -std=c++17 #-fno-omit-frame-pointer -g
 QMAKE_CXXFLAGS_RELEASE -= -O1 -O2 -O3
 
 general {
