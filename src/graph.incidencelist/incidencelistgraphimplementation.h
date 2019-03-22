@@ -24,7 +24,11 @@
 #define INCIDENCELISTGRAPHIMPLEMENTATION_H
 
 #include "incidencelistgraph.h"
+#include "incidencelistvertex.h"
+#include "graph/arc.h"
+
 #include <vector>
+#include <boost/pool/object_pool.hpp>
 
 namespace Algora {
 
@@ -86,6 +90,8 @@ private:
     std::vector<unsigned long long int> recycledVertexIds;
     std::vector<unsigned long long int> recycledArcIds;
 
+    boost::object_pool<IncidenceListVertex> vertexStorage;
+    boost::object_pool<Arc> arcStorage;
     std::vector<IncidenceListVertex*> vertexPool;
     std::vector<Arc*> arcPool;
 

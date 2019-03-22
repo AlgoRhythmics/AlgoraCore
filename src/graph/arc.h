@@ -35,6 +35,13 @@ class Arc : public VertexPair
     friend class IncidenceListGraphImplementation;
 
 public:
+    explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = nullptr)
+        : VertexPair(tail, head, parent) {}
+    explicit Arc(Vertex *tail, Vertex *head, unsigned long long id, GraphArtifact *parent = nullptr)
+        : VertexPair(tail, head, id, parent) {}
+    explicit Arc(unsigned long long id, GraphArtifact *parent = nullptr)
+        : VertexPair(id, parent) {}
+
     virtual ~Arc() {}
 
     virtual Vertex *getTail() const { return getFirst(); }
@@ -53,11 +60,6 @@ public:
     }
 
 protected:
-    explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = nullptr)
-        : VertexPair(tail, head, parent) {}
-    explicit Arc(Vertex *tail, Vertex *head, unsigned long long id, GraphArtifact *parent = nullptr)
-        : VertexPair(tail, head, id, parent) {}
-
     void hibernate() { invalidate(); }
     void recycle(Vertex *tail, Vertex *head) {
         first = tail;

@@ -38,6 +38,9 @@ public:
     explicit VertexPair(Vertex *first, Vertex *second, unsigned long long id, GraphArtifact *parent = nullptr)
         : GraphArtifact(id, parent), first(first), second(second) {}
 
+    explicit VertexPair(unsigned long long id, GraphArtifact *parent = nullptr)
+        : GraphArtifact(id, parent), first(nullptr), second(nullptr) { invalidate(); }
+
     virtual ~VertexPair() { }
 
     Vertex *getFirst() const { return first; }

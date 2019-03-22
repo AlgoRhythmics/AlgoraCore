@@ -38,6 +38,9 @@ class IncidenceListVertex : public Vertex
     friend class IncidenceListGraphImplementation;
 
 public:
+    explicit IncidenceListVertex(unsigned long long id, GraphArtifact *parent = nullptr, unsigned long long index = 0);
+    virtual ~IncidenceListVertex();
+
     virtual bool hasOutgoingArc(const Arc *a) const;
     virtual bool hasIncomingArc(const Arc *a) const;
     virtual Arc *outgoingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
@@ -60,9 +63,6 @@ public:
     unsigned long long getIndex() const;
 
 protected:
-    explicit IncidenceListVertex(unsigned long long id, GraphArtifact *parent = nullptr, unsigned long long index = 0);
-    virtual ~IncidenceListVertex();
-
     virtual void addOutgoingArc(Arc *a);
     virtual void removeOutgoingArc(const Arc *a);
     virtual void clearOutgoingArcs();
