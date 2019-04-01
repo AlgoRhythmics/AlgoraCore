@@ -33,7 +33,7 @@ class AdjacencyListStringReader : public StreamDiGraphReader
 public:
     AdjacencyListStringReader(std::istream *input,
                               AdjacencyListStringFormat format = AdjacencyListStringFormat());
-    virtual ~AdjacencyListStringReader();
+    virtual ~AdjacencyListStringReader() override;
 
     std::string getLastError() const;
 

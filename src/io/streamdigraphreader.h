@@ -31,21 +31,22 @@ namespace Algora {
 class StreamDiGraphReader : public DiGraphProvider
 {
 public:
-    explicit StreamDiGraphReader(std::istream *input = 0) : inputStream(input) { }
-    virtual ~StreamDiGraphReader() { }
+    explicit StreamDiGraphReader(std::istream *input = nullptr) : inputStream(input) { }
+    virtual ~StreamDiGraphReader() override;
 
     void setInputStream(std::istream *input) { inputStream = input; }
 
     // DiGraphProvider interface
 public:
     virtual bool isGraphAvailable() override {
-        return inputStream != 0 && inputStream->good() && inputStream->rdbuf()->in_avail() > 0;
+        return inputStream != nullptr && inputStream->good() && inputStream->rdbuf()->in_avail() > 0;
     }
 
 protected:
     std::istream *inputStream;
-
 };
+
+StreamDiGraphReader::~StreamDiGraphReader() { }
 
 }
 

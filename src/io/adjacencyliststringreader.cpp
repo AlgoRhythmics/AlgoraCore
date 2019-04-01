@@ -58,7 +58,7 @@ std::string AdjacencyListStringReader::getLastError() const
 
 bool AdjacencyListStringReader::provideDiGraph(DiGraph *graph)
 {
-    if (StreamDiGraphReader::inputStream == 0) {
+    if (StreamDiGraphReader::inputStream == nullptr) {
         return false;
     }
     std::istream &inputStream = *(StreamDiGraphReader::inputStream);
