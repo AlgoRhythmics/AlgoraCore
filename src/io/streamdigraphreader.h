@@ -32,7 +32,7 @@ class StreamDiGraphReader : public DiGraphProvider
 {
 public:
     explicit StreamDiGraphReader(std::istream *input = nullptr) : inputStream(input) { }
-    virtual ~StreamDiGraphReader() override;
+    virtual ~StreamDiGraphReader() override { }
 
     void setInputStream(std::istream *input) { inputStream = input; }
 
@@ -45,8 +45,6 @@ public:
 protected:
     std::istream *inputStream;
 };
-
-StreamDiGraphReader::~StreamDiGraphReader() { }
 
 }
 
