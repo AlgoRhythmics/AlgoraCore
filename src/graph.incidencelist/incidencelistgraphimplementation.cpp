@@ -22,9 +22,6 @@
 
 #include "incidencelistgraphimplementation.h"
 
-#include "incidencelistvertex.h"
-
-#include "graph/arc.h"
 #include "graph/parallelarcsbundle.h"
 
 #include "graph.visitor/vertexvisitor.h"
@@ -46,28 +43,23 @@ IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *hand
 
 IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
 {
-    clear(true);
+    clear(false);
+    arcPool.clear();
+    vertexPool.clear();
+    // vertexStorage and arcStorage should be auto-destroyed.
 }
 
 void IncidenceListGraphImplementation::clear(bool emptyReserves)
 {
     for (IncidenceListVertex *v : vertices) {
-        v->mapOutgoingArcs([this,emptyReserves](Arc *a) {
-            if (emptyReserves) {
-                delete a;
-            } else {
-                a->hibernate();
-                arcPool.push_back(a);
-            }
+        v->mapOutgoingArcs([this](Arc *a) {
+            a->hibernate();
+            arcPool.push_back(a);
         });
         v->clearOutgoingArcs();
         v->clearIncomingArcs();
-        if (emptyReserves) {
-           delete v;
-        } else {
-            v->hibernate();
-            vertexPool.push_back(v);
-        }
+        v->hibernate();
+        vertexPool.push_back(v);
     }
     vertices.clear();
     numArcs = 0U;
@@ -78,16 +70,15 @@ void IncidenceListGraphImplementation::clear(bool emptyReserves)
 
     if (emptyReserves) {
         for (auto a : arcPool) {
-            delete a;
+            arcStorage.destroy(a);
         }
         arcPool.clear();
         for (auto v: vertexPool) {
-            delete v;
+            vertexStorage.destroy(v);
         }
         vertexPool.clear();
     }
 }
-
 
 void IncidenceListGraphImplementation::addVertex(IncidenceListVertex *vertex)
 {
@@ -325,7 +316,8 @@ IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex
         id = recycledVertexIds.back();
         recycledVertexIds.pop_back();
     }
-    return new IncidenceListVertex(id, graph);
+    //return new IncidenceListVertex(id, graph);
+    return vertexStorage.construct(id, graph);
 }
 
 Arc *IncidenceListGraphImplementation::recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head)
@@ -349,7 +341,10 @@ Arc *IncidenceListGraphImplementation::createArc(IncidenceListVertex *tail, Inci
         id = recycledArcIds.back();
         recycledArcIds.pop_back();
     }
-    return new Arc(tail, head, id, graph);
+    //return new Arc(tail, head, id, graph);
+    Arc *arc = arcStorage.construct(id, graph);
+    arc->recycle(tail, head);
+    return arc;
 }
 
 unsigned long long IncidenceListGraphImplementation::getNextArcId()

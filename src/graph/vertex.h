@@ -33,13 +33,13 @@ class Vertex : public GraphArtifact
     friend std::ostream &operator<<(std::ostream &, const Vertex *);
 
 public:
+    explicit Vertex(GraphArtifact *parent = nullptr);
+    explicit Vertex(unsigned long long id, GraphArtifact *parent = nullptr);
     virtual ~Vertex();
 
     virtual std::string toString() const override;
 
 protected:
-    explicit Vertex(GraphArtifact *parent = nullptr);
-    explicit Vertex(unsigned long long id, GraphArtifact *parent = nullptr);
 
     // GraphArtifact interface
 public:
