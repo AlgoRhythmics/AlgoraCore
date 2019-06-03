@@ -44,7 +44,6 @@ GraphArtifact::~GraphArtifact()
 {
 }
 
-
 std::string GraphArtifact::idString() const
 {
     std::ostringstream strStream;

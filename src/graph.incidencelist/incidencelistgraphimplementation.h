@@ -41,6 +41,17 @@ class IncidenceListGraphImplementation {
 public:
     explicit IncidenceListGraphImplementation(DiGraph *handle);
     ~IncidenceListGraphImplementation();
+
+    // copying
+    IncidenceListGraphImplementation(const IncidenceListGraphImplementation &other, DiGraph *handle);
+    IncidenceListGraphImplementation& assign(const IncidenceListGraphImplementation &other, DiGraph *handle);
+    IncidenceListGraphImplementation& operator=(const IncidenceListGraphImplementation &other) = delete;
+
+    // moving is costly, but better than copying
+    IncidenceListGraphImplementation(IncidenceListGraphImplementation &&other, DiGraph *handle);
+    IncidenceListGraphImplementation& move(IncidenceListGraphImplementation &&other, DiGraph *handle);
+    IncidenceListGraphImplementation& operator=(IncidenceListGraphImplementation &&other) = delete;
+
     void clear(bool emptyReserves = false);
 
     void addVertex(IncidenceListVertex *vertex);
@@ -80,6 +91,7 @@ public:
     Arc *createArc(IncidenceListVertex *tail, IncidenceListVertex *head);
 
     unsigned long long getNextArcId();
+    void setOwner(DiGraph *handle);
 
 private:
     DiGraph *graph;
@@ -97,6 +109,8 @@ private:
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
     void unbundleOutgoingArcs(IncidenceListVertex *vertex);
+
+    void copyFrom(const IncidenceListGraphImplementation &other, PropertyMap<GraphArtifact *> &map);
 };
 
 }

@@ -34,7 +34,15 @@ class IncidenceListGraph : public DiGraph
 {
 public:
     explicit IncidenceListGraph(GraphArtifact *parent = nullptr);
-    virtual ~IncidenceListGraph();
+    virtual ~IncidenceListGraph() override;
+
+    // copying
+    IncidenceListGraph(const IncidenceListGraph &other);
+    IncidenceListGraph &operator=(const IncidenceListGraph &other);
+
+    // moving
+    IncidenceListGraph(IncidenceListGraph &&other);
+    IncidenceListGraph &operator=(IncidenceListGraph &&other);
 
     // Graph interface
 public:

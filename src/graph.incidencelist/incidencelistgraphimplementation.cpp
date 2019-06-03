@@ -27,10 +27,12 @@
 #include "graph.visitor/vertexvisitor.h"
 #include "graph.visitor/arcvisitor.h"
 #include "graph.visitor/collectarcsvisitor.h"
+#include "property/propertymap.h"
 
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
+
 
 
 namespace Algora {
@@ -47,6 +49,26 @@ IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
     arcPool.clear();
     vertexPool.clear();
     // vertexStorage and arcStorage should be auto-destroyed.
+}
+
+IncidenceListGraphImplementation::IncidenceListGraphImplementation(const IncidenceListGraphImplementation &other, DiGraph *handle)
+    : graph(handle), numArcs(0U), nextVertexId(0U), nextArcId(0U)
+{
+    PropertyMap<GraphArtifact*> pm;
+    copyFrom(other, pm);
+}
+
+IncidenceListGraphImplementation &IncidenceListGraphImplementation::assign(const IncidenceListGraphImplementation &other, DiGraph *handle)
+{
+    if (&other == this) {
+        return *this;
+    }
+
+    graph = handle;
+    PropertyMap<GraphArtifact*> pm;
+    copyFrom(other, pm);
+
+    return *this;
 }
 
 void IncidenceListGraphImplementation::clear(bool emptyReserves)
@@ -268,7 +290,9 @@ void IncidenceListGraphImplementation::reserveVertexCapacity(unsigned long long 
 {
     auto capacity = n > vertexPool.size() ? n : vertexPool.size();
     auto reserve = capacity - getSize();
-    vertexPool.reserve(reserve);
+    vertexPool.reserve(capacity);
+    vertexStorage.set_next_size(reserve);
+
     std::vector<IncidenceListVertex*> tmp;
     tmp.reserve(reserve);
     for (auto i = 0ULL; i < reserve; i++) {
@@ -284,7 +308,9 @@ void IncidenceListGraphImplementation::reserveArcCapacity(unsigned long long n)
 {
     auto capacity = n > arcPool.size() ? n : arcPool.size();
     auto reserve = capacity - getNumArcs(true);
-    arcPool.reserve(reserve);
+    arcPool.reserve(capacity);
+    arcStorage.set_next_size(reserve);
+
     std::vector<Arc*> tmp;
     tmp.reserve(reserve);
     for (auto i = 0ULL; i < reserve; i++) {
@@ -357,6 +383,22 @@ unsigned long long IncidenceListGraphImplementation::getNextArcId()
     return id;
 }
 
+void IncidenceListGraphImplementation::setOwner(DiGraph *handle)
+{
+    if (handle == graph) {
+        return;
+    }
+
+    handle = graph;
+
+    for (auto *a : arcPool) {
+        a->setParent(graph);
+    }
+    for (auto *v : vertexPool) {
+        v->setParent(graph);
+    }
+}
+
 void IncidenceListGraphImplementation::bundleOutgoingArcs(IncidenceListVertex *vertex)
 {
     std::vector<Arc*> outArcs;
@@ -405,6 +447,32 @@ void IncidenceListGraphImplementation::unbundleOutgoingArcs(IncidenceListVertex 
     }
     for (Arc *a : arcs) {
         addArc(a, vertex, dynamic_cast<IncidenceListVertex*>(a->getHead()));
+    }
+}
+
+void IncidenceListGraphImplementation::copyFrom(const IncidenceListGraphImplementation &other, PropertyMap<GraphArtifact *> &map)
+{
+    clear(true);
+
+    reserveVertexCapacity(other.vertexPool.size());
+    reserveArcCapacity(other.arcPool.size());
+
+    for (auto *v : other.vertices) {
+        auto *cv = recycleOrCreateIncidenceListVertex();
+        cv->setName(v->getName());
+        map[v] = cv;
+        map[cv] = v;
+    }
+
+    for (auto *v : other.vertices) {
+        auto *tail = dynamic_cast<IncidenceListVertex*>(map(v));
+        tail->mapOutgoingArcs([&map, this, tail](Arc *a) {
+            auto *head = dynamic_cast<IncidenceListVertex*>(map(a->getHead()));
+            auto *av = this->recycleOrCreateArc(tail, head);
+            av->setName(a->getName());
+            map[av] = a;
+            map[a] = av;
+        });
     }
 }
 

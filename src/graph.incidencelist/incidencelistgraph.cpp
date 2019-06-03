@@ -48,6 +48,26 @@ IncidenceListGraph::~IncidenceListGraph()
     delete impl;
 }
 
+IncidenceListGraph::IncidenceListGraph(const IncidenceListGraph &other)
+    : DiGraph(other.getParent()), impl(other.impl, this)
+{
+}
+
+IncidenceListGraph &IncidenceListGraph::operator=(const IncidenceListGraph &other)
+{
+
+}
+
+IncidenceListGraph::IncidenceListGraph(IncidenceListGraph &&other)
+{
+
+}
+
+IncidenceListGraph &IncidenceListGraph::operator=(IncidenceListGraph &&other)
+{
+
+}
+
 Vertex *IncidenceListGraph::addVertex()
 {
     auto v = recycleOrCreateIncidenceListVertex();
