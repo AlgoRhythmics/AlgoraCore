@@ -34,7 +34,7 @@ class MultiArc : public Arc
     friend class DiGraph;
 
 public:
-    virtual ~MultiArc();
+    virtual ~MultiArc() override;
 
     virtual unsigned long long getSize() const override = 0;
 
@@ -46,8 +46,8 @@ public:
     virtual std::string toString() const override;
 
 protected:
-    explicit MultiArc(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
-    explicit MultiArc(Vertex *tail, Vertex *head, unsigned long long id, GraphArtifact *parent = 0);
+    explicit MultiArc(Vertex *tail, Vertex *head, GraphArtifact *parent = nullptr);
+    explicit MultiArc(Vertex *tail, Vertex *head, unsigned long long id, GraphArtifact *parent = nullptr);
 };
 
 }

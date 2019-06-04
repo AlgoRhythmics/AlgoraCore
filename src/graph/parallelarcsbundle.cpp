@@ -129,4 +129,11 @@ std::string ParallelArcsBundle::toString() const
     return strStream.str();
 }
 
+void ParallelArcsBundle::setParent(GraphArtifact *p) {
+    MultiArc::setParent(p);
+    for (auto *a : grin->arcsBundle) {
+        a->setParent(p);
+    }
+}
+
 }

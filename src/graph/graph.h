@@ -40,9 +40,16 @@ class Graph : public GraphArtifact
 public:
     typedef unsigned long long size_type;
 
-    explicit Graph(GraphArtifact *parent = 0)
-        : GraphArtifact(parent) { }
+    explicit Graph(GraphArtifact *parent = nullptr);
     virtual ~Graph() { }
+
+    // copying
+    Graph(const Graph &other);
+    Graph &operator=(const Graph &other);
+
+    // moving
+    Graph(Graph &&other) = default;
+    Graph &operator=(Graph &&other) = default;
 
     // Vertices
     virtual Vertex *addVertex() = 0;
@@ -50,28 +57,10 @@ public:
     virtual bool containsVertex(const Vertex *v) const = 0;
     virtual Vertex *getAnyVertex() const = 0;
 
-    virtual void onVertexAdd(void *id, const VertexMapping &vvFun) { vertexGreetings.push_back(std::make_pair(id, vvFun)); }
-    virtual void onVertexRemove(void *id, const VertexMapping &vvFun) { vertexFarewells.push_back(std::make_pair(id, vvFun)); }
-    virtual void removeOnVertexAdd(void *id) {
-        auto i = vertexGreetings.begin();
-        while (i != vertexGreetings.end()) {
-            if (id == i->first) {
-                i = vertexGreetings.erase(i);
-            } else {
-                i++;
-            }
-        }
-    }
-    virtual void removeOnVertexRemove(void *id) {
-        auto i = vertexFarewells.begin();
-        while (i != vertexFarewells.end()) {
-            if (id == i->first) {
-                i = vertexFarewells.erase(i);
-            } else {
-                i++;
-            }
-        }
-    }
+    virtual void onVertexAdd(void *id, const VertexMapping &vvFun);
+    virtual void onVertexRemove(void *id, const VertexMapping &vvFun);
+    virtual void removeOnVertexAdd(void *id);
+    virtual void removeOnVertexRemove(void *id);
 
     // Accomodate visitors
     virtual void acceptVertexVisitor(VertexVisitor *nVisitor) {
@@ -86,18 +75,14 @@ public:
     virtual bool isEmpty() const = 0;
     virtual size_type getSize() const = 0;
 
-    virtual void clear() { vertexGreetings.clear(); vertexFarewells.clear(); }
+    virtual void clear();
 
 protected:
    std::vector<std::pair<void*, VertexMapping>> vertexGreetings;
    std::vector<std::pair<void*, VertexMapping>> vertexFarewells;
 
-   virtual void greetVertex(Vertex *v) {
-       for (const std::pair<void*, VertexMapping> &p : vertexGreetings) { p.second(v); }
-   }
-   virtual void dismissVertex(Vertex *v) {
-       for (const std::pair<void*, VertexMapping> &p : vertexFarewells) { p.second(v); }
-   }
+   virtual void greetVertex(Vertex *v);
+   virtual void dismissVertex(Vertex *v);
 
     Vertex *createVertex() {
         return new Vertex(this);

@@ -44,6 +44,13 @@ public:
 
     virtual ~Arc() override {}
 
+    // copying
+    Arc(const Arc &other) = default;
+    Arc &operator=(const Arc &other) = default;
+    // moving
+    Arc(Arc &&other) = default;
+    Arc &operator=(Arc &&other) = default;
+
     virtual Vertex *getTail() const { return getFirst(); }
     virtual Vertex *getHead() const { return getSecond(); }
     virtual unsigned long long getSize() const {

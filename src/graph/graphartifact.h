@@ -34,11 +34,13 @@ public:
     explicit GraphArtifact(GraphArtifact *parent = nullptr);
     virtual ~GraphArtifact();
 
-    // no copying, no moving
-    GraphArtifact(const GraphArtifact&) = delete;
-    GraphArtifact& operator=(const GraphArtifact&) = delete;
-    GraphArtifact(GraphArtifact &&other) = delete;
-    GraphArtifact& operator=(GraphArtifact &&other) = delete;
+    // copying
+    GraphArtifact(const GraphArtifact &other);
+    GraphArtifact& operator=(const GraphArtifact &other);
+
+    // moving
+    GraphArtifact(GraphArtifact &&other) = default;
+    GraphArtifact& operator=(GraphArtifact &&other) = default;
 
     unsigned long long getId() const { return id; }
     GraphArtifact *getParent() const { return parent; }
@@ -58,7 +60,7 @@ public:
     }
 
     // needed to implement move semantics in graph classes
-    void setParent(GraphArtifact *p) {
+    virtual void setParent(GraphArtifact *p) {
        parent = p;
     }
 
