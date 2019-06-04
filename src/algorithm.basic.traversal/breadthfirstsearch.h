@@ -44,7 +44,7 @@ public:
 
     explicit BreadthFirstSearch(bool computeValues = true, bool computeOrder = true)
         : GraphTraversal<unsigned long long>(valueComputation && computeValues),
-          computeOrder(computeOrder), maxBfsNumber(-1), maxLevel(-1),
+          computeOrder(computeOrder), maxBfsNumber(INF), maxLevel(INF),
           treeArc(arcNothing), nonTreeArc(arcNothing)
     {
         discovered.setDefaultValue(false);
@@ -60,7 +60,7 @@ public:
         nonTreeArc = aFun;
     }
 
-    int getMaxBfsNumber() const {
+    unsigned long long getMaxBfsNumber() const {
         return maxBfsNumber;
     }
 
@@ -82,7 +82,11 @@ public:
 
     // GraphTraversal interface
     unsigned long long numVerticesReached() const override {
-        return getMaxBfsNumber() + 1;
+        auto n = getMaxBfsNumber();
+        if (n == INF) {
+            return 0ULL;
+        }
+        return n + 1;
     }
 
     // DiGraphAlgorithm interface
@@ -182,7 +186,7 @@ public:
 public:
     virtual unsigned long long deliver() override
     {
-        return maxBfsNumber + 1ULL;
+        return maxBfsNumber == INF ? INF : maxBfsNumber + 1ULL;
     }
 
 private:
