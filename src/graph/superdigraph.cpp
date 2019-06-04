@@ -319,6 +319,11 @@ void SuperDiGraph::mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun
     }
 }
 
+unsigned long long SuperDiGraph::getNumArcs(bool multiArcsAsSimple) const
+{
+    return grin->extra->getNumArcs(multiArcsAsSimple) + grin->subGraph->getNumArcs(multiArcsAsSimple);
+}
+
 IncidenceListVertex *findVertex(Vertex *v, std::unordered_map<const Vertex *, IncidenceListVertex *> &map,
                                 const DiGraph *graph) {
     if (v->getParent() == graph) {
@@ -333,7 +338,7 @@ IncidenceListVertex *findVertex(Vertex *v, std::unordered_map<const Vertex *, In
         return map.at(v);
     }
 
-    return 0;
+    return nullptr;
 }
 
 const IncidenceListVertex *findVertex(const Vertex *v, std::unordered_map<const Vertex *, IncidenceListVertex *> &map,
@@ -350,7 +355,7 @@ const IncidenceListVertex *findVertex(const Vertex *v, std::unordered_map<const 
         return map.at(v);
     }
 
-    return 0;
+    return nullptr;
 }
 
 IncidenceListVertex *findOrCreateVertex(Vertex *v,

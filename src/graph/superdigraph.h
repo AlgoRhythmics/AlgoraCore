@@ -31,7 +31,7 @@ class SuperDiGraph : public DiGraph
 {
 public:
     explicit SuperDiGraph(DiGraph *graph);
-    virtual ~SuperDiGraph();
+    virtual ~SuperDiGraph() override;
 
     // Graph interface
 public:
@@ -57,6 +57,7 @@ public:
     virtual void mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
     virtual void mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
     virtual void mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) override;
+    virtual unsigned long long getNumArcs(bool multiArcsAsSimple = false) const override;
 
 private:
     class CheshireCat;
