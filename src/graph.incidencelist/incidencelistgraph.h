@@ -82,7 +82,7 @@ protected:
     IncidenceListVertex *recycleOrCreateIncidenceListVertex();
     IncidenceListVertex *createIncidenceListVertex();
     Arc *recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head);
-    Arc *ceateArc(IncidenceListVertex *tail, IncidenceListVertex *head);
+    Arc *createArc(IncidenceListVertex *tail, IncidenceListVertex *head);
 
 private:
     IncidenceListGraphImplementation *impl;

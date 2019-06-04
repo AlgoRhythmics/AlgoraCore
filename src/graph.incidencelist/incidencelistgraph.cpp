@@ -297,7 +297,7 @@ Arc *IncidenceListGraph::recycleOrCreateArc(IncidenceListVertex *tail, Incidence
     return impl->recycleOrCreateArc(tail, head);
 }
 
-Arc *IncidenceListGraph::ceateArc(IncidenceListVertex *tail, IncidenceListVertex *head)
+Arc *IncidenceListGraph::createArc(IncidenceListVertex *tail, IncidenceListVertex *head)
 {
     return impl->createArc(tail, head);
 }
