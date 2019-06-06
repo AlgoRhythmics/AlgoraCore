@@ -33,7 +33,7 @@ class IncidenceListGraphImplementation;
 class IncidenceListGraph : public DiGraph
 {
 public:
-    explicit IncidenceListGraph(GraphArtifact *parent = 0);
+    explicit IncidenceListGraph(GraphArtifact *parent = nullptr);
     virtual ~IncidenceListGraph();
 
     // Graph interface
