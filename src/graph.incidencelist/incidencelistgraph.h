@@ -29,6 +29,8 @@ namespace Algora {
 
 class IncidenceListVertex;
 class IncidenceListGraphImplementation;
+template<typename T>
+class ModifiableProperty;
 
 class IncidenceListGraph : public DiGraph
 {
@@ -37,8 +39,19 @@ public:
     virtual ~IncidenceListGraph() override;
 
     // copying
-    IncidenceListGraph(const IncidenceListGraph &other);
+    IncidenceListGraph(const IncidenceListGraph &other,
+                                     ModifiableProperty<GraphArtifact*> *otherToThisVertices = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *otherToThisArcs = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *thisToOtherVertices = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *thisToOtherArcs = nullptr
+                       );
     IncidenceListGraph &operator=(const IncidenceListGraph &other);
+    IncidenceListGraph &assign(const IncidenceListGraph &other,
+                                     ModifiableProperty<GraphArtifact*> *otherToThisVertices = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *otherToThisArcs = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *thisToOtherVertices = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *thisToOtherArcs = nullptr
+                               );
 
     // moving
     IncidenceListGraph(IncidenceListGraph &&other);

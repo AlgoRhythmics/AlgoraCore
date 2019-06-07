@@ -29,7 +29,6 @@
 #include "incidencelistgraphimplementation.h"
 
 #include <stdexcept>
-#include <iostream>
 
 namespace Algora {
 
@@ -41,46 +40,45 @@ void checkVertex(const IncidenceListVertex *v, const IncidenceListGraph *graph);
 IncidenceListGraph::IncidenceListGraph(GraphArtifact *parent)
     : DiGraph(parent), impl(new IncidenceListGraphImplementation(this))
 {
-    std::cerr << "ILG: ctor" << std::endl;
 }
 
 IncidenceListGraph::~IncidenceListGraph()
 {
-    std::cerr << "ILG: dtor" << std::endl;
     if (impl != nullptr) {
         delete impl;
     }
 }
 
-IncidenceListGraph::IncidenceListGraph(const IncidenceListGraph &other)
-    : DiGraph(other), impl(new IncidenceListGraphImplementation(*other.impl, this))
+IncidenceListGraph::IncidenceListGraph(const IncidenceListGraph &other, ModifiableProperty<GraphArtifact *> *otherToThisVertices, ModifiableProperty<GraphArtifact *> *otherToThisArcs, ModifiableProperty<GraphArtifact *> *thisToOtherVertices, ModifiableProperty<GraphArtifact *> *thisToOtherArcs)
+    : DiGraph(other), impl(new IncidenceListGraphImplementation(*other.impl, this, otherToThisVertices, otherToThisArcs, thisToOtherVertices, thisToOtherArcs))
 {
-    std::cerr << "ILG: copy ctor" << std::endl;
 }
 
 IncidenceListGraph &IncidenceListGraph::operator=(const IncidenceListGraph &other)
 {
-    std::cerr << "ILG: copy assignment" << std::endl;
+    return assign(other);
+}
+
+IncidenceListGraph &IncidenceListGraph::assign(const IncidenceListGraph &other, ModifiableProperty<GraphArtifact *> *otherToThisVertices, ModifiableProperty<GraphArtifact *> *otherToThisArcs, ModifiableProperty<GraphArtifact *> *thisToOtherVertices, ModifiableProperty<GraphArtifact *> *thisToOtherArcs)
+{
     if (&other == this) {
         return *this;
     }
 
     DiGraph::operator=(other);
-    impl->assign(*other.impl, this);
+    impl->assign(*other.impl, this, otherToThisVertices, otherToThisArcs, thisToOtherVertices, thisToOtherArcs);
     return *this;
 }
 
 IncidenceListGraph::IncidenceListGraph(IncidenceListGraph &&other)
     : DiGraph(std::move(other)), impl(other.impl)
 {
-    std::cerr << "ILG: move ctor" << std::endl;
     impl->setOwner(this);
     other.impl = nullptr;
 }
 
 IncidenceListGraph &IncidenceListGraph::operator=(IncidenceListGraph &&other)
 {
-    std::cerr << "ILG: move assignment" << std::endl;
     if (&other == this) {
         return *this;
     }

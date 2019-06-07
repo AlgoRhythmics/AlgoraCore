@@ -27,6 +27,8 @@
 #include "incidencelistvertex.h"
 #include "graph/arc.h"
 
+#include "property/modifiableproperty.h"
+
 #include <vector>
 #include <boost/pool/object_pool.hpp>
 
@@ -43,8 +45,20 @@ public:
     ~IncidenceListGraphImplementation();
 
     // copying
-    IncidenceListGraphImplementation(const IncidenceListGraphImplementation &other, DiGraph *handle = nullptr, PropertyMap<GraphArtifact*> *pm = nullptr);
-    IncidenceListGraphImplementation& assign(const IncidenceListGraphImplementation &other, DiGraph *handle = nullptr, PropertyMap<GraphArtifact*> *pm = nullptr);
+    IncidenceListGraphImplementation(const IncidenceListGraphImplementation &other,
+                                     DiGraph *handle = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *otherToThisVertices = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *otherToThisArcs = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *thisToOtherVertices = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *thisToOtherArcs = nullptr
+            );
+    IncidenceListGraphImplementation& assign(const IncidenceListGraphImplementation &other,
+                                             DiGraph *handle = nullptr,
+                                             ModifiableProperty<GraphArtifact*> *otherToThisVertices = nullptr,
+                                             ModifiableProperty<GraphArtifact*> *otherToThisArcs = nullptr,
+                                             ModifiableProperty<GraphArtifact*> *thisToOtherVertices = nullptr,
+                                             ModifiableProperty<GraphArtifact*> *thisToOtherArcs = nullptr
+            );
     IncidenceListGraphImplementation& operator=(const IncidenceListGraphImplementation &other) { return assign(other); }
 
     // moving is costly, but better than copying
@@ -113,7 +127,11 @@ private:
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
     void unbundleOutgoingArcs(IncidenceListVertex *vertex);
 
-    void copyFrom(const IncidenceListGraphImplementation &other, PropertyMap<GraphArtifact *> &map);
+    void copyFrom(const IncidenceListGraphImplementation &other,
+                  ModifiableProperty<GraphArtifact *> &otherToThisVertices,
+                  ModifiableProperty<GraphArtifact *> &otherToThisArcs,
+                  ModifiableProperty<GraphArtifact *> &thisToOtherVertices,
+                  ModifiableProperty<GraphArtifact *> &thisToOtherArcs);
 };
 
 }
