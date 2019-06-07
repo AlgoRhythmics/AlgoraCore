@@ -35,7 +35,14 @@ class Vertex : public GraphArtifact
 public:
     explicit Vertex(GraphArtifact *parent = nullptr);
     explicit Vertex(unsigned long long id, GraphArtifact *parent = nullptr);
-    virtual ~Vertex();
+    virtual ~Vertex() override;
+
+    // copying
+    Vertex(const Vertex &other) : GraphArtifact(other) { setParent(nullptr); }
+    Vertex &operator=(const Vertex &other);
+    // moving
+    Vertex(Vertex &&other);
+    Vertex &operator=(Vertex &&other);
 
     virtual std::string toString() const override;
 

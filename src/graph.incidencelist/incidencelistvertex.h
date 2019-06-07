@@ -41,6 +41,12 @@ public:
     explicit IncidenceListVertex(unsigned long long id, GraphArtifact *parent = nullptr, unsigned long long index = 0);
     virtual ~IncidenceListVertex();
 
+    // disable copying and moving
+    IncidenceListVertex(const IncidenceListVertex &other) = delete;
+    IncidenceListVertex &operator=(const IncidenceListVertex &other) = delete;
+    IncidenceListVertex(IncidenceListVertex &&other) = delete;
+    IncidenceListVertex &operator=(IncidenceListVertex &&other) = delete;
+
     virtual bool hasOutgoingArc(const Arc *a) const;
     virtual bool hasIncomingArc(const Arc *a) const;
     virtual Arc *outgoingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;

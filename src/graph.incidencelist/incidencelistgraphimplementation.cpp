@@ -27,6 +27,7 @@
 #include "graph.visitor/vertexvisitor.h"
 #include "graph.visitor/arcvisitor.h"
 #include "graph.visitor/collectarcsvisitor.h"
+#include "property/propertymap.h"
 
 #include <vector>
 #include <unordered_map>
@@ -35,10 +36,14 @@
 
 namespace Algora {
 
+template<typename... Args>
+bool any(Args... args) { return (... || args); }
+
+
+
 IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *handle)
     : graph(handle), numArcs(0U), nextVertexId(0U), nextArcId(0U)
 {
-
 }
 
 IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
@@ -47,6 +52,71 @@ IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
     arcPool.clear();
     vertexPool.clear();
     // vertexStorage and arcStorage should be auto-destroyed.
+}
+
+IncidenceListGraphImplementation::IncidenceListGraphImplementation(const IncidenceListGraphImplementation &other, DiGraph *handle,
+                                                                   ModifiableProperty<GraphArtifact *> *otherToThisVertices,
+                                                                   ModifiableProperty<GraphArtifact *> *otherToThisArcs,
+                                                                   ModifiableProperty<GraphArtifact *> *thisToOtherVertices,
+                                                                   ModifiableProperty<GraphArtifact *> *thisToOtherArcs)
+    : graph(nullptr), numArcs(0U), nextVertexId(0U), nextArcId(0U)
+{
+    if (handle != nullptr) {
+        graph = handle;
+    }
+    if (any(otherToThisVertices == nullptr, otherToThisArcs == nullptr, thisToOtherVertices == nullptr, thisToOtherArcs == nullptr)) {
+        PropertyMap<GraphArtifact*> pm;
+        otherToThisVertices = otherToThisVertices == nullptr ? &pm : otherToThisVertices;
+        thisToOtherVertices = thisToOtherVertices == nullptr ? &pm : thisToOtherVertices;
+        otherToThisArcs = otherToThisArcs == nullptr ? &pm : otherToThisArcs;
+        thisToOtherArcs = thisToOtherArcs == nullptr ? &pm : thisToOtherArcs;
+        copyFrom(other, *otherToThisVertices, *otherToThisArcs, *thisToOtherVertices, *thisToOtherArcs);
+    } else {
+        copyFrom(other, *otherToThisVertices, *otherToThisArcs, *thisToOtherVertices, *thisToOtherArcs);
+    }
+}
+
+IncidenceListGraphImplementation &IncidenceListGraphImplementation::assign(const IncidenceListGraphImplementation &other, DiGraph *handle, ModifiableProperty<GraphArtifact *> *otherToThisVertices, ModifiableProperty<GraphArtifact *> *otherToThisArcs, ModifiableProperty<GraphArtifact *> *thisToOtherVertices, ModifiableProperty<GraphArtifact *> *thisToOtherArcs)
+{
+    if (&other == this) {
+        return *this;
+    }
+
+    if (handle != nullptr) {
+        graph = handle;
+    }
+    if (any(otherToThisVertices == nullptr, otherToThisArcs == nullptr, thisToOtherVertices == nullptr, thisToOtherArcs == nullptr)) {
+        PropertyMap<GraphArtifact*> pm;
+        otherToThisVertices = otherToThisVertices == nullptr ? &pm : otherToThisVertices;
+        thisToOtherVertices = thisToOtherVertices == nullptr ? &pm : thisToOtherVertices;
+        otherToThisArcs = otherToThisArcs == nullptr ? &pm : otherToThisArcs;
+        thisToOtherArcs = thisToOtherArcs == nullptr ? &pm : thisToOtherArcs;
+    }
+    copyFrom(other, *otherToThisVertices, *otherToThisArcs, *thisToOtherVertices, *thisToOtherArcs);
+
+    return *this;
+}
+
+IncidenceListGraphImplementation::IncidenceListGraphImplementation(IncidenceListGraphImplementation &&other, DiGraph *handle)
+    : IncidenceListGraphImplementation(std::move(other))
+{
+    if (handle != nullptr) {
+        setOwner(handle);
+    }
+}
+
+IncidenceListGraphImplementation &IncidenceListGraphImplementation::move(IncidenceListGraphImplementation &&other, DiGraph *handle)
+{
+    if (&other == this) {
+        return *this;
+    }
+
+    operator=(std::move(other));
+    if (handle != nullptr) {
+        setOwner(handle);
+    }
+
+    return *this;
 }
 
 void IncidenceListGraphImplementation::clear(bool emptyReserves)
@@ -104,21 +174,17 @@ void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
         arcPool.push_back(a);
     }, arcFalse, false);
     v->clearIncomingArcs();
-    //vertices.erase(std::find(vertices.cbegin(), vertices.cend(), v));
     IncidenceListVertex *o = vertices.back();
     auto index = v->getIndex();
     o->setIndex(index);
     vertices[index] = o;
     vertices.pop_back();
-    //recycledVertexIds.push_back(v->getId());
-    //delete v;
     v->hibernate();
     vertexPool.push_back(v);
 }
 
 bool IncidenceListGraphImplementation::containsVertex(const IncidenceListVertex *v) const
 {
-    //return std::find(vertices.cbegin(), vertices.cend(), v) != vertices.cend();
     return (v->getParent() == graph && vertices.at(v->getIndex()) == v);
 }
 
@@ -147,8 +213,6 @@ void IncidenceListGraphImplementation::removeArc(Arc *a, IncidenceListVertex *ta
     tail->removeOutgoingArc(a);
     head->removeIncomingArc(a);
     numArcs--;
-    //recycledArcIds.push_back(a->getId());
-    //delete a;
     a->hibernate();
     arcPool.push_back(a);
 }
@@ -266,9 +330,14 @@ void IncidenceListGraphImplementation::unbundleParallelArcs()
 
 void IncidenceListGraphImplementation::reserveVertexCapacity(unsigned long long n)
 {
-    auto capacity = n > vertexPool.size() ? n : vertexPool.size();
-    auto reserve = capacity - getSize();
-    vertexPool.reserve(reserve);
+    if (n <= vertices.size() + vertexPool.size()) {
+        return;
+    }
+    auto reserve = n - getSize();
+
+    vertexPool.reserve(n);
+    vertexStorage.set_next_size(reserve);
+
     std::vector<IncidenceListVertex*> tmp;
     tmp.reserve(reserve);
     for (auto i = 0ULL; i < reserve; i++) {
@@ -282,9 +351,18 @@ void IncidenceListGraphImplementation::reserveVertexCapacity(unsigned long long 
 
 void IncidenceListGraphImplementation::reserveArcCapacity(unsigned long long n)
 {
-    auto capacity = n > arcPool.size() ? n : arcPool.size();
-    auto reserve = capacity - getNumArcs(true);
-    arcPool.reserve(reserve);
+    if (n <= numArcs + arcPool.size()) {
+        return;
+    }
+    auto reserve = n - numArcs;
+
+    if (reserve == 0U) {
+        return;
+    }
+
+    arcPool.reserve(n);
+    arcStorage.set_next_size(reserve);
+
     std::vector<Arc*> tmp;
     tmp.reserve(reserve);
     for (auto i = 0ULL; i < reserve; i++) {
@@ -357,6 +435,26 @@ unsigned long long IncidenceListGraphImplementation::getNextArcId()
     return id;
 }
 
+void IncidenceListGraphImplementation::setOwner(DiGraph *handle)
+{
+    if (handle == graph) {
+        return;
+    }
+
+    graph = handle;
+
+    for (auto *v : vertices) {
+        v->setParent(graph);
+        v->mapOutgoingArcs([this](Arc *a) { a->setParent(graph); });
+    }
+    for (auto *v : vertexPool) {
+        v->setParent(graph);
+    }
+    for (auto *a : arcPool) {
+        a->setParent(graph);
+    }
+}
+
 void IncidenceListGraphImplementation::bundleOutgoingArcs(IncidenceListVertex *vertex)
 {
     std::vector<Arc*> outArcs;
@@ -405,6 +503,38 @@ void IncidenceListGraphImplementation::unbundleOutgoingArcs(IncidenceListVertex 
     }
     for (Arc *a : arcs) {
         addArc(a, vertex, dynamic_cast<IncidenceListVertex*>(a->getHead()));
+    }
+}
+
+void IncidenceListGraphImplementation::copyFrom(const IncidenceListGraphImplementation &other,
+                                                ModifiableProperty<GraphArtifact *> &otherToThisVertices,
+                                                ModifiableProperty<GraphArtifact *> &otherToThisArcs,
+                                                ModifiableProperty<GraphArtifact *> &thisToOtherVertices,
+                                                ModifiableProperty<GraphArtifact *> &thisToOtherArcs)
+{
+    clear(true);
+
+    reserveVertexCapacity(other.vertices.size() + other.vertexPool.size());
+    reserveArcCapacity(other.numArcs + other.arcPool.size());
+
+    for (auto *v : other.vertices) {
+        auto *cv = recycleOrCreateIncidenceListVertex();
+        cv->setName(v->getName());
+        otherToThisVertices[v] = cv;
+        thisToOtherVertices[cv] = v;
+        addVertex(cv);
+    }
+
+    for (auto *v : other.vertices) {
+        auto *tail = dynamic_cast<IncidenceListVertex*>(otherToThisVertices(v));
+        v->mapOutgoingArcs([&otherToThisVertices, &otherToThisArcs, &thisToOtherArcs, this, tail](Arc *a) {
+            auto *head = dynamic_cast<IncidenceListVertex*>(otherToThisVertices(a->getHead()));
+            auto *av = this->recycleOrCreateArc(tail, head);
+            av->setName(a->getName());
+            otherToThisArcs[a] = av;
+            thisToOtherArcs[av] = a;
+            addArc(av, tail, head);
+        });
     }
 }
 

@@ -44,6 +44,25 @@ GraphArtifact::~GraphArtifact()
 {
 }
 
+GraphArtifact::GraphArtifact(const GraphArtifact &other)
+    : id(nextId), parent(other.parent), valid(other.valid), name(other.name)
+{
+    nextId++;
+}
+
+GraphArtifact &GraphArtifact::operator=(const GraphArtifact &other)
+{
+    if (&other == this) {
+        return *this;
+    }
+
+    // keep my id
+    parent = other.parent;
+    valid = other.valid;
+    name = other.name;
+
+    return *this;
+}
 
 std::string GraphArtifact::idString() const
 {

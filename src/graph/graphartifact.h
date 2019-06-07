@@ -34,6 +34,14 @@ public:
     explicit GraphArtifact(GraphArtifact *parent = nullptr);
     virtual ~GraphArtifact();
 
+    // copying
+    GraphArtifact(const GraphArtifact &other);
+    GraphArtifact& operator=(const GraphArtifact &other);
+
+    // moving
+    GraphArtifact(GraphArtifact &&other) = default;
+    GraphArtifact& operator=(GraphArtifact &&other) = default;
+
     unsigned long long getId() const { return id; }
     GraphArtifact *getParent() const { return parent; }
 
@@ -41,6 +49,7 @@ public:
         return "GraphArtifact";
     }
     virtual std::string toString() const = 0;
+
     bool isValid() const { return valid; }
 
     void setName(const std::string &n) {
@@ -50,14 +59,15 @@ public:
         return name;
     }
 
+    // needed to implement move semantics in graph classes
+    virtual void setParent(GraphArtifact *p) {
+       parent = p;
+    }
+
 protected:
     std::string idString() const;
     void invalidate() { valid = false; }
     void revalidate() { valid = true; }
-
-private:
-    GraphArtifact(const GraphArtifact&);
-    GraphArtifact& operator=(const GraphArtifact&);
 
 private:
     static unsigned long long nextId;

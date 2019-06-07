@@ -34,7 +34,7 @@ namespace Algora {
 template<typename Tval>
 struct PointerHash {
     size_t operator()(const Tval* val) const {
-        static const size_t shift = (size_t)log2(1 + sizeof(Tval));
+        static constexpr size_t shift = static_cast<size_t>(log2(1 + sizeof(Tval)));
         return (size_t)(val) >> shift;
     }
 };

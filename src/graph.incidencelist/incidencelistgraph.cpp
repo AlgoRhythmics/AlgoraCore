@@ -40,12 +40,52 @@ void checkVertex(const IncidenceListVertex *v, const IncidenceListGraph *graph);
 IncidenceListGraph::IncidenceListGraph(GraphArtifact *parent)
     : DiGraph(parent), impl(new IncidenceListGraphImplementation(this))
 {
-
 }
 
 IncidenceListGraph::~IncidenceListGraph()
 {
-    delete impl;
+    if (impl != nullptr) {
+        delete impl;
+    }
+}
+
+IncidenceListGraph::IncidenceListGraph(const IncidenceListGraph &other, ModifiableProperty<GraphArtifact *> *otherToThisVertices, ModifiableProperty<GraphArtifact *> *otherToThisArcs, ModifiableProperty<GraphArtifact *> *thisToOtherVertices, ModifiableProperty<GraphArtifact *> *thisToOtherArcs)
+    : DiGraph(other), impl(new IncidenceListGraphImplementation(*other.impl, this, otherToThisVertices, otherToThisArcs, thisToOtherVertices, thisToOtherArcs))
+{
+}
+
+IncidenceListGraph &IncidenceListGraph::operator=(const IncidenceListGraph &other)
+{
+    return assign(other);
+}
+
+IncidenceListGraph &IncidenceListGraph::assign(const IncidenceListGraph &other, ModifiableProperty<GraphArtifact *> *otherToThisVertices, ModifiableProperty<GraphArtifact *> *otherToThisArcs, ModifiableProperty<GraphArtifact *> *thisToOtherVertices, ModifiableProperty<GraphArtifact *> *thisToOtherArcs)
+{
+    if (&other == this) {
+        return *this;
+    }
+
+    DiGraph::operator=(other);
+    impl->assign(*other.impl, this, otherToThisVertices, otherToThisArcs, thisToOtherVertices, thisToOtherArcs);
+    return *this;
+}
+
+IncidenceListGraph::IncidenceListGraph(IncidenceListGraph &&other)
+    : DiGraph(std::move(other)), impl(other.impl)
+{
+    impl->setOwner(this);
+    other.impl = nullptr;
+}
+
+IncidenceListGraph &IncidenceListGraph::operator=(IncidenceListGraph &&other)
+{
+    if (&other == this) {
+        return *this;
+    }
+    DiGraph::operator=(std::move(other));
+    impl->move(std::move(*other.impl), this);
+    other.impl = nullptr;
+    return *this;
 }
 
 Vertex *IncidenceListGraph::addVertex()
@@ -113,7 +153,6 @@ Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
     auto t = castVertex(tail, this);
     auto h = castVertex(head, this);
 
-    //Arc *a = createArc(t, h, impl->getNextArcId());
     Arc *a = recycleOrCreateArc(t, h);
 
     impl->addArc(a, t, h);

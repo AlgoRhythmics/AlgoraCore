@@ -42,6 +42,43 @@ Vertex::~Vertex()
 
 }
 
+Vertex &Vertex::operator=(const Vertex &other) {
+    if (&other == this) {
+        return *this;
+    }
+    GraphArtifact::operator=(other);
+    setParent(nullptr);
+    return *this;
+}
+
+Vertex::Vertex(Vertex &&other)
+    : GraphArtifact(nullptr)
+{
+    if (other.getParent() != nullptr) {
+        // moving illegal
+        operator=(other);
+    } else {
+        operator=(std::move(other));
+    }
+}
+
+Vertex &Vertex::operator=(Vertex &&other)
+{
+    if (&other == this) {
+        return *this;
+    }
+
+    if (other.getParent() != nullptr) {
+        // use copy
+        return operator=(other);
+    }
+    GraphArtifact::operator=(std::move(other));
+    other.invalidate();
+
+    return *this;
+
+}
+
 std::string Vertex::toString() const
 {
     std::ostringstream strStream;

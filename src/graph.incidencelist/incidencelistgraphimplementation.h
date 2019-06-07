@@ -27,6 +27,8 @@
 #include "incidencelistvertex.h"
 #include "graph/arc.h"
 
+#include "property/modifiableproperty.h"
+
 #include <vector>
 #include <boost/pool/object_pool.hpp>
 
@@ -41,6 +43,30 @@ class IncidenceListGraphImplementation {
 public:
     explicit IncidenceListGraphImplementation(DiGraph *handle);
     ~IncidenceListGraphImplementation();
+
+    // copying
+    IncidenceListGraphImplementation(const IncidenceListGraphImplementation &other,
+                                     DiGraph *handle = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *otherToThisVertices = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *otherToThisArcs = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *thisToOtherVertices = nullptr,
+                                     ModifiableProperty<GraphArtifact*> *thisToOtherArcs = nullptr
+            );
+    IncidenceListGraphImplementation& assign(const IncidenceListGraphImplementation &other,
+                                             DiGraph *handle = nullptr,
+                                             ModifiableProperty<GraphArtifact*> *otherToThisVertices = nullptr,
+                                             ModifiableProperty<GraphArtifact*> *otherToThisArcs = nullptr,
+                                             ModifiableProperty<GraphArtifact*> *thisToOtherVertices = nullptr,
+                                             ModifiableProperty<GraphArtifact*> *thisToOtherArcs = nullptr
+            );
+    IncidenceListGraphImplementation& operator=(const IncidenceListGraphImplementation &other) { return assign(other); }
+
+    // moving is costly, but better than copying
+    IncidenceListGraphImplementation(IncidenceListGraphImplementation &&other) = default;
+    IncidenceListGraphImplementation& operator=(IncidenceListGraphImplementation &&other) = default;
+    IncidenceListGraphImplementation(IncidenceListGraphImplementation &&other, DiGraph *handle);
+    IncidenceListGraphImplementation& move(IncidenceListGraphImplementation &&other, DiGraph *handle);
+
     void clear(bool emptyReserves = false);
 
     void addVertex(IncidenceListVertex *vertex);
@@ -78,8 +104,10 @@ public:
     IncidenceListVertex *createIncidenceListVertex();
     Arc *recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head);
     Arc *createArc(IncidenceListVertex *tail, IncidenceListVertex *head);
+    MultiArc *createMultiArc(IncidenceListVertex *tail, IncidenceListVertex *head, unsigned long long);
 
     unsigned long long getNextArcId();
+    void setOwner(DiGraph *handle);
 
 private:
     DiGraph *graph;
@@ -94,9 +122,16 @@ private:
     boost::object_pool<Arc> arcStorage;
     std::vector<IncidenceListVertex*> vertexPool;
     std::vector<Arc*> arcPool;
+    std::vector<MultiArc*> multiArcs;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
     void unbundleOutgoingArcs(IncidenceListVertex *vertex);
+
+    void copyFrom(const IncidenceListGraphImplementation &other,
+                  ModifiableProperty<GraphArtifact *> &otherToThisVertices,
+                  ModifiableProperty<GraphArtifact *> &otherToThisArcs,
+                  ModifiableProperty<GraphArtifact *> &thisToOtherVertices,
+                  ModifiableProperty<GraphArtifact *> &thisToOtherArcs);
 };
 
 }

@@ -39,10 +39,18 @@ class PropertyMap;
 class DiGraph : public Graph
 {
 public:
-    explicit DiGraph(GraphArtifact *parent = 0);
-    virtual ~DiGraph() { }
+    explicit DiGraph(GraphArtifact *parent = nullptr);
+    virtual ~DiGraph() override { }
 
-    virtual DiGraph *createReversedGraph(PropertyMap<GraphArtifact*> &) const { return 0; }
+    // copying
+    DiGraph(const DiGraph &other);
+    DiGraph &operator=(const DiGraph &other);
+
+    // moving
+    DiGraph(DiGraph &&other) = default;
+    DiGraph &operator=(DiGraph &&other) = default;
+
+    virtual DiGraph *createReversedGraph(PropertyMap<GraphArtifact*> &) const { return nullptr; }
 
     // Arcs
     virtual Arc *addArc(Vertex *tail, Vertex *head) = 0;
@@ -69,26 +77,8 @@ public:
 
     virtual void onArcAdd(void *id, const ArcMapping &avFun) { arcGreetings.push_back(std::make_pair(id, avFun)); }
     virtual void onArcRemove(void *id, const ArcMapping &avFun) { arcFarewells.push_back(std::make_pair(id, avFun)); }
-    virtual void removeOnArcAdd(void *id) {
-        auto i = arcGreetings.begin();
-        while (i != arcGreetings.end()) {
-            if (id == i->first) {
-                i = arcGreetings.erase(i);
-            } else {
-                i++;
-            }
-        }
-    }
-    virtual void removeOnArcRemove(void *id) {
-        auto i = arcFarewells.begin();
-        while (i != arcFarewells.end()) {
-            if (id == i->first) {
-                i = arcFarewells.erase(i);
-            } else {
-                i++;
-            }
-        }
-    }
+    virtual void removeOnArcAdd(void *id);
+    virtual void removeOnArcRemove(void *id);
 
     // Accomodate visitors
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) {

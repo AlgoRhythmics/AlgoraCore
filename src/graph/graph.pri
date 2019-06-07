@@ -47,4 +47,5 @@ SOURCES += \
     $$PWD/graph_functional.cpp \
     $$PWD/multiarc.cpp \
     $$PWD/weightedarc.cpp \
-    $$PWD/vertexpair.cpp
+    $$PWD/vertexpair.cpp \
+    $$PWD/graph.cpp

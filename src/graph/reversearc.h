@@ -31,7 +31,7 @@ class ReverseArc : public Arc
 {
 public:
     ReverseArc(Arc *a) : Arc(a->getHead(), a->getTail(), a->getParent()), arc(a) { }
-    virtual ~ReverseArc() {}
+    virtual ~ReverseArc() override {}
 
     // GraphArtifact interface
 public:

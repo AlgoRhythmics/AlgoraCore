@@ -33,12 +33,47 @@ DiGraph::DiGraph(GraphArtifact *parent)
 
 }
 
+DiGraph::DiGraph(const DiGraph &other)
+    : Graph(other)
+{
+    // do not copy listeners
+}
+
+DiGraph &DiGraph::operator=(const DiGraph &other)
+{
+    Graph::operator=(other);
+    // do not copy listeners
+    return *this;
+}
+
 unsigned long long DiGraph::getNumArcs(bool multiArcsAsSimple) const
 {
     DiGraph *me = const_cast<DiGraph*>(this);
     unsigned long long numArcs = 0ULL;
     me->mapVertices([&](Vertex *v) { numArcs += me->getOutDegree(v, multiArcsAsSimple); });
     return numArcs;
+}
+
+void DiGraph::removeOnArcAdd(void *id) {
+    auto i = arcGreetings.begin();
+    while (i != arcGreetings.end()) {
+        if (id == i->first) {
+            i = arcGreetings.erase(i);
+        } else {
+            i++;
+        }
+    }
+}
+
+void DiGraph::removeOnArcRemove(void *id) {
+    auto i = arcFarewells.begin();
+    while (i != arcFarewells.end()) {
+        if (id == i->first) {
+            i = arcFarewells.erase(i);
+        } else {
+            i++;
+        }
+    }
 }
 
 std::string DiGraph::toString() const

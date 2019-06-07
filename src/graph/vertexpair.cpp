@@ -27,6 +27,56 @@
 
 namespace Algora {
 
+VertexPair::VertexPair(const VertexPair &other)
+    : GraphArtifact(other), first(other.first), second(other.second) {
+    setParent(nullptr);
+}
+
+VertexPair &VertexPair::operator=(const VertexPair &other) {
+    if (&other == this) {
+        return *this;
+    }
+
+    GraphArtifact::operator=(other);
+    setParent(nullptr);
+    first = other.first;
+    second = other.second;
+
+    return *this;
+}
+
+VertexPair::VertexPair(VertexPair &&other)
+    : GraphArtifact(nullptr)
+{
+    if (other.getParent() != nullptr) {
+        // moving illegal
+        operator=(other);
+    } else {
+        operator=(std::move(other));
+    }
+}
+
+VertexPair &VertexPair::operator=(VertexPair &&other) {
+    if (&other == this) {
+        return *this;
+    }
+
+    if (other.getParent() != nullptr) {
+        // use copy
+        return operator=(other);
+    }
+    GraphArtifact::operator=(std::move(other));
+    first = other.first;
+    second = other.second;
+
+    other.first = nullptr;
+    other.second = nullptr;
+    other.invalidate();
+
+    return *this;
+}
+
+
 std::string VertexPair::toString() const
 {
     std::ostringstream strStream;

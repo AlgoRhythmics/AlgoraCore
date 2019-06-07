@@ -41,7 +41,15 @@ public:
     explicit VertexPair(unsigned long long id, GraphArtifact *parent = nullptr)
         : GraphArtifact(id, parent), first(nullptr), second(nullptr) { invalidate(); }
 
-    virtual ~VertexPair() { }
+    virtual ~VertexPair() override { }
+
+    // copying
+    VertexPair(const VertexPair &other);
+    VertexPair &operator=(const VertexPair &other);
+
+    // moving
+    VertexPair(VertexPair &&other);
+    VertexPair &operator=(VertexPair &&other);
 
     Vertex *getFirst() const { return first; }
     Vertex *getSecond() const { return second; }

@@ -35,10 +35,10 @@ class ParallelArcsBundle : public MultiArc
 {
 
 public:
-    explicit ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent = 0);
+    explicit ParallelArcsBundle(Vertex *tail, Vertex *head, GraphArtifact *parent = nullptr);
     explicit ParallelArcsBundle(Arc *arc);
 
-    virtual ~ParallelArcsBundle();
+    virtual ~ParallelArcsBundle() override;
 
     virtual void getArcs(std::vector<Arc*> *l) const;
     virtual void acceptArcVisitor(ArcVisitor *aVisitor) const {
@@ -64,6 +64,7 @@ public:
         return "Parallel Arcs Bundle";
     }
     virtual std::string toString() const override;
+    virtual void setParent(GraphArtifact *p) override;
 
 private:
     struct CheshireCat;

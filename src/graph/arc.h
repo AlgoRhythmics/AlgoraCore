@@ -42,7 +42,14 @@ public:
     explicit Arc(unsigned long long id, GraphArtifact *parent = nullptr)
         : VertexPair(id, parent) {}
 
-    virtual ~Arc() {}
+    virtual ~Arc() override {}
+
+    // copying
+    Arc(const Arc &other) = default;
+    Arc &operator=(const Arc &other) = default;
+    // moving
+    Arc(Arc &&other) = default;
+    Arc &operator=(Arc &&other) = default;
 
     virtual Vertex *getTail() const { return getFirst(); }
     virtual Vertex *getHead() const { return getSecond(); }
