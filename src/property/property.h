@@ -27,22 +27,21 @@
 
 namespace Algora {
 
+class GraphArtifact;
+
 template<typename T>
 class Property : public GraphArtifactProperty
 {
 public:
     explicit Property(const std::string &name = "")
         : GraphArtifactProperty(name) { }
-    Property(const Property<T> &other) : GraphArtifactProperty(other) { }
     virtual ~Property() { }
 
-    Property &operator=(const Property<T> &rhs) {
-        if (this == &rhs) {
-            return *this;
-        }
-        GraphArtifactProperty::operator=(rhs);
-        return *this;
-    }
+    Property(const Property<T> &other) = default;
+    Property &operator=(const Property<T> &rhs) = default;
+
+    Property(Property<T> &&other) = default;
+    Property &operator=(Property<T> &&rhs) = default;
 
     T operator()(const GraphArtifact *ga) const {
         return getValue(ga);

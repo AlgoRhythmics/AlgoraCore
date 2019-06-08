@@ -40,25 +40,35 @@ public:
 
     FastPropertyMap(const T &defaultValue = T(), const std::string &name = "", unsigned long long capacity = 0)
         : ModifiableProperty<T>(name), defaultValue(defaultValue) { buckets.assign(capacity, defaultValue); }
-    FastPropertyMap(const FastPropertyMap<T> &other)
-        : ModifiableProperty<T>(other),
-          defaultValue(other.defaultValue),
-          buckets(other.buckets) { }
+    //FastPropertyMap(const FastPropertyMap<T> &other)
+    //    : ModifiableProperty<T>(other),
+    //      defaultValue(other.defaultValue),
+    //      buckets(other.buckets) { }
     virtual ~FastPropertyMap() { }
 
-    FastPropertyMap &operator=(const FastPropertyMap<T> &rhs) {
-        if (this == &rhs) {
-            return *this;
-        }
-        ModifiableProperty<T>::operator=(rhs);
-        defaultValue = rhs.defaultValue;
-        buckets = rhs.buckets;
-        return *this;
-    }
+    //FastPropertyMap &operator=(const FastPropertyMap<T> &rhs) {
+    //    if (this == &rhs) {
+    //        return *this;
+    //    }
+    //    ModifiableProperty<T>::operator=(rhs);
+    //    defaultValue = rhs.defaultValue;
+    //    buckets = rhs.buckets;
+    //    return *this;
+    //}
+
+    FastPropertyMap(const FastPropertyMap<T> &other) = default;
+    FastPropertyMap &operator=(const FastPropertyMap<T> &rhs) = default;
+    FastPropertyMap(FastPropertyMap<T> &&other) = default;
+    FastPropertyMap &operator=(FastPropertyMap<T> &&rhs) = default;
 
     const T &getDefaultValue() const { return defaultValue; }
 
-    void setDefaultValue(const T &val) { defaultValue = val; buckets.assign(buckets.size(), defaultValue); }
+    void setDefaultValue(const T &val) {
+        auto oldDefault = defaultValue;
+        defaultValue = val;
+        buckets.assign(buckets.size(), defaultValue);
+        this->observable.notifyObservers(nullptr, oldDefault, defaultValue);
+    }
 
     void setValueAtId(unsigned long long id, const T &value) {
         enlarge(id);
@@ -67,7 +77,9 @@ public:
 
     virtual void setValue(const GraphArtifact *ga, const T &value) override {
         auto id = ga->getId();
+        auto oldValue = buckets[id];
         setValueAtId(id, value);
+        this->observable.notifyObservers(ga, oldValue, value);
     }
 
     void resetAtId(unsigned long long id) {
@@ -80,6 +92,7 @@ public:
 
     void resetAll(unsigned long long capacity) {
         buckets.assign(capacity, defaultValue);
+        this->observable.notifyObservers(nullptr, defaultValue, defaultValue);
     }
 
     void resetAll() {
