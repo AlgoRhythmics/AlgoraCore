@@ -29,7 +29,7 @@ public:
     }
 
     void notifyObservers(Ts... ts) {
-       for (const auto &[_, fun] : observers) { fun(ts...); }
+       for (const auto &[_, fun] : observers) { fun(ts...); (void) _; }
     }
 
     bool hasObservers() const {

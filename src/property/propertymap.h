@@ -151,12 +151,12 @@ public:
     }
 
     virtual void setAll(const T &val) override {
-        if (this->observable.hasObservers()) {
-            for (const auto &[ga, oldValue] : map) {
-                map[ga] = val;
-                this->updateObservers(ga, oldValue, val);
-            }
-        }
+        //if (this->observable.hasObservers()) {
+        //    //for (const auto &[ga, oldValue] : map) {
+        //    //    map[ga] = val;
+        //    //    this->updateObservers(ga, oldValue, val);
+        //    //}
+        //}
         map.clear();
         setDefaultValue(val);
     }

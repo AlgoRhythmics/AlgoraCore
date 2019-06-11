@@ -67,7 +67,7 @@ public:
         auto oldDefault = defaultValue;
         defaultValue = val;
         buckets.assign(buckets.size(), defaultValue);
-        this->observable.notifyObservers(nullptr, oldDefault, defaultValue);
+        this->updateObservers(nullptr, oldDefault, defaultValue);
     }
 
     void setValueAtId(unsigned long long id, const T &value) {
@@ -79,7 +79,7 @@ public:
         auto id = ga->getId();
         auto oldValue = buckets[id];
         setValueAtId(id, value);
-        this->observable.notifyObservers(ga, oldValue, value);
+        this->updateObservers(ga, oldValue, value);
     }
 
     void resetAtId(unsigned long long id) {
@@ -92,7 +92,7 @@ public:
 
     void resetAll(unsigned long long capacity) {
         buckets.assign(capacity, defaultValue);
-        this->observable.notifyObservers(nullptr, defaultValue, defaultValue);
+        this->updateObservers(nullptr, defaultValue, defaultValue);
     }
 
     void resetAll() {
@@ -172,24 +172,34 @@ public:
 
     FastPropertyMap(const bool &defaultValue = false, const std::string &name = "", unsigned long long capacity = 0)
         : ModifiableProperty<bool>(name), defaultValue(defaultValue) { buckets.assign(capacity, defaultValue); }
-    FastPropertyMap(const FastPropertyMap<bool> &other)
-        : ModifiableProperty<bool>(other),
-          defaultValue(other.defaultValue),
-          buckets(other.buckets) { }
-    virtual ~FastPropertyMap() { }
+    //FastPropertyMap(const FastPropertyMap<bool> &other)
+    //    : ModifiableProperty<bool>(other),
+    //      defaultValue(other.defaultValue),
+    //      buckets(other.buckets) { }
+    virtual ~FastPropertyMap() override { }
 
-    FastPropertyMap &operator=(const FastPropertyMap<bool> &rhs) {
-        if (this == &rhs) {
-            return *this;
-        }
-        ModifiableProperty<bool>::operator=(rhs);
-        defaultValue = rhs.defaultValue;
-        buckets = rhs.buckets;
-        return *this;
-    }
+    //FastPropertyMap &operator=(const FastPropertyMap<bool> &rhs) {
+    //    if (this == &rhs) {
+    //        return *this;
+    //    }
+    //    ModifiableProperty<bool>::operator=(rhs);
+    //    defaultValue = rhs.defaultValue;
+    //    buckets = rhs.buckets;
+    //    return *this;
+    //}
+
+    FastPropertyMap(const FastPropertyMap<bool> &other) = default;
+    FastPropertyMap &operator=(const FastPropertyMap<bool> &rhs) = default;
+    FastPropertyMap(FastPropertyMap<bool> &&other) = default;
+    FastPropertyMap &operator=(FastPropertyMap<bool> &&rhs) = default;
 
     const bool &getDefaultValue() const { return defaultValue; }
-    void setDefaultValue(const bool &val) { defaultValue = val; buckets.assign(buckets.size(), defaultValue); }
+    void setDefaultValue(const bool &val) {
+        auto oldDefault = defaultValue;
+        defaultValue = val;
+        buckets.assign(buckets.size(), defaultValue);
+        this->updateObservers(nullptr, oldDefault, defaultValue);
+    }
 
     void setValueAtId(unsigned long long id, const bool &value) {
         enlarge(id);
@@ -198,7 +208,13 @@ public:
 
     virtual void setValue(const GraphArtifact *ga, const bool &value) override {
         auto id = ga->getId();
-        setValueAtId(id, value);
+        if (this->observable.hasObservers()) {
+            auto oldValue =getValueAtId(id);
+            setValueAtId(id, value);
+            this->updateObservers(ga, oldValue, value);
+        } else {
+            setValueAtId(id, value);
+        }
     }
 
     void resetToDefault(const GraphArtifact *ga) {
@@ -214,6 +230,7 @@ public:
             capacity = buckets.size();
         }
         buckets.assign(capacity, defaultValue);
+        this->updateObservers(nullptr, defaultValue, defaultValue);
     }
 
     virtual bool &operator[](const GraphArtifact *ga) override {
