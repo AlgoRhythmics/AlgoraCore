@@ -13,6 +13,11 @@ public:
     typedef typename std::function<void(Ts...)> Notification;
     Observable() { }
 
+    Observable(const Observable &other) = default;
+    Observable& operator=(const Observable &other) = default;
+    Observable(Observable &&other) = default;
+    Observable& operator=(Observable &&other) = default;
+
     void addObserver(void *id, const Notification &fun) {
         observers.push_back({id, fun});
     }
@@ -34,6 +39,10 @@ public:
 
     bool hasObservers() const {
         return !observers.empty();
+    }
+
+    void clear() {
+        observers.clear();
     }
 
 private:

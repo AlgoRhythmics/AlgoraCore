@@ -75,8 +75,8 @@ public:
     }
     virtual unsigned long long getNumArcs(bool multiArcsAsSimple = false) const;
 
-    virtual void onArcAdd(void *id, const ArcMapping &avFun) { arcGreetings.push_back(std::make_pair(id, avFun)); }
-    virtual void onArcRemove(void *id, const ArcMapping &avFun) { arcFarewells.push_back(std::make_pair(id, avFun)); }
+    virtual void onArcAdd(void *id, const ArcMapping &avFun);
+    virtual void onArcRemove(void *id, const ArcMapping &avFun);
     virtual void removeOnArcAdd(void *id);
     virtual void removeOnArcRemove(void *id);
 
@@ -100,23 +100,18 @@ public:
     virtual void mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) = 0;
     virtual void mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) = 0;
 
-    virtual void clear() override { arcGreetings.clear(); arcFarewells.clear(); Graph::clear(); }
+    virtual void clear() override;
 
     // GraphArtifact interface
 public:
     virtual std::string toString() const override;
 
 protected:
-   std::vector<std::pair<void*,ArcMapping>> arcGreetings;
-   std::vector<std::pair<void*,ArcMapping>> arcFarewells;
+   Observable<Arc*> observableArcGreetings;
+   Observable<Arc*> observableArcFarewells;
 
-   virtual void greetArc(Arc *a) {
-       for (const auto &[_, fun] : arcGreetings) { fun(a); }
-   }
-
-   virtual void dismissArc(Arc *a) {
-       for (const auto &[_, fun] : arcFarewells) { fun(a); }
-   }
+   void greetArc(Arc *a) { observableArcGreetings.notifyObservers(a); }
+   void dismissArc(Arc *a) { observableArcFarewells.notifyObservers(a); }
 
     virtual Arc *createArc(Vertex *tail, Vertex *head) {
         return new Arc(tail, head, this);
