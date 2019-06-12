@@ -51,21 +51,7 @@ public:
 
     PropertyMap(const T &defaultValue = T(), const std::string &name = "")
         : ModifiableProperty<T>(name), defaultValue(defaultValue) { }
-    //PropertyMap(const PropertyMap<T> &other)
-    //    : ModifiableProperty<T>(other),
-    //      defaultValue(other.defaultValue),
-    //      map(other.map) { }
     virtual ~PropertyMap() { }
-
-    //PropertyMap &operator=(const PropertyMap<T> &rhs) {
-    //    if (this == &rhs) {
-    //        return *this;
-    //    }
-    //    ModifiableProperty<T>::operator=(rhs);
-    //    defaultValue = rhs.defaultValue;
-    //    map = rhs.map;
-    //    return *this;
-    //}
 
     PropertyMap(const PropertyMap<T> &other) = default;
     PropertyMap &operator=(const PropertyMap<T> &rhs) = default;

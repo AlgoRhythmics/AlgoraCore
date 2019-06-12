@@ -32,4 +32,5 @@ HEADERS += \
     $$PWD/fastpropertymap.h
 
 SOURCES += \
-    $$PWD/graphartifactproperty.cpp
+    $$PWD/graphartifactproperty.cpp \
+    $$PWD/fastpropertymap.cpp
