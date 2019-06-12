@@ -64,7 +64,7 @@ public:
 
     virtual void setValue(const GraphArtifact *ga, const T &value) override {
         auto id = ga->getId();
-        auto oldValue = buckets[id];
+        auto oldValue = getValueAtId(id);
         setValueAtId(id, value);
         this->updateObservers(ga, oldValue, value);
     }
@@ -178,7 +178,7 @@ public:
     virtual void setValue(const GraphArtifact *ga, const bool &value) override {
         auto id = ga->getId();
         if (this->observable.hasObservers()) {
-            auto oldValue =getValueAtId(id);
+            auto oldValue = getValueAtId(id);
             setValueAtId(id, value);
             this->updateObservers(ga, oldValue, value);
         } else {
