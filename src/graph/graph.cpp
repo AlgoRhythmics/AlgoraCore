@@ -30,7 +30,7 @@ Graph::Graph(GraphArtifact *parent)
 Graph::Graph(const Graph &other)
     : GraphArtifact(other)
 {
-    // do not copy listeners
+    // do not copy observers
 }
 
 Graph &Graph::operator=(const Graph &other)
@@ -39,44 +39,34 @@ Graph &Graph::operator=(const Graph &other)
         return *this;
     }
     GraphArtifact::operator=(other);
+    // do not copy observers
 
     return *this;
 }
 
-void Graph::onVertexAdd(void *id, const VertexMapping &vvFun) { vertexGreetings.push_back(std::make_pair(id, vvFun)); }
-
-void Graph::onVertexRemove(void *id, const VertexMapping &vvFun) { vertexFarewells.push_back(std::make_pair(id, vvFun)); }
-
-void Graph::removeOnVertexAdd(void *id) {
-    auto i = vertexGreetings.begin();
-    while (i != vertexGreetings.end()) {
-        if (id == i->first) {
-            i = vertexGreetings.erase(i);
-        } else {
-            i++;
-        }
-    }
+void Graph::onVertexAdd(void *id, const VertexMapping &vvFun) {
+    observableVertexGreetings.addObserver(id, vvFun);
 }
 
-void Graph::removeOnVertexRemove(void *id) {
-    auto i = vertexFarewells.begin();
-    while (i != vertexFarewells.end()) {
-        if (id == i->first) {
-            i = vertexFarewells.erase(i);
-        } else {
-            i++;
-        }
-    }
+void Graph::onVertexRemove(void *id, const VertexMapping &vvFun)
+{
+    observableVertexFarewells.addObserver(id, vvFun);
 }
 
-void Graph::clear() { vertexGreetings.clear(); vertexFarewells.clear(); }
-
-void Graph::greetVertex(Vertex *v) {
-    for (const std::pair<void*, VertexMapping> &p : vertexGreetings) { p.second(v); }
+void Graph::removeOnVertexAdd(void *id)
+{
+    observableVertexGreetings.removeObserver(id);
 }
 
-void Graph::dismissVertex(Vertex *v) {
-    for (const std::pair<void*, VertexMapping> &p : vertexFarewells) { p.second(v); }
+void Graph::removeOnVertexRemove(void *id)
+{
+    observableVertexFarewells.removeObserver(id);
+}
+
+void Graph::clear()
+{
+    observableVertexGreetings.clear();
+    observableVertexFarewells.clear();
 }
 
 }

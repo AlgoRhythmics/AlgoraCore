@@ -20,36 +20,23 @@
  *   http://algora.xaikal.org
  */
 
-#ifndef PROPERTY_H
-#define PROPERTY_H
-
-#include "graphartifactproperty.h"
+#include "fastpropertymap.h"
 
 namespace Algora {
 
-class GraphArtifact;
-
-template<typename T>
-class Property : public GraphArtifactProperty
-{
-public:
-    explicit Property(const std::string &name = "")
-        : GraphArtifactProperty(name) { }
-    virtual ~Property() { }
-
-    Property(const Property<T> &other) = default;
-    Property &operator=(const Property<T> &rhs) = default;
-
-    Property(Property<T> &&other) = default;
-    Property &operator=(Property<T> &&rhs) = default;
-
-    T operator()(const GraphArtifact *ga) const {
-        return getValue(ga);
-    }
-
-    virtual T getValue(const GraphArtifact *ga) const = 0;
-};
-
+void FastPropertyMap<bool>::setDefaultValue(const bool &val) {
+    auto oldDefault = defaultValue;
+    defaultValue = val;
+    buckets.assign(buckets.size(), defaultValue);
+    this->updateObservers(nullptr, oldDefault, defaultValue);
 }
 
-#endif // PROPERTY_H
+void FastPropertyMap<bool>::resetAll(unsigned long long capacity) {
+    if (capacity == 0) {
+        capacity = buckets.size();
+    }
+    buckets.assign(capacity, defaultValue);
+    this->updateObservers(nullptr, defaultValue, defaultValue);
+}
+
+}

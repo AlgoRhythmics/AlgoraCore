@@ -24,6 +24,7 @@
 #define PROPERTYMAP_H
 
 #include "modifiableproperty.h"
+#include "observable.h"
 
 #include <unordered_map>
 #include <cmath>
@@ -35,7 +36,7 @@ template<typename Tval>
 struct PointerHash {
     size_t operator()(const Tval* val) const {
         static constexpr size_t shift = static_cast<size_t>(log2(1 + sizeof(Tval)));
-        return (size_t)(val) >> shift;
+        return reinterpret_cast<size_t>(val) >> shift;
     }
 };
 
@@ -50,39 +51,51 @@ public:
 
     PropertyMap(const T &defaultValue = T(), const std::string &name = "")
         : ModifiableProperty<T>(name), defaultValue(defaultValue) { }
-    PropertyMap(const PropertyMap<T> &other)
-        : ModifiableProperty<T>(other),
-          defaultValue(other.defaultValue),
-          map(other.map) { }
     virtual ~PropertyMap() { }
 
-    PropertyMap &operator=(const PropertyMap<T> &rhs) {
-        if (this == &rhs) {
-            return *this;
-        }
-        ModifiableProperty<T>::operator=(rhs);
-        defaultValue = rhs.defaultValue;
-        map = rhs.map;
-        return *this;
-    }
+    PropertyMap(const PropertyMap<T> &other) = default;
+    PropertyMap &operator=(const PropertyMap<T> &rhs) = default;
+
+    PropertyMap(PropertyMap<T> &&other) = default;
+    PropertyMap &operator=(PropertyMap<T> &&rhs) = default;
 
     const T &getDefaultValue() const { return defaultValue; }
-    void setDefaultValue(const T &val) { defaultValue = val; }
+    void setDefaultValue(const T &val) {
+        auto oldDefault = defaultValue;
+        defaultValue = val;
+        this->updateObservers(nullptr, oldDefault, defaultValue);
+    }
 
     bool isSetExplicitly(const GraphArtifact *ga) const {
         return map.count(ga) > 0;
     }
 
     virtual void setValue(const GraphArtifact *ga, const T &value) override {
-        map[ga] = value;
+        if (!this->observable.hasObservers()) {
+            map[ga] = value;
+        } else {
+            auto oldValue = getValue(ga);
+            map[ga] = value;
+            this->updateObservers(ga, oldValue, value);
+        }
     }
 
     void resetToDefault(const GraphArtifact *ga) {
         auto i = map.find(ga);
-        if (i != map.end()) { map.erase(i); }
+        if (i != map.end()) {
+            auto oldValue = i->second;
+            map.erase(i);
+            this->updateObservers(ga, oldValue, defaultValue);
+        }
     }
 
     void resetAll() {
+        if (this->observable.hasObservers()) {
+            for (const auto &[ga, oldValue] : map) {
+                map[ga] = defaultValue;
+                this->updateObservers(ga, oldValue, defaultValue);
+            }
+        }
         map.clear();
     }
 
@@ -124,9 +137,16 @@ public:
     }
 
     virtual void setAll(const T &val) override {
-        resetAll();
+        //if (this->observable.hasObservers()) {
+        //    //for (const auto &[ga, oldValue] : map) {
+        //    //    map[ga] = val;
+        //    //    this->updateObservers(ga, oldValue, val);
+        //    //}
+        //}
+        map.clear();
         setDefaultValue(val);
     }
+
 
 private:
     T defaultValue;

@@ -24,47 +24,24 @@
 
 namespace Algora {
 
-class GraphArtifactProperty::CheshireCat {
-public:
-    std::string name;
-    explicit CheshireCat(const std::string &name) : name(name) {}
-
-};
-
 GraphArtifactProperty::GraphArtifactProperty(const std::string &name)
-    : grin(new CheshireCat(name))
-{
-
-}
-
-GraphArtifactProperty::GraphArtifactProperty(const GraphArtifactProperty &rhs)
-    : grin(new CheshireCat(*rhs.grin))
+    : name(name)
 {
 
 }
 
 GraphArtifactProperty::~GraphArtifactProperty()
 {
-    delete grin;
-}
-
-GraphArtifactProperty &GraphArtifactProperty::operator=(const GraphArtifactProperty &rhs)
-{
-    if (this == &rhs) {
-        return *this;
-    }
-    *grin = *(rhs.grin);
-    return *this;
 }
 
 std::string GraphArtifactProperty::getName() const
 {
-    return grin->name;
+    return name;
 }
 
 void GraphArtifactProperty::setName(const std::string &name)
 {
-    grin->name = name;
+    this->name = name;
 }
 
 }

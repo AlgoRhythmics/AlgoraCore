@@ -24,7 +24,8 @@
 #define MODIFIABLEPROPERTY_H
 
 #include "property.h"
-
+#include "observable.h"
+#include <functional>
 
 namespace Algora {
 
@@ -32,6 +33,8 @@ template<typename T>
 class ModifiableProperty : public Property<T>
 {
 public:
+    typedef typename std::function<void(GraphArtifact *ga, const T &oldValue, const T &newValue)> PropertyChangeAction;
+
     ModifiableProperty(const std::string &name = "")
         : Property<T>(name) { }
     ModifiableProperty(const ModifiableProperty<T> &other)
@@ -43,6 +46,22 @@ public:
     virtual T &operator[](const GraphArtifact *ga) = 0;
 
     virtual void setAll(const T &val) = 0;
+
+    void onPropertyChange(void *id, const PropertyChangeAction &fun) {
+        observable.addObserver(id, fun);
+    }
+
+    void removeOnPropertyChange(void *id) {
+        observable.removeObserver(id);
+    }
+
+protected:
+    Observable<GraphArtifact*, T, T> observable;
+
+    void updateObservers(const GraphArtifact *cga, const T &oldValue, const T&newValue) {
+        auto *ga = const_cast<GraphArtifact*>(cga);
+        observable.notifyObservers(ga, oldValue,newValue);
+    }
 };
 
 }

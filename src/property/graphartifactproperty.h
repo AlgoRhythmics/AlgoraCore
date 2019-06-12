@@ -27,23 +27,25 @@
 
 namespace Algora {
 
-class GraphArtifact;
+//class GraphArtifact;
 
 class GraphArtifactProperty
 {
 public:
     explicit GraphArtifactProperty(const std::string &name = "");
-    GraphArtifactProperty(const GraphArtifactProperty &rhs);
     virtual ~GraphArtifactProperty();
 
-    GraphArtifactProperty &operator=(const GraphArtifactProperty &rhs);
+    GraphArtifactProperty(const GraphArtifactProperty &rhs) = default;
+    GraphArtifactProperty &operator=(const GraphArtifactProperty &rhs) = default;
+
+    GraphArtifactProperty(GraphArtifactProperty &&rhs) = default;
+    GraphArtifactProperty &operator=(GraphArtifactProperty &&rhs) = default;
 
     std::string getName() const;
     void setName(const std::string &name);
 
 private:
-    class CheshireCat;
-    CheshireCat *grin;
+    std::string name;
 };
 
 }

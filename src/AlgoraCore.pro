@@ -56,7 +56,8 @@ unix {
 }
 
 HEADERS += \
-    $$PWD/algoracore_info.h
+    $$PWD/algoracore_info.h \
+    observable.h
 
 SOURCES += \
     $$PWD/algoracore_info.cpp

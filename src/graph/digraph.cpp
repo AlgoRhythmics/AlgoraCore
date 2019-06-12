@@ -54,26 +54,31 @@ unsigned long long DiGraph::getNumArcs(bool multiArcsAsSimple) const
     return numArcs;
 }
 
-void DiGraph::removeOnArcAdd(void *id) {
-    auto i = arcGreetings.begin();
-    while (i != arcGreetings.end()) {
-        if (id == i->first) {
-            i = arcGreetings.erase(i);
-        } else {
-            i++;
-        }
-    }
+void DiGraph::onArcAdd(void *id, const ArcMapping &avFun)
+{
+    observableArcGreetings.addObserver(id, avFun);
 }
 
-void DiGraph::removeOnArcRemove(void *id) {
-    auto i = arcFarewells.begin();
-    while (i != arcFarewells.end()) {
-        if (id == i->first) {
-            i = arcFarewells.erase(i);
-        } else {
-            i++;
-        }
-    }
+void DiGraph::onArcRemove(void *id, const ArcMapping &avFun)
+{
+    observableArcFarewells.addObserver(id, avFun);
+}
+
+void DiGraph::removeOnArcAdd(void *id)
+{
+    observableArcGreetings.removeObserver(id);
+}
+
+void DiGraph::removeOnArcRemove(void *id)
+{
+    observableArcFarewells.removeObserver(id);
+}
+
+void DiGraph::clear()
+{
+    observableArcGreetings.clear();
+    observableArcFarewells.clear();
+    Graph::clear();
 }
 
 std::string DiGraph::toString() const

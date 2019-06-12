@@ -28,6 +28,7 @@
 
 #include "graph.visitor/vertexvisitor.h"
 #include "graph_functional.h"
+#include "observable.h"
 
 #include <vector>
 
@@ -78,11 +79,11 @@ public:
     virtual void clear();
 
 protected:
-   std::vector<std::pair<void*, VertexMapping>> vertexGreetings;
-   std::vector<std::pair<void*, VertexMapping>> vertexFarewells;
+   Observable<Vertex*> observableVertexGreetings;
+   Observable<Vertex*> observableVertexFarewells;
 
-   virtual void greetVertex(Vertex *v);
-   virtual void dismissVertex(Vertex *v);
+   void greetVertex(Vertex *v) { observableVertexGreetings.notifyObservers(v); }
+   void dismissVertex(Vertex *v) { observableVertexFarewells.notifyObservers(v); }
 
     Vertex *createVertex() {
         return new Vertex(this);
@@ -95,6 +96,7 @@ protected:
     void invalidateVertex(Vertex *v) {
         v->invalidate();
     }
+
 };
 
 }
