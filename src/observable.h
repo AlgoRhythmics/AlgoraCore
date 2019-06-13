@@ -15,8 +15,8 @@ public:
     typedef typename std::function<void(Ts...)> Notification;
     Observable() : notificationInProgress(false) { }
 
-    Observable(const Observable &other) = default;
-    Observable& operator=(const Observable &other) = default;
+    Observable(const Observable &other) = delete;
+    Observable& operator=(const Observable &other) = delete;
     Observable(Observable &&other) = default;
     Observable& operator=(Observable &&other) = default;
 
