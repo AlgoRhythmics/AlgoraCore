@@ -37,8 +37,9 @@ public:
 
     void setGraph(DiGraph *diGraph) { onDiGraphUnset(); this->diGraph = diGraph; onDiGraphSet(); }
     void unsetGraph() { onDiGraphUnset(); this->diGraph = nullptr; }
+    bool hasGraph() const { return diGraph != nullptr; }
 
-    virtual bool prepare() { return diGraph != 0; }
+    virtual bool prepare() { return hasGraph(); }
     virtual void run() = 0;
 
     virtual std::string getName() const noexcept = 0;

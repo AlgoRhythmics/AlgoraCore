@@ -37,9 +37,23 @@ public:
 
     ModifiableProperty(const std::string &name = "")
         : Property<T>(name) { }
-    ModifiableProperty(const ModifiableProperty<T> &other)
-        : Property<T>(other) { }
     virtual ~ModifiableProperty() { }
+
+    ModifiableProperty(const ModifiableProperty<T> &other)
+        : Property<T>(other) {
+        // do not copy observable
+    }
+    ModifiableProperty &operator=(const ModifiableProperty<T> &other) {
+        if (this == &other) {
+            return *this;
+        }
+        Property<T>::operator=(other);
+        // do not copy observable
+
+        return *this;
+    }
+    ModifiableProperty(ModifiableProperty<T> &&other) = default;
+    ModifiableProperty &operator=(ModifiableProperty<T> &&other) = default;
 
     virtual void setValue(const GraphArtifact *ga, const T &value) = 0;
 
