@@ -39,7 +39,7 @@ public:
                 i++;
             }
         }
-        if (notificationsInProgress == 0 || delay) {
+        if (notificationsInProgress == 0 || !delay) {
             if (i + 1 != observers.end()) {
                 *i = std::move(observers.back());
             }
