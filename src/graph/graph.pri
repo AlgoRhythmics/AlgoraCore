@@ -48,4 +48,5 @@ SOURCES += \
     $$PWD/multiarc.cpp \
     $$PWD/weightedarc.cpp \
     $$PWD/vertexpair.cpp \
-    $$PWD/graph.cpp
+    $$PWD/graph.cpp \
+    $$PWD/arc.cpp

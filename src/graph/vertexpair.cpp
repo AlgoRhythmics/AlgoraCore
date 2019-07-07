@@ -91,4 +91,14 @@ std::string VertexPair::toString() const
     return strStream.str();
 }
 
+std::ostream &operator<<(std::ostream &out, const VertexPair *vp)
+{
+    if (!vp) {
+        out << "null";
+    } else {
+        out << "(" << vp->getFirst() << ", " << vp->getSecond() << ")";
+    }
+    return out;
+}
+
 }

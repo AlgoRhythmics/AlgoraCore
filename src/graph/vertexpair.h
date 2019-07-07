@@ -78,6 +78,9 @@ inline bool operator> (const VertexPair &lhs, const VertexPair &rhs){ return  op
 inline bool operator<=(const VertexPair &lhs, const VertexPair &rhs){ return !operator> (lhs,rhs);}
 inline bool operator>=(const VertexPair &lhs, const VertexPair &rhs){ return !operator< (lhs,rhs);}
 
+std::ostream &operator<<(std::ostream &out, const VertexPair *vp);
+
+
 }
 
 #endif // VERTEXPAIR_H
