@@ -32,19 +32,21 @@ class WeightedArc : public MultiArc
     friend class DiGraph;
 
 public:
+    typedef GraphArtifact::size_type weight_type;
+
     virtual ~WeightedArc() override;
 
-    unsigned long long getWeight() const {
+    weight_type getWeight() const {
         return getSize();
     }
-    void setWeight(unsigned long long weight);
+    void setWeight(weight_type weight);
 
 protected:
-    explicit WeightedArc(Vertex *tail, Vertex *head, unsigned long long weight, GraphArtifact *parent = nullptr);
-    explicit WeightedArc(Vertex *tail, Vertex *head, unsigned long long weight, unsigned long long id, GraphArtifact *parent = nullptr);
+    explicit WeightedArc(Vertex *tail, Vertex *head, weight_type weight, GraphArtifact *parent = nullptr);
+    explicit WeightedArc(Vertex *tail, Vertex *head, weight_type weight, id_type id, GraphArtifact *parent = nullptr);
 
 private:
-    unsigned long long weight;
+    weight_type weight;
 
     // GraphArtifact interface
 public:
@@ -54,7 +56,7 @@ public:
 
     // MultiArc interface
 public:
-    virtual unsigned long long getSize() const override;
+    virtual size_type getSize() const override;
 };
 
 }

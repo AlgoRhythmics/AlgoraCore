@@ -38,7 +38,7 @@ class IncidenceListVertex : public Vertex
     friend class IncidenceListGraphImplementation;
 
 public:
-    explicit IncidenceListVertex(unsigned long long id, GraphArtifact *parent = nullptr, unsigned long long index = 0);
+    explicit IncidenceListVertex(id_type id, GraphArtifact *parent = nullptr, size_type index = 0);
     virtual ~IncidenceListVertex();
 
     // disable copying and moving
@@ -49,24 +49,24 @@ public:
 
     virtual bool hasOutgoingArc(const Arc *a) const;
     virtual bool hasIncomingArc(const Arc *a) const;
-    virtual Arc *outgoingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
-    virtual Arc *incomingArcAt(unsigned int i, bool multiArcsAsSimple = false) const;
+    virtual Arc *outgoingArcAt(size_type i, bool multiArcsAsSimple = false) const;
+    virtual Arc *incomingArcAt(size_type i, bool multiArcsAsSimple = false) const;
 
-    unsigned long long outIndexOf(const Arc *a) const;
-    unsigned long long inIndexOf(const Arc *a) const;
+    size_type outIndexOf(const Arc *a) const;
+    size_type inIndexOf(const Arc *a) const;
 
     void acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const;
     void acceptIncomingArcVisitor(ArcVisitor *aVisitor) const;
     virtual bool mapOutgoingArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition = arcFalse, bool checkValidity = true) const;
     virtual bool mapIncomingArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition = arcFalse, bool checkValidity = true) const;
 
-    unsigned long long getOutDegree(bool multiArcsAsSimple = false) const;
-    unsigned long long getInDegree(bool multiArcsAsSimple = false) const;
+    size_type getOutDegree(bool multiArcsAsSimple = false) const;
+    size_type getInDegree(bool multiArcsAsSimple = false) const;
     bool isSource() const;
     bool isSink() const;
     bool isIsolated() const { return isSource() && isSink(); }
 
-    unsigned long long getIndex() const;
+    size_type getIndex() const;
 
 protected:
     virtual void addOutgoingArc(Arc *a);
@@ -79,7 +79,7 @@ protected:
 
     virtual void enableConsistencyCheck(bool enable);
 
-    void setIndex(unsigned long long i);
+    void setIndex(size_type i);
 
     void hibernate();
     void recycle();

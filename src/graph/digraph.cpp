@@ -46,10 +46,10 @@ DiGraph &DiGraph::operator=(const DiGraph &other)
     return *this;
 }
 
-unsigned long long DiGraph::getNumArcs(bool multiArcsAsSimple) const
+DiGraph::size_type DiGraph::getNumArcs(bool multiArcsAsSimple) const
 {
     DiGraph *me = const_cast<DiGraph*>(this);
-    unsigned long long numArcs = 0ULL;
+    size_type numArcs = 0U;
     me->mapVertices([&](Vertex *v) { numArcs += me->getOutDegree(v, multiArcsAsSimple); });
     return numArcs;
 }

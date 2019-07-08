@@ -37,9 +37,9 @@ class Arc : public VertexPair
 public:
     explicit Arc(Vertex *tail, Vertex *head, GraphArtifact *parent = nullptr)
         : VertexPair(tail, head, parent) {}
-    explicit Arc(Vertex *tail, Vertex *head, unsigned long long id, GraphArtifact *parent = nullptr)
+    explicit Arc(Vertex *tail, Vertex *head, id_type id, GraphArtifact *parent = nullptr)
         : VertexPair(tail, head, id, parent) {}
-    explicit Arc(unsigned long long id, GraphArtifact *parent = nullptr)
+    explicit Arc(id_type id, GraphArtifact *parent = nullptr)
         : VertexPair(id, parent) {}
 
     virtual ~Arc() override {}
@@ -53,7 +53,7 @@ public:
 
     virtual Vertex *getTail() const { return getFirst(); }
     virtual Vertex *getHead() const { return getSecond(); }
-    virtual unsigned long long getSize() const {
+    virtual size_type getSize() const {
         return 1ULL;
     }
     bool isLoop() const {

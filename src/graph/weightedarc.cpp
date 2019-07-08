@@ -24,18 +24,18 @@
 
 namespace Algora {
 
-WeightedArc::WeightedArc(Vertex *tail, Vertex *head, unsigned long long weight, GraphArtifact *parent)
+WeightedArc::WeightedArc(Vertex *tail, Vertex *head, weight_type weight, GraphArtifact *parent)
     : MultiArc(tail, head, parent), weight(weight)
 {
 
 }
 
-WeightedArc::WeightedArc(Vertex *tail, Vertex *head, unsigned long long weight, unsigned long long id, GraphArtifact *parent)
+WeightedArc::WeightedArc(Vertex *tail, Vertex *head, weight_type weight, id_type id, GraphArtifact *parent)
     : MultiArc(tail, head, id, parent), weight(weight)
 {
 }
 
-unsigned long long WeightedArc::getSize() const
+GraphArtifact::size_type WeightedArc::getSize() const
 {
     return weight;
 }
@@ -44,7 +44,7 @@ WeightedArc::~WeightedArc()
 {
 }
 
-void WeightedArc::setWeight(unsigned long long w)
+void WeightedArc::setWeight(weight_type w)
 {
     this->weight = w;
 }

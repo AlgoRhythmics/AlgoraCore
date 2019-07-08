@@ -31,7 +31,7 @@ Vertex::Vertex(GraphArtifact *parent)
 
 }
 
-Vertex::Vertex(unsigned long long id, GraphArtifact *parent)
+Vertex::Vertex(id_type id, GraphArtifact *parent)
     : GraphArtifact(id, parent)
 {
 

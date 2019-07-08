@@ -196,7 +196,7 @@ IncidenceListVertex *IncidenceListGraphImplementation::getFirstVertex() const
     return vertices.at(0);
 }
 
-IncidenceListVertex *IncidenceListGraphImplementation::vertexAt(unsigned long long i) const
+IncidenceListVertex *IncidenceListGraphImplementation::vertexAt(size_type i) const
 {
     return vertices.at(i);
 }
@@ -233,7 +233,7 @@ Arc *IncidenceListGraphImplementation::findArc(const IncidenceListVertex *tail, 
     return arc;
 }
 
-unsigned long long IncidenceListGraphImplementation::getNumArcs(bool multiArcsAsSimple) const
+IncidenceListGraphImplementation::size_type IncidenceListGraphImplementation::getNumArcs(bool multiArcsAsSimple) const
 {
     if (multiArcsAsSimple) {
         return numArcs;
@@ -245,12 +245,12 @@ unsigned long long IncidenceListGraphImplementation::getNumArcs(bool multiArcsAs
     return arcWeights;
 }
 
-unsigned long long IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
+IncidenceListGraphImplementation::size_type IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
     return v->getOutDegree(multiArcsAsSimple);
 }
 
-unsigned long long IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
+IncidenceListGraphImplementation::size_type IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
     return v->getInDegree(multiArcsAsSimple);
 }
@@ -328,7 +328,7 @@ void IncidenceListGraphImplementation::unbundleParallelArcs()
     }
 }
 
-void IncidenceListGraphImplementation::reserveVertexCapacity(unsigned long long n)
+void IncidenceListGraphImplementation::reserveVertexCapacity(size_type n)
 {
     if (n <= vertices.size() + vertexPool.size()) {
         return;
@@ -349,7 +349,7 @@ void IncidenceListGraphImplementation::reserveVertexCapacity(unsigned long long 
     vertices.reserve(getSize() + reserve);
 }
 
-void IncidenceListGraphImplementation::reserveArcCapacity(unsigned long long n)
+void IncidenceListGraphImplementation::reserveArcCapacity(size_type n)
 {
     if (n <= numArcs + arcPool.size()) {
         return;
@@ -387,7 +387,7 @@ IncidenceListVertex *IncidenceListGraphImplementation::recycleOrCreateIncidenceL
 
 IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex()
 {
-    unsigned long long id;
+    id_type id;
     if (recycledVertexIds.empty()) {
         id = nextVertexId++;
     } else  {
@@ -412,7 +412,7 @@ Arc *IncidenceListGraphImplementation::recycleOrCreateArc(IncidenceListVertex *t
 
 Arc *IncidenceListGraphImplementation::createArc(IncidenceListVertex *tail, IncidenceListVertex *head)
 {
-    unsigned long long id;
+    id_type id;
     if (recycledArcIds.empty()) {
         id = nextArcId++;
     } else  {
@@ -425,7 +425,7 @@ Arc *IncidenceListGraphImplementation::createArc(IncidenceListVertex *tail, Inci
     return arc;
 }
 
-unsigned long long IncidenceListGraphImplementation::getNextArcId()
+IncidenceListGraphImplementation::id_type IncidenceListGraphImplementation::getNextArcId()
 {
     if (recycledArcIds.empty()) {
         return nextArcId++;

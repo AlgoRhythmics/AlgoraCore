@@ -30,7 +30,10 @@ namespace Algora {
 class GraphArtifact
 {
 public:
-    explicit GraphArtifact(unsigned long long id, GraphArtifact *parent = nullptr);
+    typedef std::size_t size_type;
+    typedef std::size_t id_type;
+
+    explicit GraphArtifact(id_type id, GraphArtifact *parent = nullptr);
     explicit GraphArtifact(GraphArtifact *parent = nullptr);
     virtual ~GraphArtifact();
 
@@ -42,7 +45,7 @@ public:
     GraphArtifact(GraphArtifact &&other) = default;
     GraphArtifact& operator=(GraphArtifact &&other) = default;
 
-    unsigned long long getId() const { return id; }
+    id_type getId() const { return id; }
     GraphArtifact *getParent() const { return parent; }
 
     virtual std::string typeString() const noexcept {
@@ -70,9 +73,9 @@ protected:
     void revalidate() { valid = true; }
 
 private:
-    static unsigned long long nextId;
+    static id_type nextId;
 
-    unsigned long long id;
+    id_type id;
     GraphArtifact *parent;
     bool valid;
     std::string name;

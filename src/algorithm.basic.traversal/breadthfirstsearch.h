@@ -29,7 +29,7 @@
 #include "property/propertymap.h"
 
 #include <boost/circular_buffer.hpp>
-#include <climits>
+#include <limits>
 
 namespace Algora {
 
@@ -37,13 +37,13 @@ class Vertex;
 
 template <template<typename T> class ModifiablePropertyType = PropertyMap,
           bool valueComputation = true>
-class BreadthFirstSearch : public GraphTraversal<unsigned long long>
+class BreadthFirstSearch : public GraphTraversal<DiGraph::size_type>
 {
 public:
-    static constexpr unsigned long long INF = ULLONG_MAX;
+    static constexpr DiGraph::size_type INF = std::numeric_limits<DiGraph::size_type>::max();
 
     explicit BreadthFirstSearch(bool computeValues = true, bool computeOrder = true)
-        : GraphTraversal<unsigned long long>(valueComputation && computeValues),
+        : GraphTraversal<DiGraph::size_type>(valueComputation && computeValues),
           computeOrder(computeOrder), maxBfsNumber(INF), maxLevel(INF),
           treeArc(arcNothing), nonTreeArc(arcNothing)
     {
@@ -60,7 +60,7 @@ public:
         nonTreeArc = aFun;
     }
 
-    unsigned long long getMaxBfsNumber() const {
+    DiGraph::size_type getMaxBfsNumber() const {
         return maxBfsNumber;
     }
 
@@ -81,7 +81,7 @@ public:
     }
 
     // GraphTraversal interface
-    unsigned long long numVerticesReached() const override {
+    DiGraph::size_type numVerticesReached() const override {
         auto n = getMaxBfsNumber();
         if (n == INF) {
             return 0ULL;
@@ -96,7 +96,6 @@ public:
         if (startVertex == 0) {
             startVertex = diGraph->getAnyVertex();
         }
-
 
         maxBfsNumber = 0ULL;
         maxLevel = 0ULL;
@@ -184,15 +183,15 @@ public:
 
     // ValueComputingAlgorithm interface
 public:
-    virtual unsigned long long deliver() override
+    virtual DiGraph::size_type deliver() override
     {
         return maxBfsNumber == INF ? INF : maxBfsNumber + 1ULL;
     }
 
 private:
     bool computeOrder;
-    unsigned long long maxBfsNumber;
-    unsigned long long maxLevel;
+    DiGraph::size_type maxBfsNumber;
+    DiGraph::size_type maxLevel;
 
     ArcMapping treeArc;
     ArcMapping nonTreeArc;

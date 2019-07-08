@@ -26,9 +26,9 @@
 
 namespace Algora {
 
-unsigned long long GraphArtifact::nextId = 0ULL;
+GraphArtifact::id_type GraphArtifact::nextId = 0ULL;
 
-GraphArtifact::GraphArtifact(unsigned long long id, GraphArtifact *parent)
+GraphArtifact::GraphArtifact(id_type id, GraphArtifact *parent)
     : id(id), parent(parent), valid(true)
 {
 

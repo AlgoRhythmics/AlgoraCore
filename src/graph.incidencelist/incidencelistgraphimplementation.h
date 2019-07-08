@@ -41,6 +41,9 @@ typedef typename std::vector<IncidenceListVertex*> VertexList;
 class IncidenceListGraphImplementation {
 
 public:
+    typedef GraphArtifact::size_type size_type;
+    typedef GraphArtifact::id_type id_type;
+
     explicit IncidenceListGraphImplementation(DiGraph *handle);
     ~IncidenceListGraphImplementation();
 
@@ -73,16 +76,16 @@ public:
     void removeVertex(IncidenceListVertex *v);
     bool containsVertex(const IncidenceListVertex *v) const;
     IncidenceListVertex *getFirstVertex() const;
-    IncidenceListVertex *vertexAt(unsigned long long i) const;
+    IncidenceListVertex *vertexAt(size_type i) const;
 
     void addArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     void removeArc(Arc *a, IncidenceListVertex *tail, IncidenceListVertex *head);
     bool containsArc(const Arc *a, const IncidenceListVertex *tail) const;
     Arc *findArc(const IncidenceListVertex *tail, const IncidenceListVertex *head) const;
-    unsigned long long getNumArcs(bool multiArcsAsSimple = false) const;
+    size_type getNumArcs(bool multiArcsAsSimple = false) const;
 
-    unsigned long long getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
-    unsigned long long getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
+    size_type getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
+    size_type getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple = false) const;
     bool isSource(const IncidenceListVertex *v) const;
     bool isSink(const IncidenceListVertex *v) const;
 
@@ -97,26 +100,26 @@ public:
     void bundleParallelArcs();
     void unbundleParallelArcs();
 
-    void reserveVertexCapacity(unsigned long long n);
-    void reserveArcCapacity(unsigned long long n);
+    void reserveVertexCapacity(size_type n);
+    void reserveArcCapacity(size_type n);
 
     IncidenceListVertex *recycleOrCreateIncidenceListVertex();
     IncidenceListVertex *createIncidenceListVertex();
     Arc *recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head);
     Arc *createArc(IncidenceListVertex *tail, IncidenceListVertex *head);
-    MultiArc *createMultiArc(IncidenceListVertex *tail, IncidenceListVertex *head, unsigned long long);
+    MultiArc *createMultiArc(IncidenceListVertex *tail, IncidenceListVertex *head, id_type);
 
-    unsigned long long getNextArcId();
+    id_type getNextArcId();
     void setOwner(DiGraph *handle);
 
 private:
     DiGraph *graph;
     VertexList vertices;
-    unsigned long long numArcs;
-    unsigned long long nextVertexId;
-    unsigned long long nextArcId;
-    std::vector<unsigned long long int> recycledVertexIds;
-    std::vector<unsigned long long int> recycledArcIds;
+    size_type numArcs;
+    id_type nextVertexId;
+    id_type nextArcId;
+    std::vector<id_type> recycledVertexIds;
+    std::vector<id_type> recycledArcIds;
 
     boost::object_pool<IncidenceListVertex> vertexStorage;
     boost::object_pool<Arc> arcStorage;

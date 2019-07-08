@@ -42,16 +42,16 @@ typedef typename std::vector<Arc*> ArcList;
 typedef typename std::vector<MultiArc*> MultiArcList;
 
 template <typename AL>
-bool removeArcFromList(AL &list, PropertyMap<unsigned long long> &indexMap, const Arc *arc);
+bool removeArcFromList(AL &list, PropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc);
 bool removeBundledArcFromList(PropertyMap<ParallelArcsBundle*> &bundleMap, const Arc *arc);
 template <typename AL>
-bool isArcInList(const PropertyMap<unsigned long long> &indexMap, AL &list, const Arc *arc);
+bool isArcInList(const PropertyMap<IncidenceListVertex::size_type> &indexMap, AL &list, const Arc *arc);
 template <typename AL>
-bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list, const PropertyMap<unsigned long long> &indexMap, const Arc *arc);
+bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list, const PropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc);
 
 class IncidenceListVertex::CheshireCat {
 public:
-    unsigned long long index;
+    size_type index;
     bool checkConsisteny;
 
     ArcList outgoingArcs;
@@ -61,12 +61,12 @@ public:
 
     PropertyMap<ParallelArcsBundle*> bundle;
 
-    PropertyMap<unsigned long long> outIndex;
-    PropertyMap<unsigned long long> inIndex;
-    PropertyMap<unsigned long long> multiOutIndex;
-    PropertyMap<unsigned long long> multiInIndex;
+    PropertyMap<size_type> outIndex;
+    PropertyMap<size_type> inIndex;
+    PropertyMap<size_type> multiOutIndex;
+    PropertyMap<size_type> multiInIndex;
 
-    CheshireCat(unsigned long long i) : index(i) {
+    CheshireCat(size_type i) : index(i) {
         bundle.setDefaultValue(nullptr);
         outIndex.setDefaultValue(NO_INDEX);
         inIndex.setDefaultValue(NO_INDEX);
@@ -88,7 +88,7 @@ public:
     }
 };
 
-IncidenceListVertex::IncidenceListVertex(unsigned long long id, GraphArtifact *parent, unsigned long long index)
+IncidenceListVertex::IncidenceListVertex(id_type id, GraphArtifact *parent, size_type index)
     : Vertex(id, parent), grin(new CheshireCat(index))
 {
     grin->checkConsisteny = true;
@@ -99,7 +99,7 @@ IncidenceListVertex::~IncidenceListVertex()
     delete grin;
 }
 
-unsigned long long IncidenceListVertex::getOutDegree(bool multiArcsAsSimple) const
+IncidenceListVertex::size_type IncidenceListVertex::getOutDegree(bool multiArcsAsSimple) const
 {
     auto deg = grin->outgoingArcs.size();
     if (multiArcsAsSimple) {
@@ -152,7 +152,7 @@ void IncidenceListVertex::clearOutgoingArcs()
     grin->multiOutIndex.resetAll();
 }
 
-unsigned long long IncidenceListVertex::getInDegree(bool multiArcsAsSimple) const
+IncidenceListVertex::size_type IncidenceListVertex::getInDegree(bool multiArcsAsSimple) const
 {
     auto deg = grin->incomingArcs.size();
     if (multiArcsAsSimple) {
@@ -218,12 +218,12 @@ void IncidenceListVertex::enableConsistencyCheck(bool enable)
     grin->checkConsisteny = enable;
 }
 
-unsigned long long IncidenceListVertex::getIndex() const
+IncidenceListVertex::size_type IncidenceListVertex::getIndex() const
 {
     return grin->index;
 }
 
-void IncidenceListVertex::setIndex(unsigned long long i)
+void IncidenceListVertex::setIndex(size_type i)
 {
     grin->index = i;
 }
@@ -253,7 +253,7 @@ bool IncidenceListVertex::hasIncomingArc(const Arc *a) const
             || isBundledArc(grin->bundle, grin->incomingMultiArcs, grin->multiInIndex, a);
 }
 
-Arc *IncidenceListVertex::outgoingArcAt(unsigned int i, bool multiArcsAsSimple) const
+Arc *IncidenceListVertex::outgoingArcAt(size_type i, bool multiArcsAsSimple) const
 {
     if (i < grin->outgoingArcs.size()) {
         return grin->outgoingArcs.at(i);
@@ -274,7 +274,7 @@ Arc *IncidenceListVertex::outgoingArcAt(unsigned int i, bool multiArcsAsSimple) 
     throw std::invalid_argument("Index must be less than outdegree.");
 }
 
-Arc *IncidenceListVertex::incomingArcAt(unsigned int i, bool multiArcsAsSimple) const
+Arc *IncidenceListVertex::incomingArcAt(size_type i, bool multiArcsAsSimple) const
 {
     if (i < grin->incomingArcs.size()) {
         return grin->incomingArcs.at(i);
@@ -295,7 +295,7 @@ Arc *IncidenceListVertex::incomingArcAt(unsigned int i, bool multiArcsAsSimple) 
     throw std::invalid_argument("Index must be less than indegree.");
 }
 
-unsigned long long IncidenceListVertex::outIndexOf(const Arc *a) const
+IncidenceListVertex::size_type IncidenceListVertex::outIndexOf(const Arc *a) const
 {
     auto i = grin->outIndex(a);
     if (i != NO_INDEX) {
@@ -304,7 +304,7 @@ unsigned long long IncidenceListVertex::outIndexOf(const Arc *a) const
     return grin->multiOutIndex(a);
 }
 
-unsigned long long IncidenceListVertex::inIndexOf(const Arc *a) const
+IncidenceListVertex::size_type IncidenceListVertex::inIndexOf(const Arc *a) const
 {
     auto i = grin->inIndex(a);
     if (i != NO_INDEX) {
@@ -366,7 +366,7 @@ bool IncidenceListVertex::mapIncomingArcs(const ArcMapping &avFun, const ArcPred
 }
 
 template <typename AL>
-bool removeArcFromList(AL &list, PropertyMap<unsigned long long> &indexMap, const Arc *arc) {
+bool removeArcFromList(AL &list, PropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc) {
     auto i = indexMap(arc);
     if (i == NO_INDEX) {
         return false;
@@ -392,7 +392,7 @@ bool removeBundledArcFromList(PropertyMap<ParallelArcsBundle*> &bundleMap, const
 }
 
 template <typename AL>
-bool isArcInList(const PropertyMap<unsigned long long> &indexMap, AL &list, const Arc *arc) {
+bool isArcInList(const PropertyMap<IncidenceListVertex::size_type> &indexMap, AL &list, const Arc *arc) {
     bool found = indexMap(arc) != NO_INDEX;
     if (found) {
         assert(list[indexMap(arc)] == arc);
@@ -401,7 +401,7 @@ bool isArcInList(const PropertyMap<unsigned long long> &indexMap, AL &list, cons
 }
 
 template <typename AL>
-bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list, const PropertyMap<unsigned long long> &indexMap, const Arc *arc) {
+bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list, const PropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc) {
     ParallelArcsBundle *pmb = bundleMap(arc);
     if (!pmb) {
         return false;

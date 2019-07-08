@@ -89,13 +89,13 @@ bool SubDiGraph::containsVertex(const Vertex *v) const
 
 Vertex *SubDiGraph::getAnyVertex() const
 {
-    Vertex *vertex = 0;
+    Vertex *vertex = nullptr;
     superGraph->mapVerticesUntil([&](Vertex *v) {
-        if (vertex == 0 && inSubGraph(v)) {
+        if (!vertex && inSubGraph(v)) {
             vertex = v;
         }
     }, [&](const Vertex *) {
-        return vertex != 0;
+        return vertex != nullptr;
     });
     return vertex;
 }
@@ -144,7 +144,7 @@ Arc *SubDiGraph::addArc(Vertex *tail, Vertex *head)
     return a;
 }
 
-MultiArc *SubDiGraph::addMultiArc(Vertex *tail, Vertex *head, unsigned long long size)
+MultiArc *SubDiGraph::addMultiArc(Vertex *tail, Vertex *head, size_type size)
 {
     if (size <= 0ULL) {
         throw std::invalid_argument("Multiarcs must be of size at least 1.");
@@ -193,25 +193,33 @@ Arc *SubDiGraph::findArc(const Vertex *from, const Vertex *to) const
     return nullptr;
 }
 
-unsigned long long SubDiGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
+SubDiGraph::size_type SubDiGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     if (!inSubGraph(v)) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
-    int out = 0;
+    SubDiGraph::size_type out = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
-    me->mapOutgoingArcs(v, [&](Arc *a) { out += multiArcsAsSimple ? 1 : a->getSize();});
+    if (multiArcsAsSimple) {
+        me->mapOutgoingArcs(v, [&out](Arc *) { out++; });
+    } else {
+        me->mapOutgoingArcs(v, [&out](Arc *a) { out += a->getSize(); });
+    }
     return out;
 }
 
-unsigned long long SubDiGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
+SubDiGraph::size_type SubDiGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     if (!inSubGraph(v)) {
         throw std::invalid_argument("Vertex is not a part of this graph.");
     }
-    int in = 0;
+    SubDiGraph::size_type in = 0;
     SubDiGraph *me = const_cast<SubDiGraph*>(this);
-    me->mapIncomingArcs(v, [&](Arc *a) { in += multiArcsAsSimple ? 1 : a->getSize(); });
+    if (multiArcsAsSimple) {
+        me->mapIncomingArcs(v, [&in](Arc *) { in++; });
+    } else {
+        me->mapIncomingArcs(v, [&in](Arc *a) { in+= a->getSize(); });
+    }
     return in;
 }
 

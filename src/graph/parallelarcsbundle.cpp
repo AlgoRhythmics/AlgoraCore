@@ -32,7 +32,7 @@ namespace Algora {
 
 struct ParallelArcsBundle::CheshireCat {
     std::vector<Arc*> arcsBundle;
-    unsigned long long size;
+    size_type size;
 
     CheshireCat() : size(0ULL) { }
 };
@@ -64,7 +64,7 @@ void ParallelArcsBundle::getArcs(std::vector<Arc *> *l) const
     std::copy(grin->arcsBundle.cbegin(), grin->arcsBundle.cend(), std::back_inserter(*l));
 }
 
-unsigned long long ParallelArcsBundle::getSize() const
+ParallelArcsBundle::size_type ParallelArcsBundle::getSize() const
 {
     //return grin->arcsBundle.size();
     return grin->size;
@@ -93,7 +93,7 @@ bool ParallelArcsBundle::addArc(Arc *a)
 
 void ParallelArcsBundle::removeArc(const Arc *a)
 {
-    unsigned int ol = grin->arcsBundle.size();
+    auto ol = grin->arcsBundle.size();
     grin->arcsBundle.erase(std::remove(grin->arcsBundle.begin(), grin->arcsBundle.end(), a), grin->arcsBundle.end());
     if (grin->arcsBundle.size() < ol) {
         grin->size -= a->getSize();

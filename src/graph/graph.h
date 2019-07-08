@@ -39,7 +39,7 @@ class Vertex;
 class Graph : public GraphArtifact
 {
 public:
-    typedef unsigned long long size_type;
+    //typedef GraphArtifact::size_type size_type;
 
     explicit Graph(GraphArtifact *parent = nullptr);
     virtual ~Graph() { }
@@ -89,7 +89,7 @@ protected:
         return new Vertex(this);
     }
 
-    Vertex *createVertex(unsigned long long id) {
+    Vertex *createVertex(id_type id) {
         return new Vertex(id, this);
     }
 

@@ -38,7 +38,7 @@
 #include "graph/digraph.h"
 #include "property/propertymap.h"
 #include "graph/graph_functional.h"
-#include <climits>
+#include <limits>
 
 namespace Algora {
 
@@ -57,7 +57,7 @@ template <template<typename T> class ModifiablePropertyType = PropertyMap>
 class DepthFirstSearch : public GraphTraversal<DFSResult>
 {
 public:
-    constexpr static unsigned long long INF = ULLONG_MAX;
+    constexpr static DiGraph::size_type INF = std::numeric_limits<DiGraph::size_type>::max();
 
     DepthFirstSearch(bool computeValues = true)
         : GraphTraversal<DFSResult>(computeValues),
@@ -79,7 +79,7 @@ public:
 
 
     // GraphTraversal interface
-    unsigned long long numVerticesReached() const override {
+		DiGraph::size_type numVerticesReached() const override {
         return verticesReached;
     }
 
@@ -89,7 +89,7 @@ public:
     {
         const Vertex *source = startVertex != nullptr ? startVertex : diGraph->getAnyVertex();
 
-        unsigned long long nextDepth = 0;
+				DiGraph::size_type nextDepth = 0;
         bool stop = false;
         discovered.resetAll();
         dfs(source, nextDepth, stop);
@@ -105,18 +105,18 @@ public:
 
     // ValueComputingAlgorithm interface
 public:
-    virtual unsigned long long deliver() override
+    virtual DiGraph::size_type deliver() override
     {
         return verticesReached;
     }
 
 private:
-    unsigned long long verticesReached;
+		DiGraph::size_type verticesReached;
     ArcMapping treeArc;
     ArcMapping nonTreeArc;
     ModifiablePropertyType<bool> discovered;
 
-    void dfs(const Vertex *v, unsigned long long &depth, bool &stop) {
+    void dfs(const Vertex *v, DiGraph::size_type &depth, bool &stop) {
         discovered[v] = true;
         DFSResult *cur = nullptr;
         if (computePropertyValues) {
