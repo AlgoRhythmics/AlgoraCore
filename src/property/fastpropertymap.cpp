@@ -31,7 +31,7 @@ void FastPropertyMap<bool>::setDefaultValue(const bool &val) {
     this->updateObservers(nullptr, oldDefault, defaultValue);
 }
 
-void FastPropertyMap<bool>::resetAll(unsigned long long capacity) {
+void FastPropertyMap<bool>::resetAll(size_type capacity) {
     if (capacity == 0) {
         capacity = buckets.size();
     }

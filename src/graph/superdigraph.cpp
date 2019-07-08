@@ -175,7 +175,7 @@ Arc *SuperDiGraph::addArc(Vertex *tail, Vertex *head)
     return a;
 }
 
-MultiArc *SuperDiGraph::addMultiArc(Vertex *tail, Vertex *head, unsigned long long size)
+MultiArc *SuperDiGraph::addMultiArc(Vertex *tail, Vertex *head, size_type size)
 {
     if (size <= 0) {
         throw std::invalid_argument("Multiarcs must be of size at least 1.");
@@ -239,7 +239,7 @@ Arc *SuperDiGraph::findArc(const Vertex *from, const Vertex *to) const
     return grin->extra->findArc(t, h);
 }
 
-unsigned long long SuperDiGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
+SuperDiGraph::size_type SuperDiGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     const IncidenceListVertex *vertex;
     if (v->getParent() == this) {
@@ -258,7 +258,7 @@ unsigned long long SuperDiGraph::getOutDegree(const Vertex *v, bool multiArcsAsS
     return grin->subGraph->getOutDegree(v);
 }
 
-unsigned long long SuperDiGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
+SuperDiGraph::size_type SuperDiGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     const IncidenceListVertex *vertex;
     if (v->getParent() == this) {
@@ -319,7 +319,7 @@ void SuperDiGraph::mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun
     }
 }
 
-unsigned long long SuperDiGraph::getNumArcs(bool multiArcsAsSimple) const
+SuperDiGraph::size_type SuperDiGraph::getNumArcs(bool multiArcsAsSimple) const
 {
     return grin->extra->getNumArcs(multiArcsAsSimple) + grin->subGraph->getNumArcs(multiArcsAsSimple);
 }

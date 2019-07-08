@@ -135,7 +135,7 @@ Vertex *IncidenceListGraph::getAnyVertex() const
     return impl->getFirstVertex();
 }
 
-IncidenceListVertex *IncidenceListGraph::vertexAt(unsigned long long i) const
+IncidenceListVertex *IncidenceListGraph::vertexAt(size_type i) const
 {
     if (i >= getSize()) {
         throw std::invalid_argument("Index must be less than graph size.");
@@ -160,7 +160,7 @@ Arc *IncidenceListGraph::addArc(Vertex *tail, Vertex *head)
     return a;
 }
 
-MultiArc *IncidenceListGraph::addMultiArc(Vertex *tail, Vertex *head, unsigned long long size)
+MultiArc *IncidenceListGraph::addMultiArc(Vertex *tail, Vertex *head, size_type size)
 {
     if (size <= 0) {
         throw std::invalid_argument("Multiarcs must be of size at least 1.");
@@ -210,18 +210,18 @@ Arc *IncidenceListGraph::findArc(const Vertex *from, const Vertex *to) const
     return impl->findArc(tail, head);
 }
 
-unsigned long long IncidenceListGraph::getNumArcs(bool multiArcsAsSimple) const
+IncidenceListGraph::size_type IncidenceListGraph::getNumArcs(bool multiArcsAsSimple) const
 {
     return impl->getNumArcs(multiArcsAsSimple);
 }
 
-unsigned long long IncidenceListGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
+IncidenceListGraph::size_type IncidenceListGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);
     return impl->getOutDegree(vertex, multiArcsAsSimple);
 }
 
-unsigned long long IncidenceListGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
+IncidenceListGraph::size_type IncidenceListGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);
     return impl->getInDegree(vertex, multiArcsAsSimple);
@@ -311,12 +311,12 @@ void IncidenceListGraph::unbundleParallelArcs()
     impl->unbundleParallelArcs();
 }
 
-void IncidenceListGraph::reserveVertexCapacity(unsigned long long n)
+void IncidenceListGraph::reserveVertexCapacity(size_type n)
 {
     impl->reserveVertexCapacity(n);
 }
 
-void IncidenceListGraph::reserveArcCapacity(unsigned long long n)
+void IncidenceListGraph::reserveArcCapacity(size_type n)
 {
    impl->reserveArcCapacity(n);
 }

@@ -54,14 +54,14 @@ public:
 
     // Arcs
     virtual Arc *addArc(Vertex *tail, Vertex *head) = 0;
-    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, unsigned long long size) = 0;
+    virtual MultiArc *addMultiArc(Vertex *tail, Vertex *head, size_type size) = 0;
     virtual void removeArc(Arc *a) = 0;
     virtual bool containsArc(const Arc *a) const = 0;
     virtual Arc *findArc(const Vertex *from, const Vertex *to) const = 0;
 
-    virtual unsigned long long getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
-    virtual unsigned long long getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
-    virtual unsigned long long getDegree(const Vertex *v, bool multiArcsAsSimple = false) const {
+    virtual size_type getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
+    virtual size_type getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
+    virtual size_type getDegree(const Vertex *v, bool multiArcsAsSimple = false) const {
         return getOutDegree(v, multiArcsAsSimple) + getInDegree(v, multiArcsAsSimple);
     }
     virtual bool isSource(const Vertex *v) const {
@@ -73,7 +73,7 @@ public:
     virtual bool isIsolated(const Vertex *v) const {
         return isSource(v) && isSink(v);
     }
-    virtual unsigned long long getNumArcs(bool multiArcsAsSimple = false) const;
+    virtual size_type getNumArcs(bool multiArcsAsSimple = false) const;
 
     virtual void onArcAdd(void *id, const ArcMapping &avFun);
     virtual void onArcRemove(void *id, const ArcMapping &avFun);
@@ -117,15 +117,15 @@ protected:
         return new Arc(tail, head, this);
     }
 
-    virtual Arc *createArc(Vertex *tail, Vertex *head, unsigned long long id) {
+    virtual Arc *createArc(Vertex *tail, Vertex *head, id_type id) {
         return new Arc(tail, head, id, this);
     }
 
-    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, unsigned long long size) {
+    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, size_type size) {
         return new WeightedArc(tail, head, size, this);
     }
 
-    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, unsigned long long size, unsigned long long id) {
+    virtual MultiArc *createMultiArc(Vertex *tail, Vertex *head, size_type size, id_type id) {
         return new WeightedArc(tail, head, size, id, this);
     }
 

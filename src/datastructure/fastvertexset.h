@@ -38,7 +38,7 @@ public:
     typedef container::const_iterator const_iterator;
     typedef std::vector<value_type>::size_type size_type;
 
-    explicit FastVertexSet(unsigned long long capacity = 0ULL) {
+    explicit FastVertexSet(size_type capacity = 0ULL) {
         setIndex.setDefaultValue(0U);
         if (capacity > 0U) {
             setIndex.resetAll(capacity);
@@ -87,7 +87,7 @@ public:
 
 private:
     std::vector<Vertex*> set;
-    FastPropertyMap<unsigned long long> setIndex;
+    FastPropertyMap<size_type> setIndex;
 };
 
 }

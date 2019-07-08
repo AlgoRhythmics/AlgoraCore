@@ -37,8 +37,9 @@ public:
     typedef typename std::vector<T>::iterator iterator;
     typedef typename std::vector<T>::const_iterator const_iterator;
     typedef typename std::vector<T>::reference reference;
+    typedef typename std::vector<T>::size_type size_type;
 
-    FastPropertyMap(const T &defaultValue = T(), const std::string &name = "", unsigned long long capacity = 0)
+    FastPropertyMap(const T &defaultValue = T(), const std::string &name = "", size_type capacity = 0)
         : ModifiableProperty<T>(name), defaultValue(defaultValue) { buckets.assign(capacity, defaultValue); }
     virtual ~FastPropertyMap() { }
 
@@ -57,7 +58,7 @@ public:
         this->updateObservers(nullptr, oldDefault, defaultValue);
     }
 
-    void setValueAtId(unsigned long long id, const T &value) {
+    void setValueAtId(GraphArtifact::id_type id, const T &value) {
         enlarge(id);
         buckets[id] = value;
     }
@@ -69,7 +70,7 @@ public:
         this->updateObservers(ga, oldValue, value);
     }
 
-    void resetAtId(unsigned long long id) {
+    void resetAtId(GraphArtifact::id_type id) {
         setValueAtId(id, defaultValue);
     }
 
@@ -77,7 +78,7 @@ public:
         setValue(ga, defaultValue);
     }
 
-    void resetAll(unsigned long long capacity) {
+    void resetAll(size_type capacity) {
         buckets.assign(capacity, defaultValue);
         this->updateObservers(nullptr, defaultValue, defaultValue);
     }
@@ -92,7 +93,7 @@ public:
         return buckets[id];
     }
 
-    T &operator[](unsigned long long id) {
+    T &operator[](GraphArtifact::id_type id) {
         enlarge(id);
         return buckets[id];
     }
@@ -121,7 +122,7 @@ public:
         return buckets.cend();
     }
 
-    T getValueAtId(unsigned long long id) const {
+    T getValueAtId(GraphArtifact::id_type id) const {
         if (id < buckets.size()) {
             return buckets.at(id);
         }
@@ -140,7 +141,7 @@ public:
     }
 
 private:
-    void enlarge(unsigned long long size) {
+    void enlarge(size_type size) {
         if (size < buckets.size()) {
             return;
         }
@@ -156,8 +157,9 @@ class FastPropertyMap<bool> : public ModifiableProperty<bool>
 {
 public:
     typedef typename std::vector<char>::reference reference;
+    typedef typename std::vector<char>::size_type size_type;
 
-    FastPropertyMap(const bool &defaultValue = false, const std::string &name = "", unsigned long long capacity = 0)
+    FastPropertyMap(const bool &defaultValue = false, const std::string &name = "", size_type capacity = 0)
         : ModifiableProperty<bool>(name), defaultValue(defaultValue) { buckets.assign(capacity, defaultValue); }
     virtual ~FastPropertyMap() override { }
 
@@ -170,7 +172,7 @@ public:
     const bool &getDefaultValue() const { return defaultValue; }
     void setDefaultValue(const bool &val);
 
-    void setValueAtId(unsigned long long id, const bool &value) {
+    void setValueAtId(GraphArtifact::id_type id, const bool &value) {
         enlarge(id);
         buckets[id] = value;
     }
@@ -190,26 +192,24 @@ public:
         setValue(ga, defaultValue);
     }
 
-    void resetAtId(unsigned long long id) {
+    void resetAtId(GraphArtifact::id_type id) {
         setValueAtId(id, defaultValue);
     }
 
-    void resetAll(unsigned long long capacity = 0ULL);
+    void resetAll(size_type capacity = 0ULL);
 
     virtual bool &operator[](const GraphArtifact *ga) override {
         auto id = ga->getId();
         enlarge(id);
-        //bool &b = (bool&) buckets[id];
-        //return b;
         return reinterpret_cast<bool&>(buckets[id]);
     }
 
-    bool &operator[](unsigned long long id) {
+    bool &operator[](GraphArtifact::id_type id) {
         enlarge(id);
         return reinterpret_cast<bool&>(buckets[id]);
     }
 
-    bool getValueAtId(unsigned long long id) const {
+    bool getValueAtId(GraphArtifact::id_type id) const {
         if (id < buckets.size()) {
             return buckets.at(id);
         }
@@ -228,7 +228,7 @@ public:
     }
 
 private:
-    void enlarge(unsigned long long size) {
+    void enlarge(size_type size) {
         if (size < buckets.size()) {
             return;
         }

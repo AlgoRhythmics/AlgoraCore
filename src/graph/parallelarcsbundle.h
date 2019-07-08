@@ -56,7 +56,7 @@ public:
 
     // MultiArc interface
 public:
-    virtual unsigned long long getSize() const override;
+    virtual size_type getSize() const override;
 
     // GraphArtifact interface
 public:

@@ -34,7 +34,7 @@ class Vertex : public GraphArtifact
 
 public:
     explicit Vertex(GraphArtifact *parent = nullptr);
-    explicit Vertex(unsigned long long id, GraphArtifact *parent = nullptr);
+    explicit Vertex(id_type id, GraphArtifact *parent = nullptr);
     virtual ~Vertex() override;
 
     // copying

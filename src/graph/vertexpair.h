@@ -35,10 +35,10 @@ public:
     explicit VertexPair(Vertex *first, Vertex *second, GraphArtifact *parent = nullptr)
         : GraphArtifact(parent), first(first), second(second) {}
 
-    explicit VertexPair(Vertex *first, Vertex *second, unsigned long long id, GraphArtifact *parent = nullptr)
+    explicit VertexPair(Vertex *first, Vertex *second, id_type id, GraphArtifact *parent = nullptr)
         : GraphArtifact(id, parent), first(first), second(second) {}
 
-    explicit VertexPair(unsigned long long id, GraphArtifact *parent = nullptr)
+    explicit VertexPair(id_type id, GraphArtifact *parent = nullptr)
         : GraphArtifact(id, parent), first(nullptr), second(nullptr) { invalidate(); }
 
     virtual ~VertexPair() override { }
