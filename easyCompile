@@ -31,6 +31,10 @@ EXTRA_ARGS=""
 QMAKE=""
 SPEC="linux-g++-64"
 
+function usage() {
+    echo "Usage: $0 [ --qmake <path/to/qmake> ] [ -c | --clean ] [ -g | --general ] [ --clang ]"
+}
+
 while [[ $# -gt 0 ]]
 do
 case $1 in
@@ -51,9 +55,13 @@ case $1 in
     SPEC="linux-clang"
     shift
     ;;
+    -h|--help)
+    usage
+    exit 0
+    ;;
     *)
     echo "Unknown option $1."
-    echo "Usage: $0 [ --qmake <path/to/qmake> ] [ -c | --clean ] [ -g | --general ] [ --clang ]"
+    usage
     exit 1
     ;;
 esac
