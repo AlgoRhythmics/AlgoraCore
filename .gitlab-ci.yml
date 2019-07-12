@@ -1,0 +1,12 @@
+image: gcc
+
+build:
+  stage: build
+  before_script:
+    - apt update && apt -y install qt5-qmake libboost-dev
+  script:
+    - ./easyCompile -c -g
+  artifacts:
+    paths:
+      - build/Debug/libAlgoraCore.a
+      - build/Release/libAlgoraCore.a
