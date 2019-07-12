@@ -15,16 +15,16 @@ The design principle was to have data structures and algorithms that are
 
 ## Building
 
-**Algora|Core** is written in C++11.
+**Algora|Core** is written in C++17.
 Implementations are based on the STL and additionally use `boost/dynamic_bitset` as well as
 `boost/logic/tribool`.
 The building process employs `qmake` version 5.
 
-On Debian/Ubuntu, `qmake` can be installed by running: `# apt-get install
-qt5-qmake`.
-On Fedora, run `# dnf install qt5-qtbase-devel` to get `qmake-qt5`.
+On Debian/Ubuntu, all dependencies can be installed by running: `# apt install
+qt5-qmake libboost-dev`.
+On Fedora, run `# dnf install qt5-qtbase-devel boost-devel`.
 
-To facilitate the building process even further, **Algora|Core** comes with an
+To facilitate the building process, **Algora|Core** comes with an
 `easyCompile` script that creates the necessary build directories and
 compiles the project.
 All you need to do is running `$ ./easyCompile` from the project's topmost
