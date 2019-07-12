@@ -1,3 +1,5 @@
+[![pipeline status](https://gitlab.com/AlgoRhythmics/AlgoraCore/badges/master/pipeline.svg)](https://gitlab.com/AlgoRhythmics/AlgoraCore/commits/master)
+
 # Algora|Core
 
 **Algora|Core** is the core library of the **Algora** project.
