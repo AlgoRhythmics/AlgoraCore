@@ -25,10 +25,7 @@
 namespace Algora {
 
 void FastPropertyMap<bool>::setDefaultValue(const bool &val) {
-    auto oldDefault = defaultValue;
     defaultValue = val;
-    buckets.assign(buckets.size(), defaultValue);
-    this->updateObservers(nullptr, oldDefault, defaultValue);
 }
 
 void FastPropertyMap<bool>::resetAll(size_type capacity) {

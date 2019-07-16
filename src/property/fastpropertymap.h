@@ -25,6 +25,7 @@
 
 #include "modifiableproperty.h"
 #include "graph/graphartifact.h"
+#include <cassert>
 
 #include <vector>
 
@@ -52,10 +53,7 @@ public:
     const T &getDefaultValue() const { return defaultValue; }
 
     void setDefaultValue(const T &val) {
-        auto oldDefault = defaultValue;
         defaultValue = val;
-        buckets.assign(buckets.size(), defaultValue);
-        this->updateObservers(nullptr, oldDefault, defaultValue);
     }
 
     void setValueAtId(GraphArtifact::id_type id, const T &value) {
@@ -80,6 +78,7 @@ public:
 
     void resetAll(size_type capacity) {
         buckets.assign(capacity, defaultValue);
+        assert(buckets.size() == capacity);
         this->updateObservers(nullptr, defaultValue, defaultValue);
     }
 
