@@ -32,7 +32,7 @@ QMAKE=""
 SPEC="linux-g++-64"
 
 function usage() {
-    echo "Usage: $0 [ --qmake <path/to/qmake> ] [ -c | --clean ] [ -g | --general ] [ --clang ]"
+    echo "Usage: $0 [ --qmake <path/to/qmake> ] [ -c | --clean ] [ -g | --general ] [ -d | --debugsymbols] [ --clang ]"
 }
 
 while [[ $# -gt 0 ]]
@@ -49,6 +49,10 @@ case $1 in
     ;;
     -g|--general)
     EXTRA_ARGS="${EXTRA_ARGS} CONFIG+=general" # do not optimize for this cpu only
+    shift
+    ;;
+    -d|--debugsymbols)
+    EXTRA_ARGS="${EXTRA_ARGS} CONFIG+=debugsymbols" # add debug symbols in release version
     shift
     ;;
     --clang)
