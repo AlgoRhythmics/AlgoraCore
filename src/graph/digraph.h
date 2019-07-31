@@ -73,7 +73,7 @@ public:
     virtual bool isIsolated(const Vertex *v) const {
         return isSource(v) && isSink(v);
     }
-    virtual size_type getNumArcs(bool multiArcsAsSimple = false) const;
+    virtual size_type getNumArcs(bool multiArcsAsSimple) const;
 
     virtual void onArcAdd(void *id, const ArcMapping &avFun);
     virtual void onArcRemove(void *id, const ArcMapping &avFun);

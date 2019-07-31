@@ -50,7 +50,8 @@ DiGraph::size_type DiGraph::getNumArcs(bool multiArcsAsSimple) const
 {
     DiGraph *me = const_cast<DiGraph*>(this);
     size_type numArcs = 0U;
-    me->mapVertices([&](Vertex *v) { numArcs += me->getOutDegree(v, multiArcsAsSimple); });
+    me->mapVertices([me, &numArcs,multiArcsAsSimple](Vertex *v) {
+        numArcs += me->getOutDegree(v, multiArcsAsSimple); });
     return numArcs;
 }
 

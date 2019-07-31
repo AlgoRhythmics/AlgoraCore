@@ -81,7 +81,7 @@ public:
     virtual void removeArc(Arc *a) override;
     virtual bool containsArc(const Arc *a) const override;
     virtual Arc *findArc(const Vertex *from, const Vertex *to) const override;
-    virtual size_type getNumArcs(bool multiArcsAsSimple = false) const override;
+    virtual size_type getNumArcs(bool multiArcsAsSimple) const override;
 
     virtual size_type getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
     virtual size_type getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
