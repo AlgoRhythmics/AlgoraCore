@@ -30,7 +30,7 @@ QT       -= core gui
 
 TARGET = AlgoraCore
 TEMPLATE = lib
-CONFIG += staticlib
+CONFIG += staticlib c++17
 
 ACINFOHDR = $$PWD/algoracore_info.h
 acinfotarget.target =  $$ACINFOHDR
