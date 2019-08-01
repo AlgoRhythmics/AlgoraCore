@@ -79,6 +79,9 @@ public:
     void resetAll(size_type capacity) {
         buckets.assign(capacity, defaultValue);
         assert(buckets.size() == capacity);
+        if (capacity == 0) {
+            buckets.shrink_to_fit();
+        }
         this->updateObservers(nullptr, defaultValue, defaultValue);
     }
 

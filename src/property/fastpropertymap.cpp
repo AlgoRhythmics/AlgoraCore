@@ -29,10 +29,11 @@ void FastPropertyMap<bool>::setDefaultValue(const bool &val) {
 }
 
 void FastPropertyMap<bool>::resetAll(size_type capacity) {
-    if (capacity == 0) {
-        capacity = buckets.size();
-    }
     buckets.assign(capacity, defaultValue);
+    assert(buckets.size() == capacity);
+    if (capacity == 0) {
+        buckets.shrink_to_fit();
+    }
     this->updateObservers(nullptr, defaultValue, defaultValue);
 }
 
