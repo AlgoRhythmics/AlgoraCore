@@ -50,7 +50,11 @@ public:
         return m_buckets[m_top].back();
     }
 
-    const value_type& bot() const {
+    const value_type& back() const {
+        return top();
+    }
+
+    const value_type& front() const {
         return m_buckets[m_bot].back();
     }
 
@@ -72,6 +76,10 @@ public:
         m_size++;
     }
 
+    void push_back (const value_type& val) {
+        push(val);
+    }
+
     void pop() {
         m_buckets[m_top].pop_back();
         m_size--;
@@ -80,7 +88,11 @@ public:
         }
     }
 
-    void popBot() {
+    void pop_back() {
+        pop();
+    }
+
+    void pop_front() {
         m_buckets[m_bot].pop_back();
         m_size--;
         while (m_bot < m_buckets.size() && m_buckets[m_bot].empty()) {
