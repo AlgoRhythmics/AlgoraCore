@@ -59,11 +59,6 @@ case $1 in
     SPEC="linux-clang"
     shift
     ;;
-    --cxx)
-    LOCAL_CXX="$2"
-    shift
-    shift
-    ;;
     -h|--help)
     usage
     exit 0
