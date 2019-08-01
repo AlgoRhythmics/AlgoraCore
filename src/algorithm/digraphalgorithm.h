@@ -35,7 +35,13 @@ public:
     explicit DiGraphAlgorithm() : diGraph(nullptr) { }
     virtual ~DiGraphAlgorithm() { }
 
-    void setGraph(DiGraph *diGraph) { onDiGraphUnset(); this->diGraph = diGraph; onDiGraphSet(); }
+    void setGraph(DiGraph *diGraph) {
+        if (this->diGraph != diGraph) {
+          onDiGraphUnset();
+          this->diGraph = diGraph;
+          onDiGraphSet();
+        }
+    }
     void unsetGraph() { onDiGraphUnset(); this->diGraph = nullptr; }
     bool hasGraph() const { return diGraph != nullptr; }
 
