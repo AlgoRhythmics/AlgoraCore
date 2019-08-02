@@ -63,7 +63,7 @@ bool AccessibilityAlgorithm::canAccess(Vertex *source, Vertex *target)
 {
     TriBool accessible(grin->isAccessible[source][target]);
     if (!boost::logic::indeterminate(accessible)) {
-        return accessible;
+        return accessible ? true : false;
     }
     return grin->checkAccessibility(diGraph, source, target);
 }
