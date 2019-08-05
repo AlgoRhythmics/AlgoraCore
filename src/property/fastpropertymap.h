@@ -76,11 +76,15 @@ public:
         setValue(ga, defaultValue);
     }
 
+		void fit() {
+        buckets.shrink_to_fit();
+		}
+
     void resetAll(size_type capacity) {
         buckets.assign(capacity, defaultValue);
         assert(buckets.size() == capacity);
         if (capacity == 0) {
-            buckets.shrink_to_fit();
+					fit();
         }
         this->updateObservers(nullptr, defaultValue, defaultValue);
     }
@@ -193,6 +197,10 @@ public:
     void resetToDefault(const GraphArtifact *ga) {
         setValue(ga, defaultValue);
     }
+
+		void fit() {
+        buckets.shrink_to_fit();
+		}
 
     void resetAtId(GraphArtifact::id_type id) {
         setValueAtId(id, defaultValue);

@@ -32,7 +32,7 @@ void FastPropertyMap<bool>::resetAll(size_type capacity) {
     buckets.assign(capacity, defaultValue);
     assert(buckets.size() == capacity);
     if (capacity == 0) {
-        buckets.shrink_to_fit();
+        fit();
     }
     this->updateObservers(nullptr, defaultValue, defaultValue);
 }
