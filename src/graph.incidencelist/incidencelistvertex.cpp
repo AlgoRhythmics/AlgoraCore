@@ -37,8 +37,6 @@
 
 namespace Algora {
 
-//#define NO_INDEX ULONG_MAX
-
 typedef typename std::vector<Arc*> ArcList;
 typedef typename std::vector<MultiArc*> MultiArcList;
 
@@ -65,8 +63,6 @@ public:
 
     FastPropertyMap<size_type> &outIndex;
     FastPropertyMap<size_type> &inIndex;
-    //PropertyMap<size_type> multiOutIndex;
-    //PropertyMap<size_type> multiInIndex;
 
     CheshireCat(
             FastPropertyMap<size_type> &outIndex,
@@ -74,10 +70,6 @@ public:
             size_type i)
         : index(i), outIndex(outIndex), inIndex(inIndex) {
         bundle.setDefaultValue(nullptr);
-        //outIndex.setDefaultValue(NO_INDEX);
-        //inIndex.setDefaultValue(NO_INDEX);
-        //multiOutIndex.setDefaultValue(NO_INDEX);
-        //multiInIndex.setDefaultValue(NO_INDEX);
     }
 
     void clear() {
@@ -100,10 +92,6 @@ public:
         incomingMultiArcs.clear();
 
         bundle.resetAll();
-        //outIndex.resetAll();
-        //inIndex.resetAll();
-        //multiOutIndex.resetAll();
-        //multiInIndex.resetAll();
     }
 };
 
@@ -319,10 +307,6 @@ Arc *IncidenceListVertex::incomingArcAt(size_type i, bool multiArcsAsSimple) con
 IncidenceListVertex::size_type IncidenceListVertex::outIndexOf(const Arc *a) const
 {
     return grin->outIndex(a);
-    //if (i != NO_INDEX) {
-    //    return i;
-    //}
-    //return grin->multiOutIndex(a);
 }
 
 IncidenceListVertex::size_type IncidenceListVertex::inIndexOf(const Arc *a) const
