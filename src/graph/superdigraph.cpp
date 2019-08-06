@@ -169,6 +169,9 @@ Arc *SuperDiGraph::addArc(Vertex *tail, Vertex *head)
 {
     IncidenceListVertex *t = findOrCreateVertex(tail, grin->map, grin->extra, this);
     IncidenceListVertex *h = findOrCreateVertex(head, grin->map, grin->extra, this);
+    // ugly hack
+    t->enableConsistencyCheck(false);
+    h->enableConsistencyCheck(false);
 
     Arc *a = createArc(tail, head);
     grin->extra->addArc(a, t, h);
@@ -184,6 +187,9 @@ MultiArc *SuperDiGraph::addMultiArc(Vertex *tail, Vertex *head, size_type size)
 
     IncidenceListVertex *t = findOrCreateVertex(tail, grin->map, grin->extra, this);
     IncidenceListVertex *h = findOrCreateVertex(head, grin->map, grin->extra, this);
+    // ugly hack
+    t->enableConsistencyCheck(false);
+    h->enableConsistencyCheck(false);
 
     MultiArc *a = createMultiArc(tail, head, size);
     grin->extra->addArc(a, t, h);

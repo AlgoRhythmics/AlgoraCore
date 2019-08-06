@@ -39,6 +39,7 @@ class IncidenceListVertex : public Vertex
 {
     friend class IncidenceListGraph;
     friend class IncidenceListGraphImplementation;
+    friend class SuperDiGraph;
 
 public:
     explicit IncidenceListVertex(id_type id,
