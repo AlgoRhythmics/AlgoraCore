@@ -32,7 +32,7 @@ QMAKE=""
 SPEC="linux-g++-64"
 
 function usage() {
-    echo "Usage: $0 [ --qmake <path/to/qmake> ] [ -c | --clean ] [ -g | --general ] [ -d | --debugsymbols] [ --clang ]"
+    echo "Usage: $0 [ --qmake <path/to/qmake> ] [ -c | --clean ] [ -g | --general ] [ -d | --debugsymbols] [ --clang ] [ -C | --compiler <compiler> ]"
 }
 
 while [[ $# -gt 0 ]]
@@ -59,6 +59,11 @@ case $1 in
     SPEC="linux-clang"
     shift
     ;;
+    -C|--compiler)
+    EXTRA_ARGS="${EXTRA_ARGS} QMAKE_CXX=$2"
+    shift
+    shift
+    ;;
     -h|--help)
     usage
     exit 0
@@ -68,9 +73,8 @@ case $1 in
     break
     ;;
     *)
-    echo "Unknown option $1."
-    usage
-    exit 1
+    echo "Ignoring unknown option $1. Run $0 -h for help."
+    shift
     ;;
 esac
 done
