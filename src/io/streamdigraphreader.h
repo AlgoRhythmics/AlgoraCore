@@ -31,10 +31,13 @@ namespace Algora {
 class StreamDiGraphReader : public DiGraphProvider
 {
 public:
-    explicit StreamDiGraphReader(std::istream *input = nullptr) : inputStream(input) { }
+    explicit StreamDiGraphReader(std::istream *input = nullptr,
+                                std::ostream *progress = nullptr)
+        : inputStream(input), progressStream(progress) { }
     virtual ~StreamDiGraphReader() override { }
 
     void setInputStream(std::istream *input) { inputStream = input; }
+    void setProgressStream(std::ostream *progress) { progressStream = progress; }
 
     // DiGraphProvider interface
 public:
@@ -44,6 +47,7 @@ public:
 
 protected:
     std::istream *inputStream;
+    std::ostream *progressStream;
 };
 
 }
