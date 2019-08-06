@@ -27,6 +27,7 @@
 #include "graph/parallelarcsbundle.h"
 #include "graph.visitor/arcvisitor.h"
 #include "property/propertymap.h"
+#include "property/fastpropertymap.h"
 
 #include <vector>
 #include <stdexcept>
@@ -36,18 +37,19 @@
 
 namespace Algora {
 
-#define NO_INDEX ULLONG_MAX
+//#define NO_INDEX ULONG_MAX
 
 typedef typename std::vector<Arc*> ArcList;
 typedef typename std::vector<MultiArc*> MultiArcList;
 
 template <typename AL>
-bool removeArcFromList(AL &list, PropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc);
+bool removeArcFromList(AL &list, FastPropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc);
 bool removeBundledArcFromList(PropertyMap<ParallelArcsBundle*> &bundleMap, const Arc *arc);
 template <typename AL>
-bool isArcInList(const PropertyMap<IncidenceListVertex::size_type> &indexMap, AL &list, const Arc *arc);
+bool isArcInList(const FastPropertyMap<IncidenceListVertex::size_type> &indexMap, AL &list, const Arc *arc);
 template <typename AL>
-bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list, const PropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc);
+bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list,
+                  const FastPropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc);
 
 class IncidenceListVertex::CheshireCat {
 public:
@@ -61,35 +63,54 @@ public:
 
     PropertyMap<ParallelArcsBundle*> bundle;
 
-    PropertyMap<size_type> outIndex;
-    PropertyMap<size_type> inIndex;
-    PropertyMap<size_type> multiOutIndex;
-    PropertyMap<size_type> multiInIndex;
+    FastPropertyMap<size_type> &outIndex;
+    FastPropertyMap<size_type> &inIndex;
+    //PropertyMap<size_type> multiOutIndex;
+    //PropertyMap<size_type> multiInIndex;
 
-    CheshireCat(size_type i) : index(i) {
+    CheshireCat(
+            FastPropertyMap<size_type> &outIndex,
+            FastPropertyMap<size_type> &inIndex,
+            size_type i)
+        : index(i), outIndex(outIndex), inIndex(inIndex) {
         bundle.setDefaultValue(nullptr);
-        outIndex.setDefaultValue(NO_INDEX);
-        inIndex.setDefaultValue(NO_INDEX);
-        multiOutIndex.setDefaultValue(NO_INDEX);
-        multiInIndex.setDefaultValue(NO_INDEX);
+        //outIndex.setDefaultValue(NO_INDEX);
+        //inIndex.setDefaultValue(NO_INDEX);
+        //multiOutIndex.setDefaultValue(NO_INDEX);
+        //multiInIndex.setDefaultValue(NO_INDEX);
     }
 
     void clear() {
+        for (Arc *a : outgoingArcs) {
+            outIndex.resetToDefault(a);
+        }
+        for (Arc *a : outgoingMultiArcs) {
+            outIndex.resetToDefault(a);
+        }
+        for (Arc *a : incomingArcs) {
+            outIndex.resetToDefault(a);
+        }
+        for (Arc *a : incomingMultiArcs) {
+            outIndex.resetToDefault(a);
+        }
+
         outgoingArcs.clear();
         incomingArcs.clear();
         outgoingMultiArcs.clear();
         incomingMultiArcs.clear();
 
         bundle.resetAll();
-        outIndex.resetAll();
-        inIndex.resetAll();
-        multiOutIndex.resetAll();
-        multiInIndex.resetAll();
+        //outIndex.resetAll();
+        //inIndex.resetAll();
+        //multiOutIndex.resetAll();
+        //multiInIndex.resetAll();
     }
 };
 
-IncidenceListVertex::IncidenceListVertex(id_type id, GraphArtifact *parent, size_type index)
-    : Vertex(id, parent), grin(new CheshireCat(index))
+IncidenceListVertex::IncidenceListVertex(id_type id, FastPropertyMap<size_type> &sharedOutIndex,
+                                         FastPropertyMap<size_type> &sharedInIndex,
+                                         GraphArtifact *parent, size_type index)
+    : Vertex(id, parent), grin(new CheshireCat(sharedOutIndex, sharedInIndex, index))
 {
     grin->checkConsisteny = true;
 }
@@ -118,7 +139,7 @@ void IncidenceListVertex::addOutgoingArc(Arc *a)
     }
     MultiArc *ma = dynamic_cast<MultiArc*>(a);
     if (ma) {
-        grin->multiOutIndex.setValue(ma, grin->outgoingMultiArcs.size());
+        grin->outIndex.setValue(ma, grin->outgoingMultiArcs.size());
         grin->outgoingMultiArcs.push_back(ma);
         ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(ma);
         if (pab) {
@@ -138,7 +159,7 @@ void IncidenceListVertex::removeOutgoingArc(const Arc *a)
         throw std::invalid_argument("Arc has other tail.");
     }
     if (!removeArcFromList(grin->outgoingArcs, grin->outIndex, a)
-            && !removeArcFromList(grin->outgoingMultiArcs, grin->multiOutIndex, a)
+            && !removeArcFromList(grin->outgoingMultiArcs, grin->outIndex, a)
             && !removeBundledArcFromList(grin->bundle, a)) {
         throw std::invalid_argument("Unknown outgoing arc.");
     }
@@ -148,8 +169,8 @@ void IncidenceListVertex::clearOutgoingArcs()
 {
     grin->outgoingArcs.clear();
     grin->outgoingMultiArcs.clear();
-    grin->outIndex.resetAll();
-    grin->multiOutIndex.resetAll();
+    //grin->outIndex.resetAll();
+    //grin->multiOutIndex.resetAll();
 }
 
 IncidenceListVertex::size_type IncidenceListVertex::getInDegree(bool multiArcsAsSimple) const
@@ -181,7 +202,7 @@ void IncidenceListVertex::addIncomingArc(Arc *a)
     }
     MultiArc *ma = dynamic_cast<MultiArc*>(a);
     if (ma) {
-        grin->multiInIndex.setValue(ma, grin->incomingMultiArcs.size());
+        grin->inIndex.setValue(ma, grin->incomingMultiArcs.size());
         grin->incomingMultiArcs.push_back(ma);
         ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(ma);
         if (pab) {
@@ -201,7 +222,7 @@ void IncidenceListVertex::removeIncomingArc(const Arc *a)
         throw std::invalid_argument("Arc has other head.");
     }
     if (!removeArcFromList(grin->incomingArcs, grin->inIndex, a)
-            && !removeArcFromList(grin->incomingMultiArcs, grin->multiInIndex, a)
+            && !removeArcFromList(grin->incomingMultiArcs, grin->inIndex, a)
             && !removeBundledArcFromList(grin->bundle, a)) {
         throw std::invalid_argument("Unknown incoming arc.");
     }
@@ -242,15 +263,15 @@ void IncidenceListVertex::recycle()
 bool IncidenceListVertex::hasOutgoingArc(const Arc *a) const
 {
     return isArcInList(grin->outIndex, grin->outgoingArcs, a)
-            || isArcInList(grin->multiOutIndex, grin->outgoingMultiArcs, a)
-            || isBundledArc(grin->bundle, grin->outgoingMultiArcs, grin->multiOutIndex, a);
+            || isArcInList(grin->outIndex, grin->outgoingMultiArcs, a)
+            || isBundledArc(grin->bundle, grin->outgoingMultiArcs, grin->outIndex, a);
 }
 
 bool IncidenceListVertex::hasIncomingArc(const Arc *a) const
 {
     return isArcInList(grin->inIndex, grin->incomingArcs, a)
-            || isArcInList(grin->multiInIndex, grin->incomingMultiArcs, a)
-            || isBundledArc(grin->bundle, grin->incomingMultiArcs, grin->multiInIndex, a);
+            || isArcInList(grin->inIndex, grin->incomingMultiArcs, a)
+            || isBundledArc(grin->bundle, grin->incomingMultiArcs, grin->inIndex, a);
 }
 
 Arc *IncidenceListVertex::outgoingArcAt(size_type i, bool multiArcsAsSimple) const
@@ -297,20 +318,16 @@ Arc *IncidenceListVertex::incomingArcAt(size_type i, bool multiArcsAsSimple) con
 
 IncidenceListVertex::size_type IncidenceListVertex::outIndexOf(const Arc *a) const
 {
-    auto i = grin->outIndex(a);
-    if (i != NO_INDEX) {
-        return i;
-    }
-    return grin->multiOutIndex(a);
+    return grin->outIndex(a);
+    //if (i != NO_INDEX) {
+    //    return i;
+    //}
+    //return grin->multiOutIndex(a);
 }
 
 IncidenceListVertex::size_type IncidenceListVertex::inIndexOf(const Arc *a) const
 {
-    auto i = grin->inIndex(a);
-    if (i != NO_INDEX) {
-        return i;
-    }
-    return grin->multiInIndex(a);
+    return grin->inIndex(a);
 }
 
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
@@ -366,9 +383,9 @@ bool IncidenceListVertex::mapIncomingArcs(const ArcMapping &avFun, const ArcPred
 }
 
 template <typename AL>
-bool removeArcFromList(AL &list, PropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc) {
+bool removeArcFromList(AL &list, FastPropertyMap<GraphArtifact::size_type> &indexMap, const Arc *arc) {
     auto i = indexMap(arc);
-    if (i == NO_INDEX) {
+    if (i == indexMap.getDefaultValue()) {
         return false;
     }
     assert(list[i] == arc);
@@ -392,8 +409,8 @@ bool removeBundledArcFromList(PropertyMap<ParallelArcsBundle*> &bundleMap, const
 }
 
 template <typename AL>
-bool isArcInList(const PropertyMap<IncidenceListVertex::size_type> &indexMap, AL &list, const Arc *arc) {
-    bool found = indexMap(arc) != NO_INDEX;
+bool isArcInList(const FastPropertyMap<GraphArtifact::size_type> &indexMap, AL &list, const Arc *arc) {
+    bool found = indexMap(arc) != indexMap.getDefaultValue();
     if (found) {
         assert(list[indexMap(arc)] == arc);
     }
@@ -401,7 +418,8 @@ bool isArcInList(const PropertyMap<IncidenceListVertex::size_type> &indexMap, AL
 }
 
 template <typename AL>
-bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list, const PropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc) {
+bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list,
+                  const FastPropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc) {
     ParallelArcsBundle *pmb = bundleMap(arc);
     if (!pmb) {
         return false;

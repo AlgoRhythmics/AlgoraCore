@@ -32,13 +32,19 @@ class IncidenceListGraph;
 class Arc;
 class ArcVisitor;
 
+template<typename T>
+class FastPropertyMap;
+
 class IncidenceListVertex : public Vertex
 {
     friend class IncidenceListGraph;
     friend class IncidenceListGraphImplementation;
 
 public:
-    explicit IncidenceListVertex(id_type id, GraphArtifact *parent = nullptr, size_type index = 0);
+    explicit IncidenceListVertex(id_type id,
+                                 FastPropertyMap<size_type> &sharedOutIndex,
+                                 FastPropertyMap<size_type> &sharedInIndex,
+                                 GraphArtifact *parent = nullptr, size_type index = 0);
     virtual ~IncidenceListVertex();
 
     // disable copying and moving

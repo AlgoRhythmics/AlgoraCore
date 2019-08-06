@@ -28,6 +28,7 @@
 #include "graph/arc.h"
 
 #include "property/modifiableproperty.h"
+#include "property/fastpropertymap.h"
 
 #include <vector>
 #include <boost/pool/object_pool.hpp>
@@ -43,6 +44,7 @@ class IncidenceListGraphImplementation {
 public:
     typedef GraphArtifact::size_type size_type;
     typedef GraphArtifact::id_type id_type;
+    static constexpr size_type NO_INDEX = std::numeric_limits<size_type>::max();
 
     explicit IncidenceListGraphImplementation(DiGraph *handle);
     ~IncidenceListGraphImplementation();
@@ -92,8 +94,10 @@ public:
     void mapVertices(const VertexMapping &vvFun, const VertexPredicate &breakCondition, bool checkValidity = true);
 
     void mapArcs(const ArcMapping &avFun, const ArcPredicate &breakCondition);
-    void mapOutgoingArcs(const IncidenceListVertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition, bool checkValidity = true);
-    void mapIncomingArcs(const IncidenceListVertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition, bool checkValidity = true);
+    void mapOutgoingArcs(const IncidenceListVertex *v, const ArcMapping &avFun,
+                         const ArcPredicate &breakCondition, bool checkValidity = true);
+    void mapIncomingArcs(const IncidenceListVertex *v, const ArcMapping &avFun,
+                         const ArcPredicate &breakCondition, bool checkValidity = true);
 
     bool isEmpty() const;
     Graph::size_type getSize() const;
@@ -126,6 +130,9 @@ private:
     std::vector<IncidenceListVertex*> vertexPool;
     std::vector<Arc*> arcPool;
     std::vector<MultiArc*> multiArcs;
+
+    FastPropertyMap<size_type> sharedOutIndexMap;
+    FastPropertyMap<size_type> sharedInIndexMap;
 
     void bundleOutgoingArcs(IncidenceListVertex *vertex);
     void unbundleOutgoingArcs(IncidenceListVertex *vertex);

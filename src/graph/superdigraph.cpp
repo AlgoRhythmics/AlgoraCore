@@ -38,11 +38,11 @@ IncidenceListVertex *findOrCreateVertex(Vertex *v,
                                   std::unordered_map<const Vertex *, IncidenceListVertex *> &map,
                                   IncidenceListGraphImplementation *impl, SuperDiGraph *graph);
 
-class DummyVertex : public IncidenceListVertex {
-public:
-    explicit DummyVertex(SuperDiGraph *g) : IncidenceListVertex(0U, g) { enableConsistencyCheck(false); }
-    virtual ~DummyVertex() { }
-};
+//class DummyVertex : public IncidenceListVertex {
+//public:
+//    explicit DummyVertex(SuperDiGraph *g) : IncidenceListVertex(0U, g) { enableConsistencyCheck(false); }
+//    virtual ~DummyVertex() { }
+//};
 
 class SuperDiGraph::CheshireCat {
 public:
@@ -138,7 +138,8 @@ Vertex *SuperDiGraph::getAnyVertex() const
 void SuperDiGraph::mapVerticesUntil(const VertexMapping &vvFun, const VertexPredicate &breakCondition)
 {
     grin->extra->mapVertices([&](Vertex *v) {
-        if (!dynamic_cast<DummyVertex*>(v)) {
+        //if (!dynamic_cast<DummyVertex*>(v)) {
+        if (v->getParent()) {
             vvFun(v);
         }
     }, breakCondition);
@@ -366,7 +367,9 @@ IncidenceListVertex *findOrCreateVertex(Vertex *v,
         return vertex;
     }
 
-    vertex = new DummyVertex(graph);
+    //vertex = new DummyVertex(graph);
+    vertex = impl->createIncidenceListVertex();
+    vertex->setParent(nullptr);
     impl->addVertex(vertex);
     map[v] = vertex;
     return vertex;

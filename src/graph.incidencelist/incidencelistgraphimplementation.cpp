@@ -44,6 +44,8 @@ bool any(Args... args) { return (... || args); }
 IncidenceListGraphImplementation::IncidenceListGraphImplementation(DiGraph *handle)
     : graph(handle), numArcs(0U), nextVertexId(0U), nextArcId(0U)
 {
+    sharedOutIndexMap.setDefaultValue(NO_INDEX);
+    sharedInIndexMap.setDefaultValue(NO_INDEX);
 }
 
 IncidenceListGraphImplementation::~IncidenceListGraphImplementation()
@@ -245,12 +247,14 @@ IncidenceListGraphImplementation::size_type IncidenceListGraphImplementation::ge
     return arcWeights;
 }
 
-IncidenceListGraphImplementation::size_type IncidenceListGraphImplementation::getOutDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
+IncidenceListGraphImplementation::size_type IncidenceListGraphImplementation::getOutDegree(
+        const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
     return v->getOutDegree(multiArcsAsSimple);
 }
 
-IncidenceListGraphImplementation::size_type IncidenceListGraphImplementation::getInDegree(const IncidenceListVertex *v, bool multiArcsAsSimple) const
+IncidenceListGraphImplementation::size_type IncidenceListGraphImplementation::getInDegree(
+        const IncidenceListVertex *v, bool multiArcsAsSimple) const
 {
     return v->getInDegree(multiArcsAsSimple);
 }
@@ -265,7 +269,8 @@ bool IncidenceListGraphImplementation::isSink(const IncidenceListVertex *v) cons
     return v->isSink();
 }
 
-void IncidenceListGraphImplementation::mapVertices(const VertexMapping &vvFun, const VertexPredicate &breakCondition, bool checkValidity)
+void IncidenceListGraphImplementation::mapVertices(const VertexMapping &vvFun,
+                                                   const VertexPredicate &breakCondition, bool checkValidity)
 {
     for (Vertex *v : vertices) {
         if (breakCondition(v)) {
@@ -394,8 +399,10 @@ IncidenceListVertex *IncidenceListGraphImplementation::createIncidenceListVertex
         id = recycledVertexIds.back();
         recycledVertexIds.pop_back();
     }
-    //return new IncidenceListVertex(id, graph);
-    return vertexStorage.construct(id, graph);
+    // constructor takes only up to three parameters...?!
+    auto v  = vertexStorage.construct(id, sharedOutIndexMap, sharedInIndexMap);
+    v->setParent(graph);
+    return v;
 }
 
 Arc *IncidenceListGraphImplementation::recycleOrCreateArc(IncidenceListVertex *tail, IncidenceListVertex *head)
