@@ -166,6 +166,7 @@ void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
         //delete a;
         a->hibernate();
         arcPool.push_back(a);
+        numArcs--;
     }, arcFalse, false);
     v->clearOutgoingArcs();
     v->mapIncomingArcs([this](Arc *a) {
@@ -174,6 +175,7 @@ void IncidenceListGraphImplementation::removeVertex(IncidenceListVertex *v)
         //delete a;
         a->hibernate();
         arcPool.push_back(a);
+        numArcs--;
     }, arcFalse, false);
     v->clearIncomingArcs();
     IncidenceListVertex *o = vertices.back();

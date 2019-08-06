@@ -40,14 +40,14 @@ namespace Algora {
 typedef typename std::vector<Arc*> ArcList;
 typedef typename std::vector<MultiArc*> MultiArcList;
 
-template <typename AL>
-bool removeArcFromList(AL &list, FastPropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc);
+template <typename AL, typename PM>
+bool removeArcFromList(AL &list, PM &indexMap, const Arc *arc);
 bool removeBundledArcFromList(PropertyMap<ParallelArcsBundle*> &bundleMap, const Arc *arc);
-template <typename AL>
-bool isArcInList(const FastPropertyMap<IncidenceListVertex::size_type> &indexMap, AL &list, const Arc *arc);
-template <typename AL>
-bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list,
-                  const FastPropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc);
+template <typename AL, typename PM>
+bool isArcInList(const PM &indexMap, AL &list, const Arc *arc);
+template <typename AL, typename PM>
+bool isBundledArc(const PropertyMap<ParallelArcsBundle*> &bundleMap, AL &list,
+                  const PM &indexMap, const Arc *arc);
 
 class IncidenceListVertex::CheshireCat {
 public:
@@ -63,12 +63,16 @@ public:
 
     FastPropertyMap<size_type> &outIndex;
     FastPropertyMap<size_type> &inIndex;
+    PropertyMap<size_type> multiOutIndex;
+    PropertyMap<size_type> multiInIndex;
 
     CheshireCat(
             FastPropertyMap<size_type> &outIndex,
             FastPropertyMap<size_type> &inIndex,
             size_type i)
         : index(i), outIndex(outIndex), inIndex(inIndex) {
+        multiOutIndex.setDefaultValue(outIndex.getDefaultValue());
+        multiInIndex.setDefaultValue(inIndex.getDefaultValue());
         bundle.setDefaultValue(nullptr);
     }
 
@@ -76,13 +80,7 @@ public:
         for (Arc *a : outgoingArcs) {
             outIndex.resetToDefault(a);
         }
-        for (Arc *a : outgoingMultiArcs) {
-            outIndex.resetToDefault(a);
-        }
         for (Arc *a : incomingArcs) {
-            outIndex.resetToDefault(a);
-        }
-        for (Arc *a : incomingMultiArcs) {
             outIndex.resetToDefault(a);
         }
 
@@ -91,6 +89,8 @@ public:
         outgoingMultiArcs.clear();
         incomingMultiArcs.clear();
 
+        multiOutIndex.resetAll();
+        multiInIndex.resetAll();
         bundle.resetAll();
     }
 };
@@ -127,7 +127,7 @@ void IncidenceListVertex::addOutgoingArc(Arc *a)
     }
     MultiArc *ma = dynamic_cast<MultiArc*>(a);
     if (ma) {
-        grin->outIndex.setValue(ma, grin->outgoingMultiArcs.size());
+        grin->multiOutIndex.setValue(ma, grin->outgoingMultiArcs.size());
         grin->outgoingMultiArcs.push_back(ma);
         ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(ma);
         if (pab) {
@@ -147,7 +147,7 @@ void IncidenceListVertex::removeOutgoingArc(const Arc *a)
         throw std::invalid_argument("Arc has other tail.");
     }
     if (!removeArcFromList(grin->outgoingArcs, grin->outIndex, a)
-            && !removeArcFromList(grin->outgoingMultiArcs, grin->outIndex, a)
+            && !removeArcFromList(grin->outgoingMultiArcs, grin->multiOutIndex, a)
             && !removeBundledArcFromList(grin->bundle, a)) {
         throw std::invalid_argument("Unknown outgoing arc.");
     }
@@ -155,10 +155,14 @@ void IncidenceListVertex::removeOutgoingArc(const Arc *a)
 
 void IncidenceListVertex::clearOutgoingArcs()
 {
+    for (Arc *a : grin->outgoingArcs) {
+        grin->outIndex.resetToDefault(a);
+    }
+    for (Arc *a : grin->outgoingMultiArcs) {
+        grin->outIndex.resetToDefault(a);
+    }
     grin->outgoingArcs.clear();
     grin->outgoingMultiArcs.clear();
-    //grin->outIndex.resetAll();
-    //grin->multiOutIndex.resetAll();
 }
 
 IncidenceListVertex::size_type IncidenceListVertex::getInDegree(bool multiArcsAsSimple) const
@@ -190,7 +194,7 @@ void IncidenceListVertex::addIncomingArc(Arc *a)
     }
     MultiArc *ma = dynamic_cast<MultiArc*>(a);
     if (ma) {
-        grin->inIndex.setValue(ma, grin->incomingMultiArcs.size());
+        grin->multiInIndex.setValue(ma, grin->incomingMultiArcs.size());
         grin->incomingMultiArcs.push_back(ma);
         ParallelArcsBundle *pab = dynamic_cast<ParallelArcsBundle*>(ma);
         if (pab) {
@@ -210,7 +214,7 @@ void IncidenceListVertex::removeIncomingArc(const Arc *a)
         throw std::invalid_argument("Arc has other head.");
     }
     if (!removeArcFromList(grin->incomingArcs, grin->inIndex, a)
-            && !removeArcFromList(grin->incomingMultiArcs, grin->inIndex, a)
+            && !removeArcFromList(grin->incomingMultiArcs, grin->multiInIndex, a)
             && !removeBundledArcFromList(grin->bundle, a)) {
         throw std::invalid_argument("Unknown incoming arc.");
     }
@@ -218,6 +222,12 @@ void IncidenceListVertex::removeIncomingArc(const Arc *a)
 
 void IncidenceListVertex::clearIncomingArcs()
 {
+    for (Arc *a : grin->incomingArcs) {
+        grin->outIndex.resetToDefault(a);
+    }
+    for (Arc *a : grin->incomingMultiArcs) {
+        grin->outIndex.resetToDefault(a);
+    }
     grin->incomingArcs.clear();
     grin->incomingMultiArcs.clear();
 }
@@ -251,14 +261,14 @@ void IncidenceListVertex::recycle()
 bool IncidenceListVertex::hasOutgoingArc(const Arc *a) const
 {
     return isArcInList(grin->outIndex, grin->outgoingArcs, a)
-            || isArcInList(grin->outIndex, grin->outgoingMultiArcs, a)
+            || isArcInList(grin->multiOutIndex, grin->outgoingMultiArcs, a)
             || isBundledArc(grin->bundle, grin->outgoingMultiArcs, grin->outIndex, a);
 }
 
 bool IncidenceListVertex::hasIncomingArc(const Arc *a) const
 {
     return isArcInList(grin->inIndex, grin->incomingArcs, a)
-            || isArcInList(grin->inIndex, grin->incomingMultiArcs, a)
+            || isArcInList(grin->multiInIndex, grin->incomingMultiArcs, a)
             || isBundledArc(grin->bundle, grin->incomingMultiArcs, grin->inIndex, a);
 }
 
@@ -306,12 +316,20 @@ Arc *IncidenceListVertex::incomingArcAt(size_type i, bool multiArcsAsSimple) con
 
 IncidenceListVertex::size_type IncidenceListVertex::outIndexOf(const Arc *a) const
 {
-    return grin->outIndex(a);
+    auto i = grin->outIndex(a);
+    if (i != grin->outIndex.getDefaultValue()) {
+        return i;
+    }
+    return grin->multiOutIndex(a);
 }
 
 IncidenceListVertex::size_type IncidenceListVertex::inIndexOf(const Arc *a) const
 {
-    return grin->inIndex(a);
+    auto i = grin->inIndex(a);
+    if (i != grin->inIndex.getDefaultValue()) {
+        return i;
+    }
+    return grin->multiInIndex(a);
 }
 
 void IncidenceListVertex::acceptOutgoingArcVisitor(ArcVisitor *aVisitor) const
@@ -366,10 +384,10 @@ bool IncidenceListVertex::mapIncomingArcs(const ArcMapping &avFun, const ArcPred
     return true;
 }
 
-template <typename AL>
-bool removeArcFromList(AL &list, FastPropertyMap<GraphArtifact::size_type> &indexMap, const Arc *arc) {
+template <typename AL, typename PM>
+bool removeArcFromList(AL &list, PM &indexMap, const Arc *arc) {
     auto i = indexMap(arc);
-    if (i == indexMap.getDefaultValue()) {
+    if (i >= list.size() || list[i] != arc) {
         return false;
     }
     assert(list[i] == arc);
@@ -392,18 +410,15 @@ bool removeBundledArcFromList(PropertyMap<ParallelArcsBundle*> &bundleMap, const
     return true;
 }
 
-template <typename AL>
-bool isArcInList(const FastPropertyMap<GraphArtifact::size_type> &indexMap, AL &list, const Arc *arc) {
-    bool found = indexMap(arc) != indexMap.getDefaultValue();
-    if (found) {
-        assert(list[indexMap(arc)] == arc);
-    }
-    return found;
+template <typename AL, typename PM>
+bool isArcInList(const PM &indexMap, AL &list, const Arc *arc) {
+    auto i = indexMap(arc);
+    return i < list.size() && list[i] == arc;
 }
 
-template <typename AL>
-bool isBundledArc(const PropertyMap<ParallelArcsBundle*> bundleMap, AL &list,
-                  const FastPropertyMap<IncidenceListVertex::size_type> &indexMap, const Arc *arc) {
+template <typename AL, typename PM>
+bool isBundledArc(const PropertyMap<ParallelArcsBundle*> &bundleMap, AL &list,
+                  const PM &indexMap, const Arc *arc) {
     ParallelArcsBundle *pmb = bundleMap(arc);
     if (!pmb) {
         return false;
