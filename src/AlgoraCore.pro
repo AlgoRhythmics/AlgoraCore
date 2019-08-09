@@ -44,7 +44,12 @@ QMAKE_CXXFLAGS_DEBUG += -std=c++17 -O0
 QMAKE_CXXFLAGS_STATIC_LIB = # remove -fPIC
 QMAKE_CXXFLAGS_RELEASE -= -O1 -O2 -O3
 QMAKE_CXXFLAGS_RELEASE += -std=c++17 -DNDEBUG -flto
-QMAKE_AR = gcc-ar rcs
+
+custom-ar {
+  QMAKE_AR += rcs
+} else {
+  QMAKE_AR = gcc-ar rcs
+}
 
 general {
   QMAKE_CXXFLAGS_RELEASE += -O2 -march=x86-64
