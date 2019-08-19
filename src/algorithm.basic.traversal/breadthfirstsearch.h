@@ -100,8 +100,7 @@ public:
         maxBfsNumber = 0ULL;
         maxLevel = 0ULL;
 
-        //queue.clear();
-        boost::circular_buffer<const Vertex*> queue;
+        queue.clear();
         queue.set_capacity(diGraph->getSize());
         discovered.resetAll();
 
@@ -112,20 +111,29 @@ public:
             property->setValue(startVertex, 0);
         }
 
-        bool stop = !onVertexDiscovered(startVertex);
+        if (onVertexDiscovered(startVertex)) {
+                resume();
+        }
+    }
 
-        auto mapArcs = [this](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
+    virtual void resume()
+    {
+        auto mapArcs = [this](const Vertex *v, const ArcMapping &avFun,
+                const ArcPredicate &breakCondition) {
             diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
             diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
         };
-        auto mapOutgoingArcs = [this](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
+        auto mapOutgoingArcs = [this](const Vertex *v, const ArcMapping &avFun,
+                const ArcPredicate &breakCondition) {
             diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
         };
-        auto mapIncomingArcs = [this](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
+        auto mapIncomingArcs = [this](const Vertex *v, const ArcMapping &avFun,
+                const ArcPredicate &breakCondition) {
             diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
         };
 
-        auto mapArcsUntil = std::function<void(const Vertex *, const ArcMapping&, const ArcPredicate&)>(mapOutgoingArcs);
+        auto mapArcsUntil = std::function<void(const Vertex *, const ArcMapping&,
+                                               const ArcPredicate&)>(mapOutgoingArcs);
         if (onUndirectedGraph) {
             mapArcsUntil = mapArcs;
         } else if (onReverseGraph) {
@@ -134,9 +142,12 @@ public:
 
         auto getTail = [](const Arc *a, const Vertex *) { return a->getTail(); };
         auto getHead = [](const Arc *a, const Vertex *) { return a->getHead(); };
-        auto getOtherEndVertex = [](const Arc *a, const Vertex *v) { auto t = a->getTail(); return v == t ? a->getHead() : t; };
-        const auto &getPeer = onUndirectedGraph ? getOtherEndVertex : (onReverseGraph ? getTail : getHead);
-
+        auto getOtherEndVertex = [](const Arc *a, const Vertex *v) {
+            auto t = a->getTail(); return v == t ? a->getHead() : t;
+        };
+        const auto &getPeer = onUndirectedGraph ? getOtherEndVertex
+                                                : (onReverseGraph ? getTail : getHead);
+        bool stop = false;
         while (!stop && !queue.empty()) {
             const Vertex *curr = queue.front();
             queue.pop_front();
@@ -152,7 +163,7 @@ public:
                 break;
             }
 
-            mapArcsUntil(curr, [this,curr,&stop,&queue,&getPeer](Arc *a) {
+            mapArcsUntil(curr, [this,curr,&stop,&getPeer](Arc *a) {
                     bool consider = onArcDiscovered(a);
                     stop |= arcStopCondition(a);
                     if (stop || !consider) {
@@ -204,6 +215,7 @@ private:
         maxLevel = INF;
     }
     ModifiablePropertyType<bool> discovered;
+    boost::circular_buffer<const Vertex*> queue;
 };
 
 }
