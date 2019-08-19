@@ -160,6 +160,7 @@ public:
             }
             stop |= vertexStopCondition(curr);
             if (stop) {
+                queue.push_front(curr); // allow for resume
                 break;
             }
 
