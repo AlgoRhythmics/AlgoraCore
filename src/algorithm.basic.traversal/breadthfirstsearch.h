@@ -111,7 +111,7 @@ public:
             property->setValue(startVertex, 0);
         }
 
-        if (onVertexDiscovered(startVertex)) {
+        if (onVertexDiscovered(startVertex) && !vertexStopCondition(startVertex)) {
                 resume();
         }
     }
@@ -150,18 +150,20 @@ public:
         bool stop = false;
         while (!stop && !queue.empty()) {
             const Vertex *curr = queue.front();
-            queue.pop_front();
-            if (curr == nullptr) {
+
+            if (curr) {
+                stop |= vertexStopCondition(curr);
+                if (stop) {
+                    break;
+                }
+                queue.pop_front();
+            } else {
+                queue.pop_front();
                 if (!queue.empty()) {
                     queue.push_back(nullptr);
                     maxLevel++;
                 }
                 continue;
-            }
-            stop |= vertexStopCondition(curr);
-            if (stop) {
-                queue.push_front(curr); // allow for resume
-                break;
             }
 
             mapArcsUntil(curr, [this,curr,&stop,&getPeer](Arc *a) {
