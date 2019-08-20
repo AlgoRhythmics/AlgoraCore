@@ -59,16 +59,16 @@ public:
     virtual bool containsArc(const Arc *a) const = 0;
     virtual Arc *findArc(const Vertex *from, const Vertex *to) const = 0;
 
-    virtual size_type getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
-    virtual size_type getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const = 0;
-    virtual size_type getDegree(const Vertex *v, bool multiArcsAsSimple = false) const {
+    virtual size_type getOutDegree(const Vertex *v, bool multiArcsAsSimple) const = 0;
+    virtual size_type getInDegree(const Vertex *v, bool multiArcsAsSimple) const = 0;
+    virtual size_type getDegree(const Vertex *v, bool multiArcsAsSimple) const {
         return getOutDegree(v, multiArcsAsSimple) + getInDegree(v, multiArcsAsSimple);
     }
     virtual bool isSource(const Vertex *v) const {
-        return getInDegree(v) == 0;
+        return getInDegree(v, true) == 0;
     }
     virtual bool isSink(const Vertex *v) const {
-        return getOutDegree(v) == 0;
+        return getOutDegree(v, true) == 0;
     }
     virtual bool isIsolated(const Vertex *v) const {
         return isSource(v) && isSink(v);

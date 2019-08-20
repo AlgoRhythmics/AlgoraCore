@@ -83,8 +83,8 @@ public:
     virtual Arc *findArc(const Vertex *from, const Vertex *to) const override;
     virtual size_type getNumArcs(bool multiArcsAsSimple) const override;
 
-    virtual size_type getOutDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
-    virtual size_type getInDegree(const Vertex *v, bool multiArcsAsSimple = false) const override;
+    virtual size_type getOutDegree(const Vertex *v, bool multiArcsAsSimple) const override;
+    virtual size_type getInDegree(const Vertex *v, bool multiArcsAsSimple) const override;
     virtual bool isSource(const Vertex *v) const override;
     virtual bool isSink(const Vertex *v) const override;
 

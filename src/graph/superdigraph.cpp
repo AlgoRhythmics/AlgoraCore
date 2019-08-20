@@ -262,7 +262,7 @@ SuperDiGraph::size_type SuperDiGraph::getOutDegree(const Vertex *v, bool multiAr
         return grin->extra->getOutDegree(vertex, multiArcsAsSimple) + grin->subGraph->getOutDegree(v, multiArcsAsSimple);
     }
 
-    return grin->subGraph->getOutDegree(v);
+    return grin->subGraph->getOutDegree(v, multiArcsAsSimple);
 }
 
 SuperDiGraph::size_type SuperDiGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
@@ -281,7 +281,7 @@ SuperDiGraph::size_type SuperDiGraph::getInDegree(const Vertex *v, bool multiArc
         return grin->extra->getInDegree(vertex, multiArcsAsSimple) + grin->subGraph->getInDegree(v, multiArcsAsSimple);
     }
 
-    return grin->subGraph->getInDegree(v);
+    return grin->subGraph->getInDegree(v, multiArcsAsSimple);
 }
 
 void SuperDiGraph::mapArcsUntil(const ArcMapping &avFun, const ArcPredicate &breakCondition)
