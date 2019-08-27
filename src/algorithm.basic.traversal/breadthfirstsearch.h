@@ -52,6 +52,14 @@ public:
 
     virtual ~BreadthFirstSearch() { }
 
+    void setStartVertices(const std::vector<Vertex*> &startVertices) {
+        this->startVertices = startVertices;
+    }
+
+    void setStartVertices(const std::vector<Vertex*> &&startVertices) {
+        this->startVertices = std::move(startVertices);
+    }
+
     void onTreeArcDiscover(const ArcMapping &aFun) {
         treeArc = aFun;
     }
@@ -91,9 +99,20 @@ public:
 
     // DiGraphAlgorithm interface
 public:
+    virtual bool prepare() override
+    {
+        return PropertyComputingAlgorithm<DiGraph::size_type, DiGraph::size_type>::prepare()
+                && ( startVertex == nullptr
+                     || (this->diGraph->containsVertex(startVertex) && startVertex->isValid()))
+                && (startVertices.empty()
+                    || std::all_of(startVertices.begin(), startVertices.end(),
+                                   [this](Vertex *v){
+                        return this->diGraph->containsVertex(v) && v->isValid(); }));
+    }
+
     virtual void run() override
     {
-        if (startVertex == 0) {
+        if (startVertex == 0 && startVertices.empty()) {
             startVertex = diGraph->getAnyVertex();
         }
 
@@ -104,16 +123,36 @@ public:
         queue.set_capacity(diGraph->getSize());
         discovered.resetAll();
 
-        queue.push_back(startVertex);
-        queue.push_back(nullptr);
-        discovered.setValue(startVertex, true);
-        if (valueComputation && computePropertyValues) {
-            property->setValue(startVertex, 0);
+        if (startVertices.empty()) {
+            if (!onVertexDiscovered(startVertex)) {
+                return;
+            }
+            queue.push_back(startVertex);
+            queue.push_back(nullptr);
+            discovered.setValue(startVertex, true);
+            if (valueComputation && computePropertyValues) {
+                property->setValue(startVertex, 0);
+            }
+        } else {
+            for (auto *v : startVertices) {
+                if (!onVertexDiscovered(v)) {
+                    continue;
+                }
+                queue.push_back(v);
+                discovered.setValue(v, true);
+                if (valueComputation && computePropertyValues) {
+                    int c = computeOrder ? maxBfsNumber : 0;
+                    property->setValue(v, c);
+                }
+                maxBfsNumber++;
+            }
+            if (queue.empty()) {
+                return;
+            }
+            queue.push_back(nullptr);
+            maxBfsNumber--;
         }
-
-        if (onVertexDiscovered(startVertex) && !vertexStopCondition(startVertex)) {
-                resume();
-        }
+        resume();
     }
 
     virtual void resume()
@@ -219,6 +258,7 @@ private:
     }
     ModifiablePropertyType<bool> discovered;
     boost::circular_buffer<const Vertex*> queue;
+    std::vector<Vertex*> startVertices;
 };
 
 }

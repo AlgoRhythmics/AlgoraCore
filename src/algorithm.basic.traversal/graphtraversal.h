@@ -79,7 +79,8 @@ public:
     virtual bool prepare() override
     {
         return PropertyComputingAlgorithm<DiGraph::size_type, PropertyType>::prepare()
-                && ( startVertex == nullptr || (this->diGraph->containsVertex(startVertex) && startVertex->isValid()));
+                && ( startVertex == nullptr
+                     || (this->diGraph->containsVertex(startVertex) && startVertex->isValid()));
     }
 
 
