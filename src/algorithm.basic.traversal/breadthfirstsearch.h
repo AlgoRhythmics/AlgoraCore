@@ -52,11 +52,11 @@ public:
 
     virtual ~BreadthFirstSearch() { }
 
-    void setStartVertices(const std::vector<Vertex*> &startVertices) {
+    void setStartVertices(const std::vector<const Vertex*> &startVertices) {
         this->startVertices = startVertices;
     }
 
-    void setStartVertices(const std::vector<Vertex*> &&startVertices) {
+    void setStartVertices(const std::vector<const Vertex*> &&startVertices) {
         this->startVertices = std::move(startVertices);
     }
 
@@ -72,7 +72,7 @@ public:
         return maxBfsNumber;
     }
 
-    int getMaxLevel() const {
+    DiGraph::size_type getMaxLevel() const {
         return maxLevel;
     }
 
@@ -84,8 +84,12 @@ public:
         computeOrder = !levels;
     }
 
-    bool vertexDiscovered(const Vertex *v) {
+    bool vertexDiscovered(const Vertex *v) const {
         return discovered(v);
+    }
+
+    bool isExhausted() const {
+        return exhausted;
     }
 
     // GraphTraversal interface
@@ -106,7 +110,7 @@ public:
                      || (this->diGraph->containsVertex(startVertex) && startVertex->isValid()))
                 && (startVertices.empty()
                     || std::all_of(startVertices.begin(), startVertices.end(),
-                                   [this](Vertex *v){
+                                   [this](const Vertex *v){
                         return this->diGraph->containsVertex(v) && v->isValid(); }));
     }
 
@@ -122,6 +126,7 @@ public:
         queue.clear();
         queue.set_capacity(diGraph->getSize());
         discovered.resetAll();
+        exhausted = false;
 
         if (startVertices.empty()) {
             if (!onVertexDiscovered(startVertex)) {
@@ -230,6 +235,10 @@ public:
                     }
                 }, [&stop](const Arc *) { return stop; });
         }
+        if (!stop) {
+            assert(queue.empty());
+            exhausted = true;
+        }
     }
     virtual std::string getName() const noexcept override { return "BFS"; }
     virtual std::string getShortName() const noexcept override { return "bfs"; }
@@ -258,7 +267,8 @@ private:
     }
     ModifiablePropertyType<bool> discovered;
     boost::circular_buffer<const Vertex*> queue;
-    std::vector<Vertex*> startVertices;
+    std::vector<const Vertex*> startVertices;
+    bool exhausted;
 };
 
 }
