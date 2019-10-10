@@ -1,4 +1,4 @@
-[![pipeline status](https://gitlab.com/AlgoRhythmics/AlgoraCore/badges/develop/pipeline.svg)](https://gitlab.com/AlgoRhythmics/AlgoraCore/commits/develop)
+[![pipeline status](https://gitlab.com/libalgora/AlgoraCore/badges/master/pipeline.svg)](https://gitlab.com/libalgora/AlgoraCore/commits/master)
 
 # Algora|Core
 
