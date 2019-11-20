@@ -49,6 +49,10 @@ public:
         constructArcPath = arcPath;
     }
 
+    void useTwoWaySearch(bool twoWay) {
+        twoWaySearch = twoWay;
+    }
+
     void setTwoWayStepSize(unsigned long stepSize) {
         twoWayStepSize = stepSize;
     }
@@ -61,8 +65,7 @@ public:
         to = t;
     }
 
-    void configure(DiGraph *diGraph, Vertex *source, Vertex *target) {
-        ValueComputingAlgorithm<bool>::setGraph(diGraph);
+    void setSourceAndTarget(Vertex *source, Vertex *target) {
         from = source;
         to = target;
     }
@@ -128,8 +131,11 @@ private:
     bool pathFound;
 
     void runOneWaySearch();
+    void runOneWayPathSearch();
     void runTwoWaySearch();
     void runTwoWayPathSearch();
+
+    void constructVertexFromArcPath();
 
     // DiGraphAlgorithm interface
 private:
