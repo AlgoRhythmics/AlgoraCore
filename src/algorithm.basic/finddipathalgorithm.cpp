@@ -325,10 +325,11 @@ void FindDiPathAlgorithm<property_map_type>::runOneWayPathSearch()
         arcPath.clear();
         Vertex *p = to;
         while (p != from) {
-            Arc *a = pred(p);
+            auto *a = pred(p);
             arcPath.push_back(a);
             p = a->getTail();
         }
+        assert(!arcPath.empty());
         std::reverse(arcPath.begin(), arcPath.end());
     }
 }
