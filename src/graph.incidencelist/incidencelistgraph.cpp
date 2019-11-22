@@ -215,13 +215,15 @@ IncidenceListGraph::size_type IncidenceListGraph::getNumArcs(bool multiArcsAsSim
     return impl->getNumArcs(multiArcsAsSimple);
 }
 
-IncidenceListGraph::size_type IncidenceListGraph::getOutDegree(const Vertex *v, bool multiArcsAsSimple) const
+IncidenceListGraph::size_type IncidenceListGraph::getOutDegree(const Vertex *v,
+                                                               bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);
     return impl->getOutDegree(vertex, multiArcsAsSimple);
 }
 
-IncidenceListGraph::size_type IncidenceListGraph::getInDegree(const Vertex *v, bool multiArcsAsSimple) const
+IncidenceListGraph::size_type IncidenceListGraph::getInDegree(const Vertex *v,
+                                                              bool multiArcsAsSimple) const
 {
     auto vertex = castVertex(v, this);
     return impl->getInDegree(vertex, multiArcsAsSimple);
@@ -244,13 +246,15 @@ void IncidenceListGraph::mapArcsUntil(const ArcMapping &avFun, const ArcPredicat
     impl->mapArcs(avFun, breakCondition);
 }
 
-void IncidenceListGraph::mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition)
+void IncidenceListGraph::mapOutgoingArcsUntil(const Vertex *v, const ArcMapping &avFun,
+                                              const ArcPredicate &breakCondition)
 {
     auto vertex = castVertex(v, this);
     impl->mapOutgoingArcs(vertex, avFun, breakCondition);
 }
 
-void IncidenceListGraph::mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition)
+void IncidenceListGraph::mapIncomingArcsUntil(const Vertex *v, const ArcMapping &avFun,
+                                              const ArcPredicate &breakCondition)
 {
     auto vertex = castVertex(v, this);
     impl->mapIncomingArcs(vertex, avFun, breakCondition);
@@ -268,6 +272,14 @@ Graph::size_type IncidenceListGraph::getSize() const
 
 void IncidenceListGraph::clear()
 {
+    impl->mapArcs([this](Arc *a) {
+        invalidateArc(a);
+        dismissArc(a);
+    }, arcFalse);
+    impl->mapVertices([this](Vertex *v) {
+        invalidateVertex(v);
+        dismissVertex(v);
+    }, vertexFalse);
    impl->clear();
    DiGraph::clear();
 }

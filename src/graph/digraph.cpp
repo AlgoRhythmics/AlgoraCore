@@ -77,8 +77,6 @@ void DiGraph::removeOnArcRemove(void *id)
 
 void DiGraph::clear()
 {
-    observableArcGreetings.clear();
-    observableArcFarewells.clear();
     Graph::clear();
 }
 
