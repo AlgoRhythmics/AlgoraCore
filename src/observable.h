@@ -5,6 +5,7 @@
 #include <functional>
 #include <algorithm>
 #include <set>
+#include <cassert>
 
 namespace Algora {
 
@@ -39,6 +40,7 @@ public:
                 i++;
             }
         }
+        assert(i != observers.end()); // observer not found
         if (notificationsInProgress == 0 || !delay) {
             if (i + 1 != observers.end()) {
                 *i = std::move(observers.back());
