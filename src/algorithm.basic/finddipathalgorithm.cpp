@@ -307,7 +307,7 @@ void FindDiPathAlgorithm<property_map_type>::runOneWayPathSearch()
     pathFound = false;
 
     bfs.setStartVertex(from);
-    bfs.setVertexStopCondition([&](const Vertex *) { return pathFound; });
+    bfs.setVertexStopCondition([this](const Vertex *) { return pathFound; });
     bfs.onTreeArcDiscover([this,&pred](const Arc *a) {
         auto head = a->getHead();
         pred[head] = const_cast<Arc*>(a);
