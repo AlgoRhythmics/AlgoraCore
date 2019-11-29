@@ -31,13 +31,13 @@ namespace Algora {
 
 class Vertex;
 
-template<typename PropertyType>
+template<typename PropertyType, bool reverseArcDirection = false, bool ignoreArcDirection = false>
 class GraphTraversal : public PropertyComputingAlgorithm<DiGraph::size_type, PropertyType>
 {
 public:
     explicit GraphTraversal(bool computeValues = true)
         : PropertyComputingAlgorithm<DiGraph::size_type, PropertyType>(computeValues),
-          startVertex(nullptr), onReverseGraph(false), onUndirectedGraph(false),
+          startVertex(nullptr),
           onVertexDiscovered(vertexTrue), onArcDiscovered(arcTrue),
           vertexStopCondition(vertexFalse), arcStopCondition(arcFalse)
     { }
@@ -64,14 +64,6 @@ public:
         arcStopCondition = aStop;
     }
 
-    void reverseArcDirection(bool reverse) {
-        onReverseGraph = reverse;
-    }
-
-    void ignoreArcDirection(bool ignore) {
-				onUndirectedGraph = ignore;
-    }
-
     virtual DiGraph::size_type numVerticesReached() const = 0;
 
     // DiGraphAlgorithm interface
@@ -86,9 +78,6 @@ public:
 
 protected:
     const Vertex *startVertex;
-
-    bool onReverseGraph;
-    bool onUndirectedGraph;
 
     VertexPredicate onVertexDiscovered;
     ArcPredicate onArcDiscovered;

@@ -107,9 +107,8 @@ void FindDiPathAlgorithm<property_map_type>::runTwoWaySearch()
     forwardBfs.setGraph(diGraph);
     forwardBfs.setStartVertex(from);
 
-    BreadthFirstSearch<property_map_type,false> backwardBfs(false, false);
+    BreadthFirstSearch<property_map_type,false,true,false> backwardBfs(false, false);
     backwardBfs.setGraph(diGraph);
-    backwardBfs.reverseArcDirection(true);
     backwardBfs.setStartVertex(to);
 
     bool reachable = false;
@@ -176,9 +175,8 @@ void FindDiPathAlgorithm<property_map_type>::runTwoWayPathSearch()
     forwardBfs.setGraph(diGraph);
     forwardBfs.setStartVertex(from);
 
-    BreadthFirstSearch<property_map_type,false> backwardBfs(false, false);
+    BreadthFirstSearch<property_map_type,false,true,false> backwardBfs(false, false);
     backwardBfs.setGraph(diGraph);
-    backwardBfs.reverseArcDirection(true);
     backwardBfs.setStartVertex(to);
 
     auto forwardStop = twoWayStepSize;
@@ -241,7 +239,8 @@ void FindDiPathAlgorithm<property_map_type>::runTwoWayPathSearch()
     forwardBfs.run();
     backwardBfs.run();
 
-    while (!fbLink && !forwardBfs.isExhausted() && !backwardBfs.isExhausted()) {
+    while (!fbLink && !forwardBfs.isExhausted() && !backwardBfs.isExhausted()
+           && forwardBfs.getMaxLevel() + backwardBfs.getMaxLevel() < diGraph->getSize()) {
         forwardBfs.resume();
         backwardBfs.resume();
     }
