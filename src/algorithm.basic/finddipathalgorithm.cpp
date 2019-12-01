@@ -153,7 +153,8 @@ void FindDiPathAlgorithm<property_map_type>::runTwoWaySearch()
     forwardBfs.run();
     backwardBfs.run();
 
-    while (!reachable && !forwardBfs.isExhausted() && !backwardBfs.isExhausted()) {
+    while (!reachable && !forwardBfs.isExhausted() && !backwardBfs.isExhausted()
+           && forwardBfs.getMaxLevel() + backwardBfs.getMaxLevel() < diGraph->getSize()) {
         forwardBfs.resume();
         backwardBfs.resume();
     }
