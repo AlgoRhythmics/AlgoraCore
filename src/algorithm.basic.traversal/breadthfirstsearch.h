@@ -166,28 +166,6 @@ public:
 
     virtual void resume()
     {
-        //auto mapArcs = [this](const Vertex *v, const ArcMapping &avFun,
-        //        const ArcPredicate &breakCondition) {
-        //    this->diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
-        //    this->diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
-        //};
-        //auto mapOutgoingArcs = [this](const Vertex *v, const ArcMapping &avFun,
-        //        const ArcPredicate &breakCondition) {
-        //    this->diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
-        //};
-        //auto mapIncomingArcs = [this](const Vertex *v, const ArcMapping &avFun,
-        //        const ArcPredicate &breakCondition) {
-        //    this->diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
-        //};
-
-        //auto mapArcsUntil = std::function<void(const Vertex *, const ArcMapping&,
-        //                                       const ArcPredicate&)>(mapOutgoingArcs);
-        //if (ignoreArcDirection) {
-        //    mapArcsUntil = mapArcs;
-        //} else if (reverseArcDirection) {
-        //    mapArcsUntil = mapIncomingArcs;
-        //}
-
         auto getTail = [](const Arc *a, const Vertex *) { return a->getTail(); };
         auto getHead = [](const Arc *a, const Vertex *) { return a->getHead(); };
         auto getOtherEndVertex = [](const Arc *a, const Vertex *v) {
@@ -217,31 +195,34 @@ public:
 
             auto arcMapping = [this,curr,&stop,&getPeer](Arc *a) {
                 bool consider = this->onArcDiscovered(a);
+                if (!consider) {
+                    return;
+                }
                 stop |= this->arcStopCondition(a);
-                if (stop || !consider) {
+                if (stop) {
                     return;
                 }
                 Vertex *peer = getPeer(a, curr);
                 if (!this->discovered(peer)) {
                     this->maxBfsNumber++;
                     if (valueComputation && this->computePropertyValues) {
-                        int v = this->computeOrder ? this->maxBfsNumber : this->property->getValue(curr) + 1;
+                        int v = this->computeOrder
+                                ? this->maxBfsNumber : this->property->getValue(curr) + 1;
                         this->property->setValue(peer, v);
                     }
+                    this->discovered.setValue(peer, true);
                     this->treeArc(a);
                     if (!this->onVertexDiscovered(peer)) {
                         return;
                     }
 
                     this->queue.push_back(peer);
-                    this->discovered.setValue(peer, true);
                 } else {
                     this->nonTreeArc(a);
                 }
             };
             auto arcStopCondition = [&stop](const Arc *) { return stop; };
 
-            //mapArcsUntil(curr,
             if (ignoreArcDirection) {
                 this->diGraph->mapOutgoingArcsUntil(curr, arcMapping, arcStopCondition);
                 this->diGraph->mapIncomingArcsUntil(curr, arcMapping, arcStopCondition);
