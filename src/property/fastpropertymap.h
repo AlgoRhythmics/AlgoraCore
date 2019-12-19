@@ -79,6 +79,10 @@ public:
         setValue(ga, defaultValue);
     }
 
+    bool hasDefaultValue(const GraphArtifact *ga) {
+        return defaultValue == getValue(ga);
+    }
+
     void fit() {
         buckets.shrink_to_fit();
     }
@@ -203,6 +207,10 @@ public:
 
     void resetToDefault(const GraphArtifact *ga) {
         setValue(ga, defaultValue);
+    }
+
+    bool hasDefaultValue(const GraphArtifact *ga) {
+        return defaultValue == getValue(ga);
     }
 
     void fit() {
