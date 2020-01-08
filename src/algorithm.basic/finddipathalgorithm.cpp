@@ -38,7 +38,7 @@ namespace Algora {
 template<template <typename T> typename property_map_type>
 FindDiPathAlgorithm<property_map_type>::FindDiPathAlgorithm(bool constructVertexPath, bool constructArcPath, bool twoWaySearch)
     : constructVertexPath(constructVertexPath), constructArcPath(constructArcPath),
-      from(nullptr), to(nullptr), twoWaySearch(twoWaySearch), twoWayStepSize(5UL),
+      from(nullptr), to(nullptr), twoWaySearch(twoWaySearch), twoWayStepSize(0UL),
       pathFound(false)
 {
 
@@ -112,8 +112,6 @@ void FindDiPathAlgorithm<property_map_type>::runTwoWaySearch()
     backwardBfs.setStartVertex(to);
 
     bool reachable = false;
-    auto forwardStop = twoWayStepSize;
-    auto backwardStop = twoWayStepSize;
 
     forwardBfs.setArcStopCondition([&backwardBfs,&reachable](const Arc *a) {
         if (backwardBfs.vertexDiscovered(a->getHead())) {
@@ -128,24 +126,31 @@ void FindDiPathAlgorithm<property_map_type>::runTwoWaySearch()
         return reachable;
     });
 
-    auto stepSize = this->twoWayStepSize;
-    forwardBfs.setVertexStopCondition(
-                [&forwardBfs,&forwardStop,&stepSize](const Vertex *) {
-        if (forwardBfs.getMaxBfsNumber() >= forwardStop) {
-            forwardStop += stepSize;
-            return true;
-        }
-        return false;
-    });
+    if (twoWayStepSize > 0) {
+        auto forwardStop = twoWayStepSize;
+        auto backwardStop = twoWayStepSize;
+        auto stepSize = this->twoWayStepSize;
+        forwardBfs.setVertexStopCondition(
+                    [&forwardBfs,&forwardStop,&stepSize](const Vertex *) {
+            if (forwardBfs.getMaxBfsNumber() >= forwardStop) {
+                forwardStop += stepSize;
+                return true;
+            }
+            return false;
+        });
 
-    backwardBfs.setVertexStopCondition(
-                [&backwardBfs,&backwardStop,&stepSize](const Vertex *) {
-        if (backwardBfs.getMaxBfsNumber() >= backwardStop) {
-            backwardStop += stepSize;
-            return true;
-        }
-        return false;
-    });
+        backwardBfs.setVertexStopCondition(
+                    [&backwardBfs,&backwardStop,&stepSize](const Vertex *) {
+            if (backwardBfs.getMaxBfsNumber() >= backwardStop) {
+                backwardStop += stepSize;
+                return true;
+            }
+            return false;
+        });
+    } else {
+        forwardBfs.autoStopAfterNeighborsScans(true);
+        backwardBfs.autoStopAfterNeighborsScans(true);
+    }
 
     forwardBfs.prepare();
     backwardBfs.prepare();
@@ -172,16 +177,21 @@ void FindDiPathAlgorithm<property_map_type>::onDiGraphSet()
 template<template <typename T> typename property_map_type>
 void FindDiPathAlgorithm<property_map_type>::runTwoWayPathSearch()
 {
-    BreadthFirstSearch<property_map_type,false> forwardBfs(false, false);
+    BreadthFirstSearch<property_map_type,true> forwardBfs(false, false);
     forwardBfs.setGraph(diGraph);
     forwardBfs.setStartVertex(from);
 
-    BreadthFirstSearch<property_map_type,false,true,false> backwardBfs(false, false);
+    BreadthFirstSearch<property_map_type,true,true,false> backwardBfs(false, false);
     backwardBfs.setGraph(diGraph);
     backwardBfs.setStartVertex(to);
 
-    auto forwardStop = twoWayStepSize;
-    auto backwardStop = twoWayStepSize;
+    property_map_type<DiGraph::size_type> outBFSLevel(0);
+    property_map_type<DiGraph::size_type> inBFSLevel(0);
+    forwardBfs.useModifiableProperty(&outBFSLevel);
+    forwardBfs.levelAsValues(true);
+    backwardBfs.useModifiableProperty(&inBFSLevel);
+    backwardBfs.levelAsValues(true);
+
     property_map_type<Arc*> treeArc(nullptr);
     Arc *fbLink = nullptr;
 
@@ -192,24 +202,31 @@ void FindDiPathAlgorithm<property_map_type>::runTwoWayPathSearch()
         return fbLink != nullptr;
     });
 
-    auto stepSize = this->twoWayStepSize;
-    forwardBfs.setVertexStopCondition(
-                [&forwardBfs,&forwardStop,&stepSize](const Vertex *) {
-        if (forwardBfs.getMaxBfsNumber() >= forwardStop) {
-            forwardStop+= stepSize;
-            return true;
-        }
-        return false;
-    });
+    if (twoWayStepSize > 0) {
+        auto forwardStop = twoWayStepSize;
+        auto backwardStop = twoWayStepSize;
+        auto stepSize = this->twoWayStepSize;
+        forwardBfs.setVertexStopCondition(
+                    [&forwardBfs,&forwardStop,&stepSize](const Vertex *) {
+            if (forwardBfs.getMaxBfsNumber() >= forwardStop) {
+                forwardStop+= stepSize;
+                return true;
+            }
+            return false;
+        });
 
-    backwardBfs.setVertexStopCondition(
-                [&backwardBfs,&backwardStop,&stepSize](const Vertex *) {
-        if (backwardBfs.getMaxBfsNumber() >= backwardStop) {
-            backwardStop+= stepSize;
-            return true;
-        }
-        return false;
-    });
+        backwardBfs.setVertexStopCondition(
+                    [&backwardBfs,&backwardStop,&stepSize](const Vertex *) {
+            if (backwardBfs.getMaxBfsNumber() >= backwardStop) {
+                backwardStop+= stepSize;
+                return true;
+            }
+            return false;
+        });
+    } else {
+        forwardBfs.autoStopAfterNeighborsScans(true);
+        backwardBfs.autoStopAfterNeighborsScans(true);
+    }
 
     forwardBfs.onTreeArcDiscover([&backwardBfs,&treeArc,&fbLink](const Arc *a) {
         if (fbLink) {

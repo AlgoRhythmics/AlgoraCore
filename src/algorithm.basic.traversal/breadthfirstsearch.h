@@ -48,7 +48,8 @@ public:
         : GraphTraversal<DiGraph::size_type,reverseArcDirection, ignoreArcDirection>(
               valueComputation && computeValues),
           computeOrder(computeOrder), maxBfsNumber(INF), maxLevel(INF),
-          treeArc(arcNothing), nonTreeArc(arcNothing)
+          treeArc(arcNothing), nonTreeArc(arcNothing),
+          stopAfterEachNeighborsScan(false)
     {
         discovered.setDefaultValue(false);
     }
@@ -61,6 +62,10 @@ public:
 
     void setStartVertices(const std::vector<const Vertex*> &&startVertices) {
         this->startVertices = std::move(startVertices);
+    }
+
+    void autoStopAfterNeighborsScans(bool stop) {
+        stopAfterEachNeighborsScan = stop;
     }
 
     void onTreeArcDiscover(const ArcMapping &aFun) {
@@ -231,9 +236,15 @@ public:
             } else {
                 this->diGraph->mapOutgoingArcsUntil(curr, arcMapping, arcStopCondition);
             }
+
+            if (stopAfterEachNeighborsScan) {
+                stop = true;
+            }
         }
         if (!stop) {
             assert(this->queue.empty());
+        }
+        if (this->queue.empty()) {
             this->exhausted = true;
         }
     }
@@ -266,6 +277,7 @@ private:
     boost::circular_buffer<const Vertex*> queue;
     std::vector<const Vertex*> startVertices;
     bool exhausted;
+    bool stopAfterEachNeighborsScan;
 };
 
 }
