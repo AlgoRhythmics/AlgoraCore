@@ -43,7 +43,9 @@
 
 namespace Algora {
 
+template <template<typename T> class ModifiablePropertyType = PropertyMap>
 int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber);
+
 void strongconnect(DiGraph *graph, Vertex *v,
                    int &nextIndex, int &nextScc,
                    std::vector<Vertex*> &stack,
@@ -52,20 +54,23 @@ void strongconnect(DiGraph *graph, Vertex *v,
                    ModifiableProperty<bool> &onStack,
                    ModifiableProperty<int> &sccNumber);
 
-TarjanSCCAlgorithm::TarjanSCCAlgorithm()
+template <template<typename T> class ModifiablePropertyType>
+TarjanSCCAlgorithm<ModifiablePropertyType>::TarjanSCCAlgorithm()
     : numSccs(0)
 {
 
 }
 
-TarjanSCCAlgorithm::~TarjanSCCAlgorithm()
+template <template<typename T> class ModifiablePropertyType>
+TarjanSCCAlgorithm<ModifiablePropertyType>::~TarjanSCCAlgorithm()
 {
 
 }
 
-void TarjanSCCAlgorithm::run()
+template <template<typename T> class ModifiablePropertyType>
+void TarjanSCCAlgorithm<ModifiablePropertyType>::run()
 {
-    numSccs = tarjanRecursive(diGraph, *this->property);
+    numSccs = tarjanRecursive<ModifiablePropertyType>(diGraph, *this->property);
 
     if (numSccs > 1) {
         diGraph->mapVertices([&](Vertex *v) {
@@ -74,18 +79,20 @@ void TarjanSCCAlgorithm::run()
     }
 }
 
-int TarjanSCCAlgorithm::deliver()
+template <template<typename T> class ModifiablePropertyType>
+int TarjanSCCAlgorithm<ModifiablePropertyType>::deliver()
 {
     return numSccs;
 }
 
+template <template<typename T> class ModifiablePropertyType>
 int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber) {
     int nextIndex = 0;
     int nextScc = 0;
     std::vector<Vertex*> stack;
-    PropertyMap<int> vertexIndex(-1);
-    PropertyMap<int> lowLink(-1);
-    PropertyMap<bool> onStack(false);
+    ModifiablePropertyType<int> vertexIndex(-1);
+    ModifiablePropertyType<int> lowLink(-1);
+    ModifiablePropertyType<bool> onStack(false);
 
     diGraph->mapVertices([&](Vertex *v) {
         if (vertexIndex(v) == -1) {
