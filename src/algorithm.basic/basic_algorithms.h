@@ -38,7 +38,7 @@ bool isAcyclic(DiGraph *diGraph);
 
 bool isStronglyConnected(DiGraph *diGraph);
 
-int countStrongComponents(DiGraph *diGraph);
+DiGraph::size_type countStrongComponents(DiGraph *diGraph);
 
 bool isBiconnected(DiGraph *diGraph);
 

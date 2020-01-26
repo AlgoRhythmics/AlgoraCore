@@ -28,6 +28,7 @@
 #include "property/propertymap.h"
 
 #include <vector>
+#include <limits>
 
 //#define DEBUG_TSCC
 #ifdef DEBUG_TSCC
@@ -43,20 +44,25 @@
 
 namespace Algora {
 
+namespace  {
+const static DiGraph::size_type UNSET = std::numeric_limits<DiGraph::size_type>::max();
+}
+
 template <template<typename T> class ModifiablePropertyType = PropertyMap>
-int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber);
+DiGraph::size_type tarjanRecursive(DiGraph *diGraph,
+                                   ModifiableProperty<DiGraph::size_type> &sccNumber);
 
 void strongconnect(DiGraph *graph, Vertex *v,
-                   int &nextIndex, int &nextScc,
+                   DiGraph::size_type &nextIndex, DiGraph::size_type &nextScc,
                    std::vector<Vertex*> &stack,
-                   ModifiableProperty<int> &vertexIndex,
-                   ModifiableProperty<int> &lowLink,
+                   ModifiableProperty<DiGraph::size_type> &vertexIndex,
+                   ModifiableProperty<DiGraph::size_type> &lowLink,
                    ModifiableProperty<bool> &onStack,
-                   ModifiableProperty<int> &sccNumber);
+                   ModifiableProperty<DiGraph::size_type> &sccNumber);
 
 template <template<typename T> class ModifiablePropertyType>
 TarjanSCCAlgorithm<ModifiablePropertyType>::TarjanSCCAlgorithm()
-    : numSccs(0)
+    : PropertyComputingAlgorithm<DiGraph::size_type, DiGraph::size_type>(true), numSccs(0)
 {
 
 }
@@ -74,28 +80,30 @@ void TarjanSCCAlgorithm<ModifiablePropertyType>::run()
 
     if (numSccs > 1) {
         diGraph->mapVertices([&](Vertex *v) {
-            property->setValue(v, numSccs - property->getValue(v) - 1);
+            property->setValue(v,
+                               numSccs - property->getValue(v) - 1);
         });
     }
 }
 
 template <template<typename T> class ModifiablePropertyType>
-int TarjanSCCAlgorithm<ModifiablePropertyType>::deliver()
+DiGraph::size_type TarjanSCCAlgorithm<ModifiablePropertyType>::deliver()
 {
     return numSccs;
 }
 
 template <template<typename T> class ModifiablePropertyType>
-int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber) {
-    int nextIndex = 0;
-    int nextScc = 0;
+GraphArtifact::size_type tarjanRecursive(DiGraph *diGraph,
+                                         ModifiableProperty<DiGraph::size_type> &sccNumber) {
+    DiGraph::size_type nextIndex = 0;
+    DiGraph::size_type nextScc = 0;
     std::vector<Vertex*> stack;
-    ModifiablePropertyType<int> vertexIndex(-1);
-    ModifiablePropertyType<int> lowLink(-1);
+    ModifiablePropertyType<DiGraph::size_type> vertexIndex(UNSET);
+    ModifiablePropertyType<DiGraph::size_type> lowLink(UNSET);
     ModifiablePropertyType<bool> onStack(false);
 
     diGraph->mapVertices([&](Vertex *v) {
-        if (vertexIndex(v) == -1) {
+        if (vertexIndex(v) == UNSET) {
             strongconnect(diGraph, v, nextIndex, nextScc, stack, vertexIndex, lowLink, onStack, sccNumber);
         }
     });
@@ -103,15 +111,15 @@ int tarjanRecursive(DiGraph *diGraph, ModifiableProperty<int> &sccNumber) {
 }
 
 void strongconnect(DiGraph *graph, Vertex *v,
-                   int &nextIndex, int &nextScc,
+                   GraphArtifact::size_type &nextIndex, GraphArtifact::size_type &nextScc,
                    std::vector<Vertex *> &stack,
-                   ModifiableProperty<int> &vertexIndex,
-                   ModifiableProperty<int> &lowLink,
+                   ModifiableProperty<DiGraph::size_type> &vertexIndex,
+                   ModifiableProperty<DiGraph::size_type> &lowLink,
                    ModifiableProperty<bool> &onStack,
-                   ModifiableProperty<int> &sccNumber) {
+                   ModifiableProperty<DiGraph::size_type> &sccNumber) {
 
     PRINT_DEBUG( "strongconnect on " << v )
-    int vLowLink = nextIndex;
+    auto vLowLink = nextIndex;
     vertexIndex.setValue(v, nextIndex);
     lowLink.setValue(v, nextIndex);
     PRINT_DEBUG( "index is " << nextIndex )
@@ -123,10 +131,10 @@ void strongconnect(DiGraph *graph, Vertex *v,
     graph->mapOutgoingArcs(v, [&](Arc *a) {
         Vertex *head = a->getHead();
         PRINT_DEBUG( "considering out-neighbor " << head )
-        if (vertexIndex(head) == -1) {
+        if (vertexIndex(head) == UNSET) {
             PRINT_DEBUG( "neighbor has no index yet." )
             strongconnect(graph, head, nextIndex, nextScc, stack, vertexIndex, lowLink, onStack, sccNumber);
-            int hLowLink = lowLink(head);
+            auto hLowLink = lowLink(head);
             PRINT_DEBUG( "neighbor has lowlink " << hLowLink )
             if (hLowLink < vLowLink) {
                 vLowLink = hLowLink;
@@ -134,7 +142,7 @@ void strongconnect(DiGraph *graph, Vertex *v,
             }
         } else if (onStack(head)) {
             PRINT_DEBUG( "neighbor is already on stack." )
-            int hIndex = vertexIndex(head);
+            auto hIndex = vertexIndex(head);
             PRINT_DEBUG( "neighbor has index " << hIndex )
             if (hIndex < vLowLink) {
                 vLowLink = hIndex;

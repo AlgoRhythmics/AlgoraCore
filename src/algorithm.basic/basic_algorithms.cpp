@@ -51,10 +51,10 @@ bool isStronglyConnected(DiGraph *diGraph)
     return countStrongComponents(diGraph) == 1;
 }
 
-int countStrongComponents(DiGraph *diGraph)
+DiGraph::size_type countStrongComponents(DiGraph *diGraph)
 {
     TarjanSCCAlgorithm tarjan;
-    PropertyMap<int> sccs(-1);
+    PropertyMap<DiGraph::size_type> sccs(0);
     tarjan.useModifiableProperty(&sccs);
     return runAlgorithm(tarjan, diGraph);
 }
@@ -106,12 +106,12 @@ int computeDiameter(DiGraph *diGraph)
 void computeCondensation(DiGraph *diGraph, DiGraph *condensedGraph)
 {
     TarjanSCCAlgorithm tarjan;
-    PropertyMap<int> sccOf(-1);
+    PropertyMap<DiGraph::size_type> sccOf(0);
     tarjan.useModifiableProperty(&sccOf);
-    int sccs = runAlgorithm(tarjan, diGraph);
+    auto sccs = runAlgorithm(tarjan, diGraph);
     condensedGraph->clear();
     std::vector<Vertex*> sccVertices;
-    for (int i = 0; i < sccs; i++) {
+    for (auto i = 0UL; i < sccs; i++) {
         sccVertices.push_back(condensedGraph->addVertex());
     }
     diGraph->mapArcs([&](Arc *a) {
