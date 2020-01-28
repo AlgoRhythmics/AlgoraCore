@@ -39,7 +39,7 @@ template<template <typename T> typename property_map_type>
 FindDiPathAlgorithm<property_map_type>::FindDiPathAlgorithm(bool constructVertexPath, bool constructArcPath, bool twoWaySearch)
     : constructVertexPath(constructVertexPath), constructArcPath(constructArcPath),
       from(nullptr), to(nullptr), twoWaySearch(twoWaySearch), twoWayStepSize(0UL),
-      pathFound(false)
+      pathFound(false), pr_num_vertices_seen(0)
 {
 
 }
@@ -47,6 +47,10 @@ FindDiPathAlgorithm<property_map_type>::FindDiPathAlgorithm(bool constructVertex
 template<template <typename T> typename property_map_type>
 bool FindDiPathAlgorithm<property_map_type>::prepare()
 {
+    pr_num_vertices_seen = 0;
+    vertexPath.clear();
+    arcPath.clear();
+
     bool ok = ValueComputingAlgorithm<bool>::prepare()
             && from != nullptr
             && to != nullptr
@@ -58,9 +62,6 @@ bool FindDiPathAlgorithm<property_map_type>::prepare()
 template<template <typename T> typename property_map_type>
 void FindDiPathAlgorithm<property_map_type>::run()
 {
-    vertexPath.clear();
-    arcPath.clear();
-
     if (from == to) {
         pathFound = true;
         return;
@@ -164,6 +165,7 @@ void FindDiPathAlgorithm<property_map_type>::runTwoWaySearch()
         backwardBfs.resume();
     }
     pathFound = reachable;
+    pr_num_vertices_seen += forwardBfs.numVerticesReached() + backwardBfs.numVerticesReached();
 }
 
 template<template <typename T> typename property_map_type>
@@ -283,6 +285,7 @@ void FindDiPathAlgorithm<property_map_type>::runTwoWayPathSearch()
         assert(!arcPath.empty());
     }
     pathFound = fbLink != nullptr;
+    pr_num_vertices_seen += forwardBfs.numVerticesReached() + backwardBfs.numVerticesReached();
 }
 
 template<template <typename T> typename property_map_type>
@@ -314,6 +317,7 @@ void FindDiPathAlgorithm<property_map_type>::runOneWaySearch()
         return pathFound;
     });
     runAlgorithm(bfs, diGraph);
+    pr_num_vertices_seen += bfs.numVerticesReached();
 }
 
 template<template <typename T> typename property_map_type>
@@ -349,6 +353,7 @@ void FindDiPathAlgorithm<property_map_type>::runOneWayPathSearch()
         assert(!arcPath.empty());
         std::reverse(arcPath.begin(), arcPath.end());
     }
+    pr_num_vertices_seen += bfs.numVerticesReached();
 }
 
 }

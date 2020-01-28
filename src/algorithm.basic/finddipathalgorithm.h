@@ -25,6 +25,7 @@
 
 #include "algorithm/valuecomputingalgorithm.h"
 #include "property/propertymap.h"
+#include "graph/digraph.h"
 
 #include <vector>
 
@@ -107,6 +108,10 @@ public:
         return empty;
     }
 
+    DiGraph::size_type getNumVerticesSeen() const {
+        return pr_num_vertices_seen;
+    }
+
     // DiGraphAlgorithm interface
 public:
     virtual bool prepare() override;
@@ -130,6 +135,8 @@ private:
     std::vector<Vertex*> vertexPath;
     std::vector<Arc*> arcPath;
     bool pathFound;
+
+    DiGraph::size_type pr_num_vertices_seen;
 
     void runOneWaySearch();
     void runOneWayPathSearch();
