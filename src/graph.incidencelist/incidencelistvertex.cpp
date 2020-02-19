@@ -159,7 +159,7 @@ void IncidenceListVertex::clearOutgoingArcs()
         grin->outIndex.resetToDefault(a);
     }
     for (Arc *a : grin->outgoingMultiArcs) {
-        grin->outIndex.resetToDefault(a);
+        grin->multiOutIndex.resetToDefault(a);
     }
     grin->outgoingArcs.clear();
     grin->outgoingMultiArcs.clear();
@@ -223,10 +223,10 @@ void IncidenceListVertex::removeIncomingArc(const Arc *a)
 void IncidenceListVertex::clearIncomingArcs()
 {
     for (Arc *a : grin->incomingArcs) {
-        grin->outIndex.resetToDefault(a);
+        grin->inIndex.resetToDefault(a);
     }
     for (Arc *a : grin->incomingMultiArcs) {
-        grin->outIndex.resetToDefault(a);
+        grin->multiInIndex.resetToDefault(a);
     }
     grin->incomingArcs.clear();
     grin->incomingMultiArcs.clear();
