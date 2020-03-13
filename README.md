@@ -34,6 +34,11 @@ directory.
 The compiled library can then be found in the `build/Debug` and `build/Release`
 subdirectories.
 
+## How to use
+
+See the `examples` directory to get a first impression of how you can use
+**Algora**.
+
 ## License
 
 **Algora** and **Algora|Core** is free software and licensed under the
