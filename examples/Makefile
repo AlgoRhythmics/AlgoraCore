@@ -1,6 +1,6 @@
 CC      := g++
 
-TARGETS:= breadthfirstsearch bfs
+TARGETS:= bfs
 
 .PHONY: all clean
 
