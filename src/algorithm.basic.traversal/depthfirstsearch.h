@@ -53,14 +53,15 @@ struct DFSResult {
     DFSResult(const Vertex *p) : parent(p) {}
 };
 
-template <template<typename T> class ModifiablePropertyType = PropertyMap>
-class DepthFirstSearch : public GraphTraversal<DFSResult>
+template <template<typename T> class ModifiablePropertyType = PropertyMap,
+          bool reverseArcDirection = false, bool ignoreArcDirection = false>
+class DepthFirstSearch : public GraphTraversal<DFSResult, reverseArcDirection, ignoreArcDirection>
 {
 public:
     constexpr static DiGraph::size_type INF = std::numeric_limits<DiGraph::size_type>::max();
 
     DepthFirstSearch(bool computeValues = true)
-        : GraphTraversal<DFSResult>(computeValues),
+        : GraphTraversal<DFSResult,reverseArcDirection,ignoreArcDirection>(computeValues),
           verticesReached(INF),
           treeArc(arcNothing), nonTreeArc(arcNothing)
     {
@@ -87,7 +88,8 @@ public:
 public:
     virtual void run() override
     {
-        const Vertex *source = startVertex != nullptr ? startVertex : diGraph->getAnyVertex();
+        const Vertex *source =
+                this->startVertex != nullptr ? this->startVertex : this->diGraph->getAnyVertex();
 
 				DiGraph::size_type nextDepth = 0;
         bool stop = false;
@@ -111,7 +113,7 @@ public:
     }
 
 private:
-		DiGraph::size_type verticesReached;
+    DiGraph::size_type verticesReached;
     ArcMapping treeArc;
     ArcMapping nonTreeArc;
     ModifiablePropertyType<bool> discovered;
@@ -119,19 +121,19 @@ private:
     void dfs(const Vertex *v, DiGraph::size_type &depth, bool &stop) {
         discovered[v] = true;
         DFSResult *cur = nullptr;
-        if (computePropertyValues) {
-            cur = &(*property)[v];
+        if (this->computePropertyValues) {
+            cur = &(*this->property)[v];
             cur->dfsNumber = depth;
             cur->lowNumber = depth;
         }
         depth++;
         PRINT_DEBUG(v << " : low = " << cur->lowNumber);
 
-        if (!onVertexDiscovered(v)) {
+        if (!this->onVertexDiscovered(v)) {
             return;
         }
 
-        stop |= vertexStopCondition(v);
+        stop |= this->vertexStopCondition(v);
 
         if (stop) {
             return;
@@ -140,16 +142,16 @@ private:
         auto vm = [&](const Vertex *v, const Vertex *u, Arc *arc) {
             PRINT_DEBUG("Considering child " << u << " of " << v);
 
-            bool consider = onArcDiscovered(arc);
-            stop |= arcStopCondition(arc);
+            bool consider = this->onArcDiscovered(arc);
+            stop |= this->arcStopCondition(arc);
 
             if (stop || !consider) {
                 return;
             }
 
             if (!discovered[u]) {
-                if (computePropertyValues) {
-                    (*property)[u].parent = v;
+                if (this->computePropertyValues) {
+                    (*this->property)[u].parent = v;
                 }
                 PRINT_DEBUG("Set parent of " << u << " to " << (*property)[u].parent);
                 treeArc(arc);
@@ -160,27 +162,27 @@ private:
                     return;
                 }
 
-                if (computePropertyValues) {
-                    if ((*property)[u].lowNumber < cur->lowNumber) {
+                if (this->computePropertyValues) {
+                    if ((*this->property)[u].lowNumber < cur->lowNumber) {
                         PRINT_DEBUG("Updating low from " << cur->lowNumber << " to " << (*property)[u].lowNumber);
-                        cur->lowNumber = (*property)[u].lowNumber;
+                        cur->lowNumber = (*this->property)[u].lowNumber;
                         PRINT_DEBUG("Low is now " << (*property)[v].lowNumber)
                     }
                 }
             } else {
                 nonTreeArc(arc);
-                if (computePropertyValues && cur->parent != u && (*property)[u].dfsNumber < cur->lowNumber) {
+                if (this->computePropertyValues && cur->parent != u && (*this->property)[u].dfsNumber < cur->lowNumber) {
                     PRINT_DEBUG("Updating low from " << cur->lowNumber << " to " << (*property)[u].dfsNumber);
-                    cur->lowNumber = (*property)[u].dfsNumber;
+                    cur->lowNumber = (*this->property)[u].dfsNumber;
                     PRINT_DEBUG("Low is now " << (*property)[v].lowNumber);
                 }
             }
         };
-        if (!stop && (this->onUndirectedGraph || !this->onReverseGraph)) {
-            diGraph->mapOutgoingArcsUntil(v, [&](Arc *a) { vm(v, a->getHead(), a); }, [&stop](const Arc *) { return stop; });
+        if (!stop && (ignoreArcDirection || !reverseArcDirection)) {
+            this->diGraph->mapOutgoingArcsUntil(v, [&](Arc *a) { vm(v, a->getHead(), a); }, [&stop](const Arc *) { return stop; });
         }
-        if (!stop && (this->onUndirectedGraph || this->onReverseGraph)) {
-            diGraph->mapIncomingArcsUntil(v, [&](Arc *a) { vm(v, a->getTail(), a); }, [&stop](const Arc *) { return stop; });
+        if (!stop && (ignoreArcDirection || reverseArcDirection)) {
+            this->diGraph->mapIncomingArcsUntil(v, [&](Arc *a) { vm(v, a->getTail(), a); }, [&stop](const Arc *) { return stop; });
         }
     }
 };

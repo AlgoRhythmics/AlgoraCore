@@ -36,21 +36,37 @@ namespace Algora {
 class Vertex;
 
 template <template<typename T> class ModifiablePropertyType = PropertyMap,
-          bool valueComputation = true>
-class BreadthFirstSearch : public GraphTraversal<DiGraph::size_type>
+          bool valueComputation = true,
+          bool reverseArcDirection = false, bool ignoreArcDirection = false>
+class BreadthFirstSearch : public GraphTraversal<DiGraph::size_type,
+        reverseArcDirection, ignoreArcDirection>
 {
 public:
     static constexpr DiGraph::size_type INF = std::numeric_limits<DiGraph::size_type>::max();
 
     explicit BreadthFirstSearch(bool computeValues = true, bool computeOrder = true)
-        : GraphTraversal<DiGraph::size_type>(valueComputation && computeValues),
+        : GraphTraversal<DiGraph::size_type,reverseArcDirection, ignoreArcDirection>(
+              valueComputation && computeValues),
           computeOrder(computeOrder), maxBfsNumber(INF), maxLevel(INF),
-          treeArc(arcNothing), nonTreeArc(arcNothing)
+          treeArc(arcNothing), nonTreeArc(arcNothing),
+          stopAfterEachNeighborsScan(false)
     {
         discovered.setDefaultValue(false);
     }
 
     virtual ~BreadthFirstSearch() { }
+
+    void setStartVertices(const std::vector<const Vertex*> &startVertices) {
+        this->startVertices = startVertices;
+    }
+
+    void setStartVertices(const std::vector<const Vertex*> &&startVertices) {
+        this->startVertices = std::move(startVertices);
+    }
+
+    void autoStopAfterNeighborsScans(bool stop) {
+        stopAfterEachNeighborsScan = stop;
+    }
 
     void onTreeArcDiscover(const ArcMapping &aFun) {
         treeArc = aFun;
@@ -64,7 +80,7 @@ public:
         return maxBfsNumber;
     }
 
-    int getMaxLevel() const {
+    DiGraph::size_type getMaxLevel() const {
         return maxLevel;
     }
 
@@ -76,8 +92,12 @@ public:
         computeOrder = !levels;
     }
 
-    bool vertexDiscovered(const Vertex *v) {
+    bool vertexDiscovered(const Vertex *v) const {
         return discovered(v);
+    }
+
+    bool isExhausted() const {
+        return exhausted;
     }
 
     // GraphTraversal interface
@@ -91,91 +111,141 @@ public:
 
     // DiGraphAlgorithm interface
 public:
+    virtual bool prepare() override
+    {
+        return PropertyComputingAlgorithm<DiGraph::size_type, DiGraph::size_type>::prepare()
+                && ( this->startVertex == nullptr
+                     || (this->diGraph->containsVertex(this->startVertex) &&
+                         this->startVertex->isValid()))
+                && (startVertices.empty()
+                    || std::all_of(startVertices.begin(), startVertices.end(),
+                                   [this](const Vertex *v){
+                        return this->diGraph->containsVertex(v) && v->isValid(); }));
+    }
+
     virtual void run() override
     {
-        if (startVertex == 0) {
-            startVertex = diGraph->getAnyVertex();
+        if (this->startVertex == nullptr && startVertices.empty()) {
+            this->startVertex = this->diGraph->getAnyVertex();
         }
 
         maxBfsNumber = 0ULL;
         maxLevel = 0ULL;
 
-        //queue.clear();
-        boost::circular_buffer<const Vertex*> queue;
-        queue.set_capacity(diGraph->getSize());
+        queue.clear();
+        queue.set_capacity(this->diGraph->getSize());
         discovered.resetAll();
+        exhausted = false;
 
-        queue.push_back(startVertex);
-        queue.push_back(nullptr);
-        discovered.setValue(startVertex, true);
-        if (valueComputation && computePropertyValues) {
-            property->setValue(startVertex, 0);
+        if (startVertices.empty()) {
+            if (!this->onVertexDiscovered(this->startVertex)) {
+                return;
+            }
+            queue.push_back(this->startVertex);
+            queue.push_back(nullptr);
+            discovered.setValue(this->startVertex, true);
+            if (valueComputation && this->computePropertyValues) {
+                this->property->setValue(this->startVertex, 0);
+            }
+        } else {
+            for (auto *v : startVertices) {
+                if (!this->onVertexDiscovered(v)) {
+                    continue;
+                }
+                queue.push_back(v);
+                discovered.setValue(v, true);
+                if (valueComputation && this->computePropertyValues) {
+                    int c = computeOrder ? maxBfsNumber : 0;
+                    this->property->setValue(v, c);
+                }
+                maxBfsNumber++;
+            }
+            if (queue.empty()) {
+                return;
+            }
+            queue.push_back(nullptr);
+            maxBfsNumber--;
         }
+        resume();
+    }
 
-        bool stop = !onVertexDiscovered(startVertex);
-
-        auto mapArcs = [this](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
-            diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
-            diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
-        };
-        auto mapOutgoingArcs = [this](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
-            diGraph->mapOutgoingArcsUntil(v, avFun, breakCondition);
-        };
-        auto mapIncomingArcs = [this](const Vertex *v, const ArcMapping &avFun, const ArcPredicate &breakCondition) {
-            diGraph->mapIncomingArcsUntil(v, avFun, breakCondition);
-        };
-
-        auto mapArcsUntil = std::function<void(const Vertex *, const ArcMapping&, const ArcPredicate&)>(mapOutgoingArcs);
-        if (onUndirectedGraph) {
-            mapArcsUntil = mapArcs;
-        } else if (onReverseGraph) {
-            mapArcsUntil = mapIncomingArcs;
-        }
-
+    virtual void resume()
+    {
         auto getTail = [](const Arc *a, const Vertex *) { return a->getTail(); };
         auto getHead = [](const Arc *a, const Vertex *) { return a->getHead(); };
-        auto getOtherEndVertex = [](const Arc *a, const Vertex *v) { auto t = a->getTail(); return v == t ? a->getHead() : t; };
-        const auto &getPeer = onUndirectedGraph ? getOtherEndVertex : (onReverseGraph ? getTail : getHead);
+        auto getOtherEndVertex = [](const Arc *a, const Vertex *v) {
+            auto t = a->getTail(); return v == t ? a->getHead() : t;
+        };
+        const auto &getPeer = ignoreArcDirection ? getOtherEndVertex
+                                                : (reverseArcDirection ? getTail : getHead);
+        bool stop = false;
 
-        while (!stop && !queue.empty()) {
-            const Vertex *curr = queue.front();
-            queue.pop_front();
-            if (curr == nullptr) {
-                if (!queue.empty()) {
-                    queue.push_back(nullptr);
-                    maxLevel++;
+        while (!stop && !this->queue.empty()) {
+            const Vertex *curr = this->queue.front();
+
+            if (curr) {
+                stop |= this->vertexStopCondition(curr);
+                if (stop) {
+                    break;
+                }
+                this->queue.pop_front();
+            } else {
+                this->queue.pop_front();
+                if (!this->queue.empty()) {
+                    this->queue.push_back(nullptr);
+                    this->maxLevel++;
                 }
                 continue;
             }
-            stop |= vertexStopCondition(curr);
-            if (stop) {
-                break;
-            }
 
-            mapArcsUntil(curr, [this,curr,&stop,&queue,&getPeer](Arc *a) {
-                    bool consider = onArcDiscovered(a);
-                    stop |= arcStopCondition(a);
-                    if (stop || !consider) {
+            auto arcMapping = [this,curr,&stop,&getPeer](Arc *a) {
+                bool consider = this->onArcDiscovered(a);
+                if (!consider) {
+                    return;
+                }
+                stop |= this->arcStopCondition(a);
+                if (stop) {
+                    return;
+                }
+                Vertex *peer = getPeer(a, curr);
+                if (!this->discovered(peer)) {
+                    this->maxBfsNumber++;
+                    if (valueComputation && this->computePropertyValues) {
+                        int v = this->computeOrder
+                                ? this->maxBfsNumber : this->property->getValue(curr) + 1;
+                        this->property->setValue(peer, v);
+                    }
+                    this->discovered.setValue(peer, true);
+                    this->treeArc(a);
+                    if (!this->onVertexDiscovered(peer)) {
                         return;
                     }
-                    Vertex *peer = getPeer(a, curr);
-                    if (!discovered(peer)) {
-                        maxBfsNumber++;
-                        if (valueComputation && computePropertyValues) {
-                            int v = computeOrder ? maxBfsNumber : property->getValue(curr) + 1;
-                            property->setValue(peer, v);
-                        }
-                        treeArc(a);
-                        if (!onVertexDiscovered(peer)) {
-                            return;
-                        }
 
-                        queue.push_back(peer);
-                        discovered.setValue(peer, true);
-                    } else {
-                        nonTreeArc(a);
-                    }
-                }, [&stop](const Arc *) { return stop; });
+                    this->queue.push_back(peer);
+                } else {
+                    this->nonTreeArc(a);
+                }
+            };
+            auto arcStopCondition = [&stop](const Arc *) { return stop; };
+
+            if (ignoreArcDirection) {
+                this->diGraph->mapOutgoingArcsUntil(curr, arcMapping, arcStopCondition);
+                this->diGraph->mapIncomingArcsUntil(curr, arcMapping, arcStopCondition);
+            } else if (reverseArcDirection) {
+                this->diGraph->mapIncomingArcsUntil(curr, arcMapping, arcStopCondition);
+            } else {
+                this->diGraph->mapOutgoingArcsUntil(curr, arcMapping, arcStopCondition);
+            }
+
+            if (stopAfterEachNeighborsScan) {
+                stop = true;
+            }
+        }
+        if (!stop) {
+            assert(this->queue.empty());
+        }
+        if (this->queue.empty()) {
+            this->exhausted = true;
         }
     }
     virtual std::string getName() const noexcept override { return "BFS"; }
@@ -204,6 +274,10 @@ private:
         maxLevel = INF;
     }
     ModifiablePropertyType<bool> discovered;
+    boost::circular_buffer<const Vertex*> queue;
+    std::vector<const Vertex*> startVertices;
+    bool exhausted;
+    bool stopAfterEachNeighborsScan;
 };
 
 }

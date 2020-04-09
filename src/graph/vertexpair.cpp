@@ -96,7 +96,11 @@ std::ostream &operator<<(std::ostream &out, const VertexPair *vp)
     if (!vp) {
         out << "null";
     } else {
-        out << "(" << vp->getFirst() << ", " << vp->getSecond() << ")";
+        auto name = vp->getName();
+        if (name.empty()) {
+            name = std::to_string(vp->getId());
+        }
+        out << "(" << vp->getFirst() << ", " << vp->getSecond() << ")[" << name << "]";
     }
     return out;
 }

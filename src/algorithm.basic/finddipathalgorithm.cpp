@@ -29,91 +29,331 @@
 #include "algorithm.basic.traversal/breadthfirstsearch.h"
 #include "algorithm/digraphalgorithmexception.h"
 
+#include "property/fastpropertymap.h"
+
 #include <algorithm>
 
 namespace Algora {
 
-FindDiPathAlgorithm::FindDiPathAlgorithm(bool constructPath)
-    : constructPath(constructPath), from(0), to(0), pathFound(false)
+template<template <typename T> typename property_map_type>
+FindDiPathAlgorithm<property_map_type>::FindDiPathAlgorithm(bool constructVertexPath, bool constructArcPath, bool twoWaySearch)
+    : constructVertexPath(constructVertexPath), constructArcPath(constructArcPath),
+      from(nullptr), to(nullptr), twoWaySearch(twoWaySearch), twoWayStepSize(0UL),
+      pathFound(false), pr_num_vertices_seen(0)
 {
 
 }
 
-FindDiPathAlgorithm::~FindDiPathAlgorithm()
+template<template <typename T> typename property_map_type>
+bool FindDiPathAlgorithm<property_map_type>::prepare()
 {
+    pr_num_vertices_seen = 0;
+    vertexPath.clear();
+    arcPath.clear();
 
-}
-
-bool FindDiPathAlgorithm::prepare()
-{
     bool ok = ValueComputingAlgorithm<bool>::prepare()
-            && from != 0
-            && to != 0
+            && from != nullptr
+            && to != nullptr
             && diGraph->containsVertex(from)
             && diGraph->containsVertex(to);
     return ok;
 }
 
-void FindDiPathAlgorithm::run()
+template<template <typename T> typename property_map_type>
+void FindDiPathAlgorithm<property_map_type>::run()
 {
-    vertexPath.clear();
-    arcPath.clear();
-    pathFound = false;
-
     if (from == to) {
         pathFound = true;
         return;
     }
 
-
-    BreadthFirstSearch<> bfs(false);
-    bfs.setGraph(diGraph);
-    PropertyMap<Arc*> pred(0);
-
-    bfs.setStartVertex(from);
-    bfs.setVertexStopCondition([&](const Vertex *) { return pathFound; });
-    bfs.onArcDiscover([&](const Arc *a) {
-        Arc *arc = const_cast<Arc*>(a);
-        Vertex *head = a->getHead();
-        if(!pred[head]) {
-            pred[head] = arc;
-        }
-        if (head == to) {
-            pathFound = true;
-        }
-        return true;
-    });
-
-    if (!bfs.prepare()){
-       throw DiGraphAlgorithmException(this, "Could not prepare BFS algorithm.");
+    if (diGraph->isSink(from) || diGraph->isSource(to)) {
+        pathFound = false;
+        return;
     }
-    bfs.run();
-    bfs.deliver();
 
-    if (pathFound && constructPath) {
-        Vertex *p = to;
-        while (p != from) {
-            Arc *a = pred(p);
-            vertexPath.push_back(p);
-            arcPath.push_back(a);
-            p = a->getTail();
+    pathFound = false;
+
+    if (twoWaySearch) {
+        if (constructVertexPath || constructArcPath) {
+            runTwoWayPathSearch();
+            if (constructVertexPath) {
+                constructVertexFromArcPath();
+            }
+        } else  {
+            runTwoWaySearch();
         }
-        vertexPath.push_back(from);
-        std::reverse(vertexPath.begin(), vertexPath.end());
-        std::reverse(arcPath.begin(), arcPath.end());
+    } else {
+        if (constructVertexPath || constructArcPath) {
+            runOneWayPathSearch();
+            if (constructVertexPath) {
+                constructVertexFromArcPath();
+            }
+        } else {
+            runOneWaySearch();
+        }
     }
 }
 
-bool FindDiPathAlgorithm::deliver()
+template<template <typename T> typename property_map_type>
+bool FindDiPathAlgorithm<property_map_type>::deliver()
 {
     return pathFound;
 }
 
-void Algora::FindDiPathAlgorithm::onDiGraphSet()
+template<template <typename T> typename property_map_type>
+void FindDiPathAlgorithm<property_map_type>::runTwoWaySearch()
+{
+    BreadthFirstSearch<property_map_type,false> forwardBfs(false, false);
+    forwardBfs.setGraph(diGraph);
+    forwardBfs.setStartVertex(from);
+
+    BreadthFirstSearch<property_map_type,false,true,false> backwardBfs(false, false);
+    backwardBfs.setGraph(diGraph);
+    backwardBfs.setStartVertex(to);
+
+    bool reachable = false;
+
+    forwardBfs.setArcStopCondition([&backwardBfs,&reachable](const Arc *a) {
+        if (backwardBfs.vertexDiscovered(a->getHead())) {
+            reachable = true;
+        }
+        return reachable;
+    });
+    backwardBfs.setArcStopCondition([&forwardBfs,&reachable](const Arc *a) {
+        if (forwardBfs.vertexDiscovered(a->getTail())) {
+            reachable = true;
+        }
+        return reachable;
+    });
+
+    if (twoWayStepSize > 0) {
+        auto forwardStop = twoWayStepSize;
+        auto backwardStop = twoWayStepSize;
+        auto stepSize = this->twoWayStepSize;
+        forwardBfs.setVertexStopCondition(
+                    [&forwardBfs,&forwardStop,&stepSize](const Vertex *) {
+            if (forwardBfs.getMaxBfsNumber() >= forwardStop) {
+                forwardStop += stepSize;
+                return true;
+            }
+            return false;
+        });
+
+        backwardBfs.setVertexStopCondition(
+                    [&backwardBfs,&backwardStop,&stepSize](const Vertex *) {
+            if (backwardBfs.getMaxBfsNumber() >= backwardStop) {
+                backwardStop += stepSize;
+                return true;
+            }
+            return false;
+        });
+    } else {
+        forwardBfs.autoStopAfterNeighborsScans(true);
+        backwardBfs.autoStopAfterNeighborsScans(true);
+    }
+
+    forwardBfs.prepare();
+    backwardBfs.prepare();
+
+    forwardBfs.run();
+    backwardBfs.run();
+
+    while (!reachable && !forwardBfs.isExhausted() && !backwardBfs.isExhausted()
+           && forwardBfs.getMaxLevel() + backwardBfs.getMaxLevel() < diGraph->getSize()) {
+        forwardBfs.resume();
+        backwardBfs.resume();
+    }
+    pathFound = reachable;
+    pr_num_vertices_seen += forwardBfs.numVerticesReached() + backwardBfs.numVerticesReached();
+}
+
+template<template <typename T> typename property_map_type>
+void FindDiPathAlgorithm<property_map_type>::onDiGraphSet()
 {
     vertexPath.clear();
     arcPath.clear();
     pathFound = false;
+}
+
+template<template <typename T> typename property_map_type>
+void FindDiPathAlgorithm<property_map_type>::runTwoWayPathSearch()
+{
+    BreadthFirstSearch<property_map_type,true> forwardBfs(false, false);
+    forwardBfs.setGraph(diGraph);
+    forwardBfs.setStartVertex(from);
+
+    BreadthFirstSearch<property_map_type,true,true,false> backwardBfs(false, false);
+    backwardBfs.setGraph(diGraph);
+    backwardBfs.setStartVertex(to);
+
+    property_map_type<DiGraph::size_type> outBFSLevel(0);
+    property_map_type<DiGraph::size_type> inBFSLevel(0);
+    forwardBfs.useModifiableProperty(&outBFSLevel);
+    forwardBfs.levelAsValues(true);
+    backwardBfs.useModifiableProperty(&inBFSLevel);
+    backwardBfs.levelAsValues(true);
+
+    property_map_type<Arc*> treeArc(nullptr);
+    Arc *fbLink = nullptr;
+
+    forwardBfs.setArcStopCondition([fbLink](const Arc *) {
+        return fbLink != nullptr;
+    });
+    backwardBfs.setArcStopCondition([fbLink](const Arc *) {
+        return fbLink != nullptr;
+    });
+
+    if (twoWayStepSize > 0) {
+        auto forwardStop = twoWayStepSize;
+        auto backwardStop = twoWayStepSize;
+        auto stepSize = this->twoWayStepSize;
+        forwardBfs.setVertexStopCondition(
+                    [&forwardBfs,&forwardStop,&stepSize](const Vertex *) {
+            if (forwardBfs.getMaxBfsNumber() >= forwardStop) {
+                forwardStop+= stepSize;
+                return true;
+            }
+            return false;
+        });
+
+        backwardBfs.setVertexStopCondition(
+                    [&backwardBfs,&backwardStop,&stepSize](const Vertex *) {
+            if (backwardBfs.getMaxBfsNumber() >= backwardStop) {
+                backwardStop+= stepSize;
+                return true;
+            }
+            return false;
+        });
+    } else {
+        forwardBfs.autoStopAfterNeighborsScans(true);
+        backwardBfs.autoStopAfterNeighborsScans(true);
+    }
+
+    forwardBfs.onTreeArcDiscover([&backwardBfs,&treeArc,&fbLink](const Arc *a) {
+        if (fbLink) {
+            return;
+        }
+        auto head = a->getHead();
+        if (backwardBfs.vertexDiscovered(head)) {
+            fbLink = const_cast<Arc*>(a);
+        } else {
+            treeArc[head] = const_cast<Arc*>(a);
+        }
+    });
+    backwardBfs.onTreeArcDiscover([&forwardBfs,&treeArc,&fbLink](const Arc *a) {
+        if (fbLink) {
+            return;
+        }
+        auto tail = a->getTail();
+        if (forwardBfs.vertexDiscovered(tail)) {
+            fbLink = const_cast<Arc*>(a);
+        } else {
+            treeArc[tail] = const_cast<Arc*>(a);
+        }
+    });
+
+    forwardBfs.prepare();
+    backwardBfs.prepare();
+
+    forwardBfs.run();
+    backwardBfs.run();
+
+    while (!fbLink && !forwardBfs.isExhausted() && !backwardBfs.isExhausted()
+           && forwardBfs.getMaxLevel() + backwardBfs.getMaxLevel() < diGraph->getSize()) {
+        forwardBfs.resume();
+        backwardBfs.resume();
+    }
+
+    arcPath.clear();
+    if (fbLink) {
+        auto v = fbLink->getTail();
+        while (v != from) {
+            auto *a = treeArc(v);
+            arcPath.push_back(a);
+            v = a->getTail();
+        }
+        std::reverse(arcPath.begin(), arcPath.end());
+        arcPath.push_back(fbLink);
+        v = fbLink->getHead();
+        while (v != to) {
+            auto *a = treeArc(v);
+            arcPath.push_back(a);
+            v = a->getHead();
+        }
+
+        assert(!arcPath.empty());
+    }
+    pathFound = fbLink != nullptr;
+    pr_num_vertices_seen += forwardBfs.numVerticesReached() + backwardBfs.numVerticesReached();
+}
+
+template<template <typename T> typename property_map_type>
+void FindDiPathAlgorithm<property_map_type>::constructVertexFromArcPath()
+{
+    vertexPath.clear();
+
+    if (arcPath.empty()) {
+        return;
+    }
+
+    for (const auto &arc: arcPath) {
+        vertexPath.push_back(arc->getTail());
+    }
+    vertexPath.push_back(arcPath.back()->getHead());
+}
+
+template<template <typename T> typename property_map_type>
+void FindDiPathAlgorithm<property_map_type>::runOneWaySearch()
+{
+    BreadthFirstSearch<property_map_type,false> bfs(false, false);
+    pathFound = false;
+
+    bfs.setStartVertex(from);
+    bfs.setArcStopCondition([this](const Arc *a) {
+        if (a->getHead() == to) {
+            pathFound = true;
+        }
+        return pathFound;
+    });
+    runAlgorithm(bfs, diGraph);
+    pr_num_vertices_seen += bfs.numVerticesReached();
+}
+
+template<template <typename T> typename property_map_type>
+void FindDiPathAlgorithm<property_map_type>::runOneWayPathSearch()
+{
+    BreadthFirstSearch<property_map_type,false> bfs(false, false);
+    property_map_type<Arc*> pred(nullptr);
+    pathFound = false;
+
+    bfs.setStartVertex(from);
+    bfs.setVertexStopCondition([this](const Vertex *) { return pathFound; });
+    bfs.onTreeArcDiscover([this,&pred](const Arc *a) {
+        auto head = a->getHead();
+        pred[head] = const_cast<Arc*>(a);
+        if (head == to) {
+            pathFound = true;
+        }
+        return pathFound;
+    });
+    bfs.setArcStopCondition([this](const Arc *) {
+        return pathFound;
+    });
+    runAlgorithm(bfs, diGraph);
+
+    if (pathFound && (constructVertexPath || constructArcPath)) {
+        arcPath.clear();
+        Vertex *p = to;
+        while (p != from) {
+            auto *a = pred(p);
+            arcPath.push_back(a);
+            p = a->getTail();
+        }
+        assert(!arcPath.empty());
+        std::reverse(arcPath.begin(), arcPath.end());
+    }
+    pr_num_vertices_seen += bfs.numVerticesReached();
 }
 
 }

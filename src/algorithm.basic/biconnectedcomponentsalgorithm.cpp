@@ -56,15 +56,14 @@ void BiconnectedComponentsAlgorithm::run()
 {
     DFSResult none;
     PropertyMap<DFSResult> dfsResult(none);
-    DepthFirstSearch<> dfs;
+    DepthFirstSearch<PropertyMap, false, true> dfs;
     dfs.useModifiableProperty(&dfsResult);
-    dfs.ignoreArcDirection(true);
 
-    int n = diGraph->getSize();
-    std::vector<Vertex*> dfsOrderRev(n, 0);
+    auto n = diGraph->getSize();
+    std::vector<Vertex*> dfsOrderRev(n, nullptr);
     int verticesReached = 0;
     diGraph->mapVertices([&](Vertex *v) {
-        int dfsNum = dfsResult(v).dfsNumber;
+        auto dfsNum = dfsResult(v).dfsNumber;
         if (dfsNum == -1) {
             PRINT_DEBUG("Running DFS starting from " << v);
             dfs.setStartVertex(v);

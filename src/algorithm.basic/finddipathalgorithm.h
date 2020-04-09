@@ -24,6 +24,8 @@
 #define FINDDIPATHALGORITHM_H
 
 #include "algorithm/valuecomputingalgorithm.h"
+#include "property/propertymap.h"
+#include "graph/digraph.h"
 
 #include <vector>
 
@@ -32,17 +34,29 @@ namespace Algora {
 class Vertex;
 class Arc;
 
+template<template <typename T> typename property_map_type = PropertyMap>
 class FindDiPathAlgorithm : public ValueComputingAlgorithm<bool>
 {
 public:
     typedef std::vector<Vertex*>::const_iterator VertexIterator;
     typedef std::vector<Arc*>::const_iterator ArcIterator;
 
-    explicit FindDiPathAlgorithm(bool constructPath = true);
-    virtual ~FindDiPathAlgorithm();
+    explicit FindDiPathAlgorithm(bool constructVertexPath = true,
+                                 bool constructArcPath = true,
+                                 bool twoWaySearch = true);
+    virtual ~FindDiPathAlgorithm() override = default;
 
-    void setConstructPath(bool constructPath) {
-        this->constructPath = constructPath;
+    void setConstructPaths(bool vertexPath, bool arcPath) {
+        constructVertexPath = vertexPath;
+        constructArcPath = arcPath;
+    }
+
+    void useTwoWaySearch(bool twoWay) {
+        twoWaySearch = twoWay;
+    }
+
+    void setTwoWayStepSize(unsigned long stepSize) {
+        twoWayStepSize = stepSize;
     }
 
     void setSourceVertex(Vertex *s) {
@@ -51,6 +65,11 @@ public:
 
     void setTargetVertex(Vertex *t) {
         to = t;
+    }
+
+    void setSourceAndTarget(Vertex *source, Vertex *target) {
+        from = source;
+        to = target;
     }
 
     ArcIterator begin() const {
@@ -77,6 +96,22 @@ public:
         return arcPath.cend();
     }
 
+    std::vector<Vertex*> deliverVerticesOnPath() {
+        std::vector<Vertex*> empty;
+        std::swap(vertexPath, empty);
+        return empty;
+    }
+
+    std::vector<Arc*> deliverArcsOnPath() {
+        std::vector<Arc*> empty;
+        std::swap(arcPath, empty);
+        return empty;
+    }
+
+    DiGraph::size_type getNumVerticesSeen() const {
+        return pr_num_vertices_seen;
+    }
+
     // DiGraphAlgorithm interface
 public:
     virtual bool prepare() override;
@@ -89,12 +124,26 @@ public:
     virtual bool deliver() override;
 
 private:
-    bool constructPath;
+    bool constructVertexPath;
+    bool constructArcPath;
     Vertex *from;
     Vertex *to;
+    bool twoWaySearch;
+    unsigned long twoWayStepSize;
+    bool fastPropertyMap;
+
     std::vector<Vertex*> vertexPath;
     std::vector<Arc*> arcPath;
     bool pathFound;
+
+    DiGraph::size_type pr_num_vertices_seen;
+
+    void runOneWaySearch();
+    void runOneWayPathSearch();
+    void runTwoWaySearch();
+    void runTwoWayPathSearch();
+
+    void constructVertexFromArcPath();
 
     // DiGraphAlgorithm interface
 private:
@@ -102,5 +151,7 @@ private:
 };
 
 }
+
+#include "finddipathalgorithm.cpp"
 
 #endif // FINDDIPATHALGORITHM_H

@@ -18,8 +18,8 @@ The design principle was to have data structures and algorithms that are
 ## Building
 
 **Algora|Core** is written in C++17.
-Implementations are based on the STL and additionally use `boost/dynamic_bitset` as well as
-`boost/logic/tribool`.
+Implementations are based on the STL and additionally use (a) few
+boost libraries.
 The building process employs `qmake` version 5.
 
 On Debian/Ubuntu, all dependencies can be installed by running: `# apt install
@@ -33,6 +33,11 @@ All you need to do is running `$ ./easyCompile` from the project's topmost
 directory.
 The compiled library can then be found in the `build/Debug` and `build/Release`
 subdirectories.
+
+## How to use
+
+See the `examples` directory to get a first impression of how you can use
+**Algora**.
 
 ## License
 

@@ -65,8 +65,6 @@ void Graph::removeOnVertexRemove(void *id)
 
 void Graph::clear()
 {
-    observableVertexGreetings.clear();
-    observableVertexFarewells.clear();
 }
 
 }

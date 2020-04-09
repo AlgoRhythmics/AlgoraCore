@@ -24,16 +24,21 @@
 #define TARJANSCCALGORITHM_H
 
 #include "algorithm/propertycomputingalgorithm.h"
+#include "property/propertymap.h"
+#include "graph/digraph.h"
+
+#include <limits>
 
 namespace Algora {
 
 class Vertex;
 
-class TarjanSCCAlgorithm : public PropertyComputingAlgorithm<int, int>
+template <template<typename T> class ModifiablePropertyType = PropertyMap>
+class TarjanSCCAlgorithm : public PropertyComputingAlgorithm<DiGraph::size_type, DiGraph::size_type>
 {
 public:
     TarjanSCCAlgorithm();
-    virtual ~TarjanSCCAlgorithm();
+    virtual ~TarjanSCCAlgorithm() override;
 
     // DiGraphAlgorithm interface
 public:
@@ -43,12 +48,14 @@ public:
 
     // ValueComputingAlgorithm interface
 public:
-    virtual int deliver() override;
+    virtual DiGraph::size_type deliver() override;
 
 private:
-    int numSccs;
+    DiGraph::size_type numSccs;
 };
 
 }
+
+#include "tarjansccalgorithm.cpp"
 
 #endif // TARJANSCCALGORITHM_H

@@ -36,14 +36,14 @@
 namespace Algora {
 
 bool hasDiPath(DiGraph *diGraph, Vertex *from, Vertex *to) {
-    FindDiPathAlgorithm findDiPath(false);
+    FindDiPathAlgorithm<> findDiPath(false, false, true);
     return runDiPathAlgorithm(diGraph, from, to, findDiPath);
 }
 
 bool isAcyclic(DiGraph *diGraph) {
     TopSortAlgorithm topSort(false);
-    int sortedVertices = runAlgorithm(topSort, diGraph);
-    return sortedVertices == (int) diGraph->getSize();
+    auto sortedVertices = runAlgorithm(topSort, diGraph);
+    return sortedVertices == diGraph->getSize();
 }
 
 bool isStronglyConnected(DiGraph *diGraph)
@@ -51,10 +51,10 @@ bool isStronglyConnected(DiGraph *diGraph)
     return countStrongComponents(diGraph) == 1;
 }
 
-int countStrongComponents(DiGraph *diGraph)
+DiGraph::size_type countStrongComponents(DiGraph *diGraph)
 {
     TarjanSCCAlgorithm tarjan;
-    PropertyMap<int> sccs(-1);
+    PropertyMap<DiGraph::size_type> sccs(0);
     tarjan.useModifiableProperty(&sccs);
     return runAlgorithm(tarjan, diGraph);
 }
@@ -73,7 +73,7 @@ int countBiconnectedComponents(DiGraph *diGraph)
     return runAlgorithm(bic, diGraph);
 }
 
-bool runDiPathAlgorithm(DiGraph *diGraph, Vertex *from, Vertex *to, FindDiPathAlgorithm &a)
+bool runDiPathAlgorithm(DiGraph *diGraph, Vertex *from, Vertex *to, FindDiPathAlgorithm<> &a)
 {
     a.setSourceVertex(from);
     a.setTargetVertex(to);
@@ -106,17 +106,17 @@ int computeDiameter(DiGraph *diGraph)
 void computeCondensation(DiGraph *diGraph, DiGraph *condensedGraph)
 {
     TarjanSCCAlgorithm tarjan;
-    PropertyMap<int> sccOf(-1);
+    PropertyMap<DiGraph::size_type> sccOf(0);
     tarjan.useModifiableProperty(&sccOf);
-    int sccs = runAlgorithm(tarjan, diGraph);
+    auto sccs = runAlgorithm(tarjan, diGraph);
     condensedGraph->clear();
     std::vector<Vertex*> sccVertices;
-    for (int i = 0; i < sccs; i++) {
+    for (auto i = 0UL; i < sccs; i++) {
         sccVertices.push_back(condensedGraph->addVertex());
     }
     diGraph->mapArcs([&](Arc *a) {
-        int tailScc = sccOf(a->getTail());
-        int headScc = sccOf(a->getHead());
+        auto tailScc = sccOf(a->getTail());
+        auto headScc = sccOf(a->getHead());
         if (tailScc != headScc) {
             condensedGraph->addArc(sccVertices.at(tailScc), sccVertices.at(headScc));
         }

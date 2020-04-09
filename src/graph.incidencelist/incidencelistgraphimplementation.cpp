@@ -127,7 +127,7 @@ void IncidenceListGraphImplementation::clear(bool emptyReserves)
         v->mapOutgoingArcs([this](Arc *a) {
             a->hibernate();
             arcPool.push_back(a);
-        });
+        }, arcFalse, false);
         v->clearOutgoingArcs();
         v->clearIncomingArcs();
         v->hibernate();

@@ -1,5 +1,9 @@
 image: gcc
 
+stages:
+  - build
+  - examples
+
 build:
   stage: build
   before_script:
@@ -10,3 +14,10 @@ build:
     paths:
       - build/Debug/libAlgoraCore.a
       - build/Release/libAlgoraCore.a
+
+examples:
+  stage: examples
+  before_script:
+    - apt update && apt -y install qt5-qmake libboost-dev
+  script:
+    - cd examples && make all

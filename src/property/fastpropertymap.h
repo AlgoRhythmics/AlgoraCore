@@ -40,8 +40,11 @@ public:
     typedef typename std::vector<T>::reference reference;
     typedef typename std::vector<T>::size_type size_type;
 
-    FastPropertyMap(const T &defaultValue = T(), const std::string &name = "", size_type capacity = 0)
-        : ModifiableProperty<T>(name), defaultValue(defaultValue) { buckets.assign(capacity, defaultValue); }
+    FastPropertyMap(const T &defaultValue = T(), const std::string &name = "",
+                    size_type capacity = 0)
+        : ModifiableProperty<T>(name), defaultValue(defaultValue) {
+        buckets.assign(capacity, defaultValue);
+    }
     virtual ~FastPropertyMap() { }
 
 
@@ -76,21 +79,29 @@ public:
         setValue(ga, defaultValue);
     }
 
-		void fit() {
+    bool hasDefaultValue(const GraphArtifact *ga) {
+        return defaultValue == getValue(ga);
+    }
+
+    void fit() {
         buckets.shrink_to_fit();
-		}
+    }
 
     void resetAll(size_type capacity) {
         buckets.assign(capacity, defaultValue);
         assert(buckets.size() == capacity);
         if (capacity == 0) {
-					fit();
+            fit();
         }
         this->updateObservers(nullptr, defaultValue, defaultValue);
     }
 
     void resetAll() {
         resetAll(buckets.size());
+    }
+
+    size_type size() const {
+        return buckets.size();
     }
 
     virtual T &operator[](const GraphArtifact *ga) override {
@@ -198,15 +209,23 @@ public:
         setValue(ga, defaultValue);
     }
 
-		void fit() {
+    bool hasDefaultValue(const GraphArtifact *ga) {
+        return defaultValue == getValue(ga);
+    }
+
+    void fit() {
         buckets.shrink_to_fit();
-		}
+    }
 
     void resetAtId(GraphArtifact::id_type id) {
         setValueAtId(id, defaultValue);
     }
 
     void resetAll(size_type capacity = 0ULL);
+
+    size_type size() const {
+        return buckets.size();
+    }
 
     virtual bool &operator[](const GraphArtifact *ga) override {
         auto id = ga->getId();

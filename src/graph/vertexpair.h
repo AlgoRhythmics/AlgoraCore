@@ -80,7 +80,6 @@ inline bool operator>=(const VertexPair &lhs, const VertexPair &rhs){ return !op
 
 std::ostream &operator<<(std::ostream &out, const VertexPair *vp);
 
-
 }
 
 #endif // VERTEXPAIR_H
